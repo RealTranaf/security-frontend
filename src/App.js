@@ -1,23 +1,19 @@
-import logo from './logo.svg';
 import './App.css';
+import logo from './resource/logo.jpg'
+import Header from './components/Header';
+import Body from './components/Body';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header pageTitle="Frontend for Spring Security + JWT" logoSrc={logo}></Header>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='col'>
+            <Body></Body>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
