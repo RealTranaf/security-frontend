@@ -1,32 +1,34 @@
 import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
 
 import { login } from '../services/auth-service';
+import logo from '../resource/logo.jpg'
 
 function LoginPage() {
 
-    const required = (value) => {
-        if (!value) {
-            return (
-                <div className='alert alert-danger' role='alert'>
-                    This field is required!
-                </div>
-            )
-        }
-    }
-    
     let navigate = useNavigate()
 
     const form = useRef()
-    const checkBtn = useRef()
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState("")
+    const [errors, setErrors] = useState({})
+
+    const validateForm = () => {
+        const errors = {}
+        if (!username.trim()) {
+            errors.username = "Username is required."
+        }
+        if (!password.trim()) {
+            errors.password = "Password is required."
+        } else if (password.length < 6) {
+            errors.password = "Password must be at least 6 characters long."
+        }
+        setErrors(errors)
+        return Object.keys(errors).length === 0
+    }
 
     const onChangeUsername = (e) => {
         const username = e.target.value
@@ -44,9 +46,9 @@ function LoginPage() {
         setMessage("")
         setLoading(true)
 
-        form.current.validateAll();
+        // form.current.validateAll()
 
-        if (checkBtn.current.context._errors.length === 0) {
+        if (validateForm()) {
             try {
                 await login(username, password)
                 navigate("/profile")
@@ -64,17 +66,15 @@ function LoginPage() {
 
     return (
         <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card p-4 shadow-sm' style={{ maxWidth: "400px", width: "100%" }}>
+            <div className='card card-container'>
                 <div className='text-center mb-3'>
                     <img
-                        src='src/resource/logo.jpg'
+                        src={logo}
                         alt="profile-img"
-                        className="rounded-circle"
-                        width="100"
-                        height="100"
+                        className='profile-img-card'
                     />
                 </div>
-                <Form onSubmit={handleLogin} ref={form}>
+                <form onSubmit={handleLogin} ref={form}>
                     <div className='mb-3'>
                         <label htmlFor='username'>Username</label>
                         <input
@@ -83,21 +83,29 @@ function LoginPage() {
                             name='username'
                             value={username}
                             onChange={onChangeUsername}
-                            validations={[required]}
                         >
                         </input>
+                        {errors.username && (
+                            <div className='alert alert-danger' role='alert'>
+                                {errors.username}
+                            </div>
+                        )}
                     </div>
                     <div className='mb-3'>
-                        <label htmlFor='password'>Username</label>
+                        <label htmlFor='password'>Password</label>
                         <input
                             type='password'
                             className='form-control'
                             name='password'
                             value={password}
                             onChange={onChangePassword}
-                            validations={[required]}
                         >
                         </input>
+                        {errors.password && (
+                            <div className='alert alert-danger' role='alert'>
+                                {errors.password}
+                            </div>
+                        )}
                     </div>
                     <div className='d-grid mb-3'>
                         <button className="btn btn-primary" disabled={loading}>
@@ -112,8 +120,7 @@ function LoginPage() {
                             {message}
                         </div>
                     )}
-                    <CheckButton style={{ display: "none" }} ref={checkBtn} />
-                </Form>
+                </form>
             </div>
         </div>
     )

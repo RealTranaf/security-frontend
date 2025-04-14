@@ -2,6 +2,8 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/auth"
 
+axios.defaults.withCredentials = true;
+
 export async function signup (username, email, password, role){
     return await axios.post(API_URL + "/signup", {
         username,
@@ -12,22 +14,21 @@ export async function signup (username, email, password, role){
 };
 
 export async function login (username, password){
-    const response = await axios
-        .post(API_URL + "/login", {
+    const response = await axios.post(API_URL + "/login", {
             username,
-            password,
+            password
         });
-    if (response.data.accessToken) {
+    if (response.data.token) {
         localStorage.setItem("user", JSON.stringify(response.data));
     }
     return response.data;
 }
 
-export async function logout(){
+export function logout(){
     localStorage.removeItem("user");
 };
 
-export async function getCurrentUser(){
+export function getCurrentUser(){
     return JSON.parse(localStorage.getItem("user"));
 };
 

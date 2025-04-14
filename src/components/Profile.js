@@ -1,9 +1,9 @@
 import React from "react";
-import { getUser } from "../services/user-service";
+import { getCurrentUser } from "../services/auth-service";
 
 function Profile() {
-
-    const currentUser = getUser();
+    
+    const currentUser = getCurrentUser();
     return (
         <div className="container mt-5">
             <div className="card">
@@ -13,22 +13,26 @@ function Profile() {
                     </h3>
                 </div>
                 <div className="card-body">
+                    
+                    {/* <p className="mb-2">
+                        <strong>Tokens:</strong>
+                        <ul className="mt-2">
+                            {currentUser.token.map((token, index) => (
+                                <li key={index}>
+                                    {token.substring(0, 20)}...{token.substring(token.length - 20)}
+                                </li>
+                            ))}
+                        </ul>
+                    </p> */}
                     <p className="mb-2">
-                        <strong>Token:</strong>{" "}
-                        {currentUser.accessToken.substring(0, 20)}...
-                        {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
-                    </p>
-                    <p className="mb-2">
-                        <strong>Id:</strong> {currentUser.id}
+                        <strong>Username:</strong> {currentUser.username}
                     </p>
                     <p className="mb-2">
                         <strong>Email:</strong> {currentUser.email}
                     </p>
-                    <strong>Authorities:</strong>
-                    <ul>
-                        {currentUser.roles &&
-                            currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
-                    </ul>
+                    <p className="mb-2">
+                        <strong>Authorities:</strong> {currentUser.role}
+                    </p>
                 </div>
             </div>
         </div>

@@ -1,55 +1,12 @@
 import React, { useState, useRef } from 'react'
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
-
 import { signup } from '../services/auth-service';
-import { isEmail } from 'validator';
+import logo from '../resource/logo.jpg'
+import { useNavigate } from 'react-router-dom';
 
 function SignupPage() {
 
-    const required = (value) => {
-        if (!value) {
-            return (
-                <div className='alert alert-danger' role='alert'>
-                    This field is required!
-                </div>
-            )
-        }
-    }
-
-    const validEmail = (value) => {
-        if (!isEmail(value)) {
-            return (
-                <div className='alert alert-danger' role='alert'>
-                    This is not a valid email!
-                </div>
-            )
-        }
-    }
-
-    const validUsername = (value) => {
-        if (value.length < 3 || value.length > 20) {
-            return (
-                <div className='alert alert-danger' role='alert'>
-                    This is not a valid email!
-                </div>
-            )
-        }
-    }
-
-    const validPassword = (value) => {
-        if (value.length < 6 || value.length > 40) {
-            return (
-                <div className='alert alert-danger' role='alert'>
-                    The password must be between 6 and 40 characters!
-                </div>
-            )
-        }
-    }
-
     const form = useRef()
-    const checkBtn = useRef()
+    const navigate = useNavigate()
 
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
@@ -57,7 +14,35 @@ function SignupPage() {
     const [role, setRole] = useState("")
     const [successful, setSuccessful] = useState(false)
     const [message, setMessage] = useState("")
+    const [errors, setErrors] = useState({})
 
+    const validateForm = () => {
+        const newErrors = {}
+        if (!username) {
+            newErrors.username = "Username is required"
+        } else if (username.length < 3 || username.length > 20) {
+            newErrors.username = "Username must be between 3 and 20 characters!"
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!email) {
+            newErrors.email = "Email is required!"
+        } else if (!emailRegex.test(email)) {
+            newErrors.email = "This is not a valid email!"
+        }
+
+        if (!password) {
+            newErrors.password = "Password is required!"
+        } else if (password.length < 6 || password.length > 40) {
+            newErrors.password = "Password must be between 6 and 40 characters!"
+        }
+
+        if (!role) {
+            newErrors.role = "Role is required!"
+        }
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0;
+    }
     const onChangeUsername = (e) => {
         const username = e.target.value
         setUsername(username)
@@ -65,7 +50,7 @@ function SignupPage() {
 
     const onChangeEmail = (e) => {
         const email = e.target.value
-        setUsername(email)
+        setEmail(email)
     }
 
     const onChangePassword = (e) => {
@@ -75,7 +60,7 @@ function SignupPage() {
 
     const onChangeRole = (e) => {
         const role = e.target.value
-        setPassword(role)
+        setRole(role)
     }
 
     const handleSignup = async (e) => {
@@ -84,34 +69,34 @@ function SignupPage() {
         setMessage("")
         setSuccessful(false)
 
-        form.current.validateAll();
-
-        if (checkBtn.current.context._errors.length === 0) {
+        if (validateForm()) {
             try {
-                await signup(username, email, password, role)
+                const response = await signup(username, email, password, role)
                 setMessage(response.data.message)
                 setSuccessful(true)
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error occurred during login."
+                const resMessage = (error.response?.data?.message) || error.message || "An error occurred during signup."
                 setMessage(resMessage)
                 setSuccessful(false)
             }
         }
     }
 
+    const redirectToVerify = () => {
+        navigate('/verify', { state: { username } });
+    };
+
     return (
         <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card p-4 shadow-sm' style={{ maxWidth: "400px", width: "100%" }}>
+            <div className='card card-container'>
                 <div className='text-center mb-3'>
                     <img
-                        src='src/resource/logo.jpg'
+                        src={logo}
                         alt="profile-img"
-                        className="rounded-circle"
-                        width="100"
-                        height="100"
+                        className="profile-img-card"
                     />
                 </div>
-                <Form onSubmit={handleSignup} ref={form}>
+                <form onSubmit={handleSignup} ref={form}>
                     {!successful && (
                         <div className='container'>
                             <div className='mb-3'>
@@ -122,64 +107,64 @@ function SignupPage() {
                                     name='username'
                                     value={username}
                                     onChange={onChangeUsername}
-                                    validations={[required, validUsername]}
                                 >
                                 </input>
+                                {errors.username && (
+                                    <div className='alert alert-danger' role='alert'>
+                                        {errors.username}
+                                    </div>
+                                )}
                             </div>
                             <div className='mb-3'>
                                 <label htmlFor='email'>Email</label>
                                 <input
                                     type='text'
                                     className='form-control'
-                                    name='username'
+                                    name='email'
                                     value={email}
                                     onChange={onChangeEmail}
-                                    validations={[required, validEmail]}
                                 >
                                 </input>
+                                {errors.email && (
+                                    <div className='alert alert-danger' role='alert'>
+                                        {errors.email}
+                                    </div>
+                                )}
                             </div>
                             <div className='mb-3'>
-                                <label htmlFor='password'>Username</label>
+                                <label htmlFor='password'>Password</label>
                                 <input
                                     type='password'
                                     className='form-control'
                                     name='password'
                                     value={password}
                                     onChange={onChangePassword}
-                                    validations={[required, validPassword]}
                                 >
                                 </input>
+                                {errors.password && (
+                                    <div className='alert alert-danger' role='alert'>
+                                        {errors.password}
+                                    </div>
+                                )}
                             </div>
                             <div className='mb-3'>
                                 <label htmlFor='role'>Role</label>
-                                <div className='dropdown'>
-                                    <button
-                                        className="btn btn-primary dropdown-toggle"
-                                        type="button"
-                                        id="dropdownMenuButton"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        {role}
-                                    </button>
-                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <li>
-                                            <button className="dropdown-item" data-value="User" onClick={onChangeRole}>
-                                                User
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button className="dropdown-item" data-value="Admin" onClick={onChangeRole}>
-                                                Admin
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button className="dropdown-item" data-value="Manager" onClick={onChangeRole}>
-                                                Manager
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <select
+                                    className='form-control'
+                                    name='role'
+                                    value={role}
+                                    onChange={onChangeRole}
+                                >
+                                    <option value="">Select a role</option>
+                                    <option value="USER">User</option>
+                                    <option value="ADMIN">Admin</option>
+                                    <option value="MANAGER">Manager</option>
+                                </select>
+                                {errors.role && (
+                                    <div className='alert alert-danger' role='alert'>
+                                        {errors.role}
+                                    </div>
+                                )}
                             </div>
                             <div className="mb-3">
                                 <button className="btn btn-primary">Sign Up</button>
@@ -187,12 +172,24 @@ function SignupPage() {
                         </div>
                     )}
                     {message && (
-                        <div className={successful ?"alert alert-success text-center" : "alert alert-danger text-center"} role="alert">
-                            {message}
+                        <div className='mb-3'>
+                            <div className={successful ? "alert alert-success text-center" : "alert alert-danger text-center"} role="alert">
+                                {message}
+                            </div>
                         </div>
                     )}
-                    <CheckButton style={{ display: "none" }} ref={checkBtn} />
-                </Form>
+                    {successful && (
+                        <div className="text-center">
+                            To complete the signup process, you will need to verify your account!
+                            <button
+                                className="btn btn-secondary"
+                                onClick={redirectToVerify}
+                            >
+                                Go to Verification
+                            </button>
+                        </div>
+                    )}
+                </form>
             </div>
         </div>
     )
