@@ -12,7 +12,7 @@ import Profile from './components/Profile'
 import SignupPage from './components/SignupPage';
 import VerifyPage from './components/VerifyPage';
 
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 
 function App() {
   return (

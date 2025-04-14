@@ -1,36 +1,63 @@
 import React, { useState } from 'react'
-import { verify, getCurrentUser} from '../services/auth-service'
+import { resendCode, verify } from '../services/auth-service'
 import { useLocation } from 'react-router-dom'
 
 function VerifyPage() {
-    const [verificationCode, setVerificationCode] = useState()
+    const [verificationCode, setVerificationCode] = useState('')
     const [message, setMessage] = useState('')
     const [successful, setSuccessful] = useState(false)
+    const [errors, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
 
     const location = useLocation()
 
     const currentUsername = location.state?.username
+
+    const validateForm = () => {
+        const errors = {}
+        if (!verificationCode.trim() || verificationCode.length !== 6) {
+            errors.verificationCode = "Please enter a 6 digit code!"
+        }
+        setErrors(errors)
+        return Object.keys(errors).length === 0
+    }
 
     const handleVerification = async (e) => {
         e.preventDefault()
         setMessage('')
         setSuccessful(false)
 
-        if (verificationCode.length !== 6 || isNaN(verificationCode)){
-            setMessage('Please enter a 6 digit code!')
-            return
+        // if (verificationCode.length !== 6 || isNaN(verificationCode)){
+        //     setMessage('Please enter a 6 digit code!')
+        //     return
+        // }
+
+        if (validateForm()) {
+            try {
+                const response = await verify(currentUsername, verificationCode)
+                setMessage(response.data.message)
+                setSuccessful(true)
+            } catch (error) {
+                const resMessage = (error.response?.data?.message) || error.message || "An error occurred during verification!"
+                setMessage(resMessage)
+                setSuccessful(false)
+            }
+        } else {
+            setLoading(false)
         }
 
+
+    }
+
+    const handleResendCode = async (e) => {
+        setMessage('')
         try {
-            const response = await verify(currentUsername, verificationCode)
+            const response = await resendCode(currentUsername)
             setMessage(response.data.message)
-            setSuccessful(true)
         } catch (error) {
-            const resMessage = (error.response?.data?.message) || error.message || "An error occurred during verification!"
+            const resMessage = (error.response?.data?.message) || error.message || "An error occurred during resending!"
             setMessage(resMessage)
-            setSuccessful(false)
         }
-        
     }
 
     const onChangeVerificationCode = (e) => {
@@ -49,14 +76,19 @@ function VerifyPage() {
                         <input
                             type='text'
                             className='form-control'
-                            name = 'verificationCode'
+                            name='verificationCode'
                             value={verificationCode}
                             onChange={onChangeVerificationCode}
                             maxLength={6}
                         >
                         </input>
+                        {errors.verificationCode && (
+                            <div className='alert alert-danger' role='alert'>
+                                {errors.verificationCode}
+                            </div>
+                        )}
                     </div>
-                    <div className="mb-3">
+                    <div className="mb-3 text-center">
                         <button className="btn btn-primary">Verify</button>
                     </div>
                     {message && (
@@ -67,6 +99,9 @@ function VerifyPage() {
                         </div>
                     )}
                 </form>
+                <div className='mb-3 text-center'>
+                    <button className="btn btn-primary" style={{ margin: '20px' }} onClick={handleResendCode}>Resend code</button>
+                </div>
             </div>
         </div>
     )

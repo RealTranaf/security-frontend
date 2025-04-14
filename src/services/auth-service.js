@@ -38,3 +38,9 @@ export async function verify(username, verificationCode) {
         verificationCode
     });
 }
+
+export async function resendCode(username) {
+    return await axios.post(API_URL + "/resend", {
+        username
+    })
+}
