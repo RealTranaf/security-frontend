@@ -15,6 +15,7 @@ function SignupPage() {
     const [successful, setSuccessful] = useState(false)
     const [message, setMessage] = useState("")
     const [errors, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
 
     const validateForm = () => {
         const newErrors = {}
@@ -68,6 +69,7 @@ function SignupPage() {
 
         setMessage("")
         setSuccessful(false)
+        setLoading(true)
 
         if (validateForm()) {
             try {
@@ -78,13 +80,16 @@ function SignupPage() {
                 const resMessage = (error.response?.data?.message) || error.message || "An error occurred during signup."
                 setMessage(resMessage)
                 setSuccessful(false)
+                setLoading(false)
             }
+        } else {
+            setLoading(false)
         }
     }
 
     const redirectToVerify = () => {
         navigate('/verify', { state: { username } });
-    };
+    }
 
     return (
         <div className='container d-flex justify-content-center align-items-center'>
@@ -167,7 +172,12 @@ function SignupPage() {
                                 )}
                             </div>
                             <div className="mb-3">
-                                <button className="btn btn-primary">Sign Up</button>
+                                <button className="btn btn-primary" disabled={loading}>
+                                    {loading && (
+                                        <span className="spinner-border spinner-border-sm me-2"></span>
+                                    )}
+                                    Sign Up
+                                </button>
                             </div>
                         </div>
                     )}
@@ -182,8 +192,9 @@ function SignupPage() {
                         <div className="text-center">
                             To complete the signup process, you will need to verify your account!
                             <button
-                                className="btn btn-secondary"
+                                className="btn btn-primary"
                                 onClick={redirectToVerify}
+                                style={{margin: "20px"}}
                             >
                                 Go to Verification
                             </button>

@@ -3,6 +3,8 @@ import { resendCode, verify } from '../services/auth-service'
 import { useLocation } from 'react-router-dom'
 
 function VerifyPage() {
+
+
     const [verificationCode, setVerificationCode] = useState('')
     const [message, setMessage] = useState('')
     const [successful, setSuccessful] = useState(false)
@@ -26,12 +28,6 @@ function VerifyPage() {
         e.preventDefault()
         setMessage('')
         setSuccessful(false)
-
-        // if (verificationCode.length !== 6 || isNaN(verificationCode)){
-        //     setMessage('Please enter a 6 digit code!')
-        //     return
-        // }
-
         if (validateForm()) {
             try {
                 const response = await verify(currentUsername, verificationCode)
@@ -43,7 +39,6 @@ function VerifyPage() {
                 setSuccessful(false)
             }
         } else {
-            setLoading(false)
         }
 
 
@@ -51,13 +46,18 @@ function VerifyPage() {
 
     const handleResendCode = async (e) => {
         setMessage('')
+        setLoading(true)
         try {
             const response = await resendCode(currentUsername)
             setMessage(response.data.message)
+            setSuccessful(true)
         } catch (error) {
             const resMessage = (error.response?.data?.message) || error.message || "An error occurred during resending!"
             setMessage(resMessage)
+            setSuccessful(false)
+            setLoading(false)
         }
+        setLoading(false)
     }
 
     const onChangeVerificationCode = (e) => {
@@ -100,7 +100,16 @@ function VerifyPage() {
                     )}
                 </form>
                 <div className='mb-3 text-center'>
-                    <button className="btn btn-primary" style={{ margin: '20px' }} onClick={handleResendCode}>Resend code</button>
+                    <button 
+                        className="btn btn-primary" 
+                        style={{ margin: '20px' }} 
+                        onClick={handleResendCode}
+                        disabled={loading}>
+                        {loading && (
+                            <span className="spinner-border spinner-border-sm me-2"></span>
+                        )}
+                        Resend code
+                    </button>
                 </div>
             </div>
         </div>

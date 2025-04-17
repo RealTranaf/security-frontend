@@ -6,7 +6,7 @@ import logo from '../resource/logo.jpg'
 
 function LoginPage() {
 
-    let navigate = useNavigate()
+    const navigate = useNavigate()
 
     const form = useRef()
 
@@ -15,6 +15,7 @@ function LoginPage() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState("")
     const [errors, setErrors] = useState({})
+    const [enableVerify, setEnableVerify] = useState()
 
     const validateForm = () => {
         const errors = {}
@@ -33,11 +34,13 @@ function LoginPage() {
     const onChangeUsername = (e) => {
         const username = e.target.value
         setUsername(username)
+        setEnableVerify(false)
     }
 
     const onChangePassword = (e) => {
         const password = e.target.value
         setPassword(password)
+        setEnableVerify(false)
     }
 
     const handleLogin = async (e) => {
@@ -55,14 +58,21 @@ function LoginPage() {
                 window.location.reload()
             } catch (error) {
                 const resMessage = (error.response?.data?.message) || error.message || "An error occurred during login."
+                if (resMessage === "User is disabled"){
+                    setEnableVerify(true)
+                }
                 setMessage(resMessage)
                 setLoading(false)
             }
         } else {
             setLoading(false)
         }
+        // console.log(username)
 
     }
+    const redirectToVerify = () => {
+        navigate('/verify', { state: { username } });
+    };
 
     return (
         <div className='container d-flex justify-content-center align-items-center'>
@@ -121,6 +131,14 @@ function LoginPage() {
                         </div>
                     )}
                 </form>
+                {enableVerify && <div className='d-grid mb-3'>
+                    <button className="btn btn-primary" onClick={redirectToVerify}>
+                        {/* {loading && (
+                            <span className="spinner-border spinner-border-sm me-2"></span>
+                        )} */}
+                        Go to verification
+                    </button>
+                </div>}
             </div>
         </div>
     )
