@@ -13,17 +13,9 @@ function Profile() {
                     </h3>
                 </div>
                 <div className="card-body">
-                    
-                    {/* <p className="mb-2">
-                        <strong>Tokens:</strong>
-                        <ul className="mt-2">
-                            {currentUser.token.map((token, index) => (
-                                <li key={index}>
-                                    {token.substring(0, 20)}...{token.substring(token.length - 20)}
-                                </li>
-                            ))}
-                        </ul>
-                    </p> */}
+                    <p className="mb-2">
+                        <strong>JWT:</strong> {currentUser.token}
+                    </p>
                     <p className="mb-2">
                         <strong>Username:</strong> {currentUser.username}
                     </p>

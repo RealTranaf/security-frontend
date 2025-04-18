@@ -25,8 +25,8 @@ export async function testAdmin() {
     return axios.get(`${API_URL}/admin`, { headers: authHeader() })
 }
 
-export async function testManager() {
-    return axios.get(`${API_URL}/manager`, { headers: authHeader() })
+export async function testTeacher() {
+    return axios.get(`${API_URL}/teacher`, { headers: authHeader() })
 }
 
 

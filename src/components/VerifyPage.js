@@ -88,7 +88,7 @@ function VerifyPage() {
                             </div>
                         )}
                     </div>
-                    <div className="mb-3 text-center">
+                    <div className="d-grid mb-3">
                         <button className="btn btn-primary">Verify</button>
                     </div>
                     {message && (
@@ -99,7 +99,7 @@ function VerifyPage() {
                         </div>
                     )}
                 </form>
-                <div className='mb-3 text-center'>
+                <div className='d-grid mb-3'>
                     <button 
                         className="btn btn-primary" 
                         style={{ margin: '20px' }} 

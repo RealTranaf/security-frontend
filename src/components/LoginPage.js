@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 import { login } from '../services/auth-service';
 import logo from '../resource/logo.jpg'
@@ -133,12 +133,12 @@ function LoginPage() {
                 </form>
                 {enableVerify && <div className='d-grid mb-3'>
                     <button className="btn btn-primary" onClick={redirectToVerify}>
-                        {/* {loading && (
-                            <span className="spinner-border spinner-border-sm me-2"></span>
-                        )} */}
                         Go to verification
                     </button>
                 </div>}
+                <div className="text-center mt-3">
+                    <Link to="/forgot-password">Forgot your password?</Link>
+                </div>
             </div>
         </div>
     )

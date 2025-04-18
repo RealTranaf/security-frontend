@@ -44,3 +44,22 @@ export async function resendCode(username) {
         username
     })
 }
+
+export async function forgotPassword(email) {
+    return await axios.post(API_URL + "/forgot-password", {
+        email
+    })
+}
+
+export async function resetPassword(token, newPassword) {
+    return await axios.post(API_URL + "/reset-password", {
+        token,
+        newPassword
+    })
+}
+
+export async function validateResetToken(token){
+    return await axios.get(API_URL + "/reset-password", {
+        params: {token}
+    });
+}

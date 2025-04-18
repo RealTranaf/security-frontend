@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { testManager } from '../services/user-service'
+import { testTeacher } from '../services/user-service'
 import eventBus from '../services/eventBus'
 
-function ManagerBoard() {
+function TeacherBoard() {
     const [content, setContent] = useState("")
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await testManager()
+                const response = await testTeacher()
                 setContent(response.data)
             } catch (error) {
                 const _content =
@@ -34,4 +34,4 @@ function ManagerBoard() {
     )
 }
 
-export default ManagerBoard
+export default TeacherBoard

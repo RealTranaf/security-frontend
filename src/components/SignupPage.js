@@ -161,9 +161,9 @@ function SignupPage() {
                                     onChange={onChangeRole}
                                 >
                                     <option value="">Select a role</option>
-                                    <option value="USER">User</option>
+                                    <option value="STUDENT">Student</option>
                                     <option value="ADMIN">Admin</option>
-                                    <option value="MANAGER">Manager</option>
+                                    <option value="TEACHER">Teacher</option>
                                 </select>
                                 {errors.role && (
                                     <div className='alert alert-danger' role='alert'>
@@ -171,7 +171,7 @@ function SignupPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="mb-3">
+                            <div className="d-grid mb-3">
                                 <button className="btn btn-primary" disabled={loading}>
                                     {loading && (
                                         <span className="spinner-border spinner-border-sm me-2"></span>
@@ -189,7 +189,7 @@ function SignupPage() {
                         </div>
                     )}
                     {successful && (
-                        <div className="text-center">
+                        <div className="d-grid mb-3">
                             To complete the signup process, you will need to verify your account!
                             <button
                                 className="btn btn-primary"

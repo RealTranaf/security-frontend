@@ -5,7 +5,7 @@ import { logout, getCurrentUser } from '../services/auth-service';
 import eventBus from '../services/eventBus';
 
 function NavBar() {
-    const [showManagerBoard, setShowManagerBoard] = useState(false)
+    const [showTeacherBoard, setShowTeacherBoard] = useState(false)
     const [showAdminBoard, setShowAdminBoard] = useState(false)
     const [currentUser, setCurrentUser] = useState()
 
@@ -14,10 +14,8 @@ function NavBar() {
             const user = await getCurrentUser()
             if (user) {
                 setCurrentUser(user);
-                setShowManagerBoard(user.role === "MANAGER");
+                setShowTeacherBoard(user.role === "TEACHER");
                 setShowAdminBoard(user.role === "ADMIN");
-                // setShowManagerBoard(true);
-                // setShowAdminBoard(true);
             }
         }
         fetchUser()
@@ -31,7 +29,7 @@ function NavBar() {
 
     const logOut = () => {
         logout();
-        setShowManagerBoard(false);
+        setShowTeacherBoard(false);
         setShowAdminBoard(false);
         setCurrentUser(undefined);
     };
@@ -40,7 +38,7 @@ function NavBar() {
         <div>
             <nav className='navbar navbar-expand navbar-dark bg-dark'>
                 <Link to={"/"} className="navbar-brand" style={{ paddingLeft: "10px" }}>
-                    :v
+                    The App
                 </Link>
                 <div className='navbar-nav me-auto'>
 
@@ -50,10 +48,10 @@ function NavBar() {
                         </Link>
                     </li>
 
-                    {showManagerBoard && (
+                    {showTeacherBoard && (
                         <li className="nav-item">
-                            <Link to={"/manager"} className="nav-link">
-                                Manager Board
+                            <Link to={"/teacher"} className="nav-link">
+                                Teacher Board
                             </Link>
                         </li>
                     )}
@@ -84,7 +82,7 @@ function NavBar() {
                         </li>
                         <li className="nav-item">
                             <a href="/login" className="nav-link" onClick={logOut}>
-                                LogOut
+                                Log out
                             </a>
                         </li>
                     </div>
