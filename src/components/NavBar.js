@@ -49,11 +49,18 @@ function NavBar() {
                     </li>
 
                     {showTeacherBoard && (
-                        <li className="nav-item">
-                            <Link to={"/teacher"} className="nav-link">
-                                Teacher Board
-                            </Link>
-                        </li>
+                        <>
+                            <li className="nav-item">
+                                <Link to={"/teacher"} className="nav-link">
+                                    Teacher Board
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to={"/create-room"} className="nav-link">
+                                    Create Room
+                                </Link>
+                            </li>
+                        </>
                     )}
 
                     {showAdminBoard && (

@@ -13,7 +13,7 @@ import SignupPage from './components/SignupPage';
 import VerifyPage from './components/VerifyPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
-
+import CreateRoomPage from './components/CreateRoomPage';
 import { Routes, Route} from "react-router-dom";
 
 function App() {
@@ -33,6 +33,7 @@ function App() {
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/create-room" element={<CreateRoomPage />} />
         </Routes>
       </div>
     </div>
