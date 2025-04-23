@@ -28,10 +28,6 @@ export function logout(){
     localStorage.removeItem("user");
 };
 
-export function getCurrentUser(){
-    return JSON.parse(localStorage.getItem("user"));
-};
-
 export async function verify(username, verificationCode) {
     return await axios.post(API_URL + "/verify", {
         username,

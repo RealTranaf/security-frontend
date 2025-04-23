@@ -15,7 +15,7 @@ import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import CreateRoomPage from './components/CreateRoomPage';
 import { Routes, Route} from "react-router-dom";
-
+import RoomPage from './components/RoomPage';
 function App() {
   return (
     <div>
@@ -34,6 +34,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/create-room" element={<CreateRoomPage />} />
+          <Route path="/rooms/:roomId" element={<RoomPage />} />
         </Routes>
       </div>
     </div>

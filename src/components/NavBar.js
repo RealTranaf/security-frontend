@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 
-import { logout, getCurrentUser } from '../services/auth-service';
+import { logout } from '../services/auth-service';
+// import { getCurrentUser } from '../services/user-service';
 import eventBus from '../services/eventBus';
 
 function NavBar() {
@@ -11,12 +12,25 @@ function NavBar() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const user = await getCurrentUser()
-            if (user) {
-                setCurrentUser(user);
-                setShowTeacherBoard(user.role === "TEACHER");
-                setShowAdminBoard(user.role === "ADMIN");
+            try {
+                // const response = await getCurrentUser()
+                // const user = response.data
+                const user = JSON.parse(localStorage.getItem('user'))
+                if (user) {
+                    setCurrentUser(user);
+                    setShowTeacherBoard(user.role === "TEACHER");
+                    setShowAdminBoard(user.role === "ADMIN");
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 403) {
+                    console.error("Access denied. Redirecting to login...")
+                    logout()
+                    window.location.href = "/login"
+                } else {
+                    console.error("Failed to fetch user:", error)
+                }
             }
+
         }
         fetchUser()
         eventBus.on("logout", () => {
@@ -28,11 +42,11 @@ function NavBar() {
     }, []);
 
     const logOut = () => {
-        logout();
-        setShowTeacherBoard(false);
-        setShowAdminBoard(false);
-        setCurrentUser(undefined);
-    };
+        logout()
+        setShowTeacherBoard(false)
+        setShowAdminBoard(false)
+        setCurrentUser(undefined)
+    }
 
     return (
         <div>

@@ -20,6 +20,11 @@ function ResetPasswordPage() {
             } catch (error) {
                 const resMessage = (error.response?.data?.message) || error.message || "An error has occured"
                 setMessage(resMessage)
+                if (error.response && error.response.status === 403) {
+                    window.location.href = "/login"
+                } else {
+                    console.error("Failed to fetch user:", error)
+                }
             }
         }
         checkToken()

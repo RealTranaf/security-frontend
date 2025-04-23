@@ -11,14 +11,19 @@ function TeacherBoard() {
                 const response = await testTeacher()
                 setContent(response.data)
             } catch (error) {
-                const _content =
-                    (error.response && error.response.data) ||
-                    error.message ||
-                    error.toString()
+                // const _content =
+                //     (error.response && error.response.data) ||
+                //     error.message ||
+                //     error.toString()
 
-                setContent(_content)
+                // setContent(_content)
                 if (error.response && error.response.status === 401) {
                     eventBus.dispatch("logout");
+                }
+                if (error.response && error.response.status === 403) {
+                    window.location.href = "/login"
+                } else {
+                    console.error("Failed to fetch user:", error)
                 }
             }
         }

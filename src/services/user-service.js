@@ -13,7 +13,7 @@ export async function getAllUser(){
     return axios.get(`${API_URL}/users/all`, { headers: authHeader() })
 }
 
-export async function getUser() {
+export async function getCurrentUser() {
     return axios.get(`${API_URL}/users/me`, { headers: authHeader() })
 }
 

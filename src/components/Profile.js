@@ -1,9 +1,33 @@
-import React from "react";
-import { getCurrentUser } from "../services/auth-service";
+import React, { useEffect, useState } from "react";
+import { getCurrentUser } from "../services/user-service";
 
 function Profile() {
-    
-    const currentUser = getCurrentUser();
+    const [currentUser, setCurrentUser] = useState()
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await getCurrentUser()
+                const user = response.data
+                console.log(user)
+                if (user) {
+                    setCurrentUser(user)
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 403) {
+                    window.location.href = "/login"
+                } else {
+                    console.error("Failed to fetch user:", error)
+                }
+            }
+        }
+        fetchUser()
+    }, [])
+
+    if (!currentUser) {
+        return <div>Loading...</div>; // Show a loading message while fetching user data
+    }
+
     return (
         <div className="container mt-5">
             <div className="card">
@@ -13,9 +37,6 @@ function Profile() {
                     </h3>
                 </div>
                 <div className="card-body">
-                    <p className="mb-2">
-                        <strong>JWT:</strong> {currentUser.token}
-                    </p>
                     <p className="mb-2">
                         <strong>Username:</strong> {currentUser.username}
                     </p>

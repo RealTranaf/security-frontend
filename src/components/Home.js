@@ -1,30 +1,67 @@
 import React, { useEffect, useState } from 'react'
-import { getPublicHello } from '../services/user-service'
+// import { getPublicHello } from '../services/user-service'
+import { getRoomList } from '../services/room-service'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
-    const [content, setContent] = useState("")
+    const [rooms, setRooms] = useState([])
+    const [error, setError] = useState('');
+
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchRoom = async () => {
             try {
-                const response = await getPublicHello()
-                setContent(response.data)
-            } catch (error) {
-                const _content =
-                    (error.response && error.response.data) ||
-                    error.message ||
-                    error.toString();
+                const response = await getRoomList()
 
-                setContent(_content);
+                const sortedRooms = response.data.sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                )
+                setRooms(sortedRooms)
+            } catch (error) {
+                // const errorMessage =
+                //     (error.response && error.response.data) ||
+                //     error.message ||
+                //     error.toString()
+
+                // setError(errorMessage);
+                if (error.response && error.response.status === 403) {
+                    window.location.href = "/login"
+                } else {
+                    console.error("Failed to fetch user:", error)
+                }
             }
         }
-        fetchData()
+        fetchRoom()
     }, [])
+
+    const handleRoomClick = (roomId) => {
+        navigate(`/rooms/${roomId}`)
+    }
 
     return (
         <div className="container">
-            <div className="bg-light p-5 rounded">
-                <h3>{content}</h3>
+            <div className="p-5 rounded">
+                <h3>Your classes</h3>
+                {error && <div className="alert alert-danger">{error}</div>}
+                <div className="row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr)" }}>
+                    {rooms.map((room) => (
+                        <div className="col-md-6" key={room.id}>
+                            <div
+                                className="room-card"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleRoomClick(room.id)}
+                            >
+                                <div className="card-body">
+                                    <h5 className="room-card-title">{room.name}</h5>
+                                    <p className="room-card-text">
+                                        Created by: {room.createdBy}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )
