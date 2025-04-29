@@ -29,4 +29,7 @@ export async function testTeacher() {
     return axios.get(`${API_URL}/teacher`, { headers: authHeader() })
 }
 
+export async function searchUsers(query) {
+    return axios.get(`${API_URL}/users/search?query=${query}`, { headers: authHeader() })
+}
 

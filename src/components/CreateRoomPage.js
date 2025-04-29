@@ -29,7 +29,7 @@ function CreateRoomPage() {
     if (validateForm()) {
       try {
         const response = await createRoom(roomName)
-        console.log(response)
+        // console.log(response)
         setMessage(`Room "${response.data.name}" created successfully`)
         setSuccessful(true)
       } catch (error) {
@@ -76,6 +76,9 @@ function CreateRoomPage() {
                 )}
               </div>
               <div className="d-grid mb-3">
+                {loading && (
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                )}
                 <button className="btn btn-primary">Create Room</button>
               </div>
             </div>

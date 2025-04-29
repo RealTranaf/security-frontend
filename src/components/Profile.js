@@ -9,7 +9,7 @@ function Profile() {
             try {
                 const response = await getCurrentUser()
                 const user = response.data
-                console.log(user)
+                // console.log(user)
                 if (user) {
                     setCurrentUser(user)
                 }

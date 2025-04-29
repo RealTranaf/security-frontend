@@ -16,5 +16,13 @@ export async function getRoomDetail(roomId) {
 }
 
 export async function addUserstoRoom(roomId, usernames){
-    return await axios.post(API_URL + `/${roomId}` + "/add-users", { usernames }, { headers: authHeader()} )
+    return await axios.post(API_URL + `/${roomId}/add-users`, { usernames }, { headers: authHeader() } )
+}
+
+export async function removeUsersFromRoom(roomId, usernames) {
+    // return await axios.delete(API_URL + `/${roomId}/remove-users`, { data: {usernames} }, { headers: authHeader() })
+    const queryParams = usernames.map((username) => `username=${encodeURIComponent(username)}`).join("&")
+    return await axios.delete(`${API_URL}/${roomId}/remove-users?${queryParams}`, {
+        headers: authHeader()
+    })
 }
