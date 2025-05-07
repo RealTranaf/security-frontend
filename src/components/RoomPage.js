@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getRoomDetail, addUserstoRoom, removeUsersFromRoom } from '../services/room-service'
 import { getCurrentUser, searchUsers } from '../services/user-service'
-import { getPostsByRoom, createPost } from '../services/post-service'
 
 import '../App.css'
+import PostList from './PostList'
 
 function RoomPage() {
     const { roomId } = useParams()
@@ -16,10 +16,6 @@ function RoomPage() {
 
     const [selectedUsersAdd, setSelectedUsersAdd] = useState([])
     const [selectedUsersRemove, setSelectedUsersRemove] = useState([])
-
-    const [posts, setPosts] = useState([])
-    const [newPostContent, setNewPostContent] = useState('')
-    const [newCommentContent, setNewCommentContent] = useState({})
 
     const [isLoadingUser, setIsLoadingUser] = useState(true)
     // const [message, setMessage] = useState('')
@@ -66,17 +62,7 @@ function RoomPage() {
             }
         }
 
-        const fetchPosts = async () => {
-            try{
-                const response = await getPostsByRoom(roomId)
-                setPosts(response.data)
-            } catch(error){
-                console.error('Failed to fetch posts:', error)
-            }
-        }
-
         fetchRoomDetails()
-        fetchPosts()
     }, [roomId])
 
     //user search function
@@ -100,14 +86,20 @@ function RoomPage() {
         search()
     }, [searchQuery])
 
-    const handleAddPost = async () => {
-        if (!newPostContent.trim){
-            return
-        }
-        try {
-            const response = await createPost()
-        }
-    }
+    // const handleAddPost = async () => {
+    //     if (!newPostContent.trim){
+    //         return
+    //     }
+    //     try {
+    //         await createPost(roomId, newPostContent)
+    //         setNewPostContent('')
+
+    //         const response = await getPostsByRoom(roomId)
+    //         setPosts(response.data)
+    //     } catch (error) {
+    //         console.error('Failed to create post:', error)
+    //     }
+    // }
 
     //handle adding users
     const handleAddUsers = async (e) => {
@@ -208,7 +200,6 @@ function RoomPage() {
                         </button>
                     </div>
                 )}
-
             </div>
             <p>Room ID: {room.id}</p>
             <p>Room Creator: {room.createdBy}</p>
@@ -220,6 +211,7 @@ function RoomPage() {
                     </li>
                 ))}
             </ul>
+            <PostList roomId={roomId} currentUser={currentUser}></PostList>
 
             {/* Add user modal */}
             <div

@@ -8,5 +8,5 @@ export async function getCommentsByPost(postId) {
 }
 
 export async function createComment(postId, comment) {
-    return await axios.post(`${API_URL}/${postId}/comments/create`, { comment }, { headers: authHeader() })
+    return await axios.post(`${API_URL}/${postId}/comments/create`, { content: comment }, { headers: authHeader() })
 }

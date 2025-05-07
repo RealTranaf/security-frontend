@@ -8,5 +8,5 @@ export async function getPostsByRoom (roomId) {
 }
 
 export async function createPost(roomId, post) {
-    return await axios.post(`${API_URL}/${roomId}/posts/create`, { post }, { headers: authHeader() })
+    return await axios.post(`${API_URL}/${roomId}/posts/create`, { content: post }, { headers: authHeader() })
 }
