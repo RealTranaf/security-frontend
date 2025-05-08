@@ -3,8 +3,8 @@ import authHeader from "./auth-header";
 
 const API_URL = "http://localhost:8080/posts"
 
-export async function getCommentsByPost(postId) {
-    return await axios.get(`${API_URL}/${postId}/comments`, { headers: authHeader() })
+export async function getCommentsByPost(postId, page, size) {
+    return await axios.get(`${API_URL}/${postId}/comments?page=${page}&size=${size}`, { headers: authHeader() })
 }
 
 export async function createComment(postId, comment) {

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 function Home() {
     const [rooms, setRooms] = useState([])
-    const [error, setError] = useState('');
+    const [error, setError] = useState('')
 
     const navigate = useNavigate()
 
@@ -44,7 +44,7 @@ function Home() {
             <div className="p-5 rounded">
                 <h3>Your classes</h3>
                 {error && <div className="alert alert-danger">{error}</div>}
-                <div className="row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr)" }}>
+                <div className="row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr)" }}>
                     {rooms.map((room) => (
                         <div className="col-md-6" key={room.id}>
                             <div
