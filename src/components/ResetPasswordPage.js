@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { resetPassword, validateResetToken } from '../services/auth-service';
+import { resetPassword, validateResetToken } from '../services/auth-service'
 
 function ResetPasswordPage() {
-    const location = useLocation();
-    const token = new URLSearchParams(location.search).get('token');
+    const location = useLocation()
+    const token = new URLSearchParams(location.search).get('token')
     const [newPassword, setNewPassword] = useState('')
     const [isValidToken, setIsValidToken] = useState(false)
     const [errors, setErrors] = useState({})
@@ -42,7 +42,7 @@ function ResetPasswordPage() {
     }
 
     const handleResetPassword = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         setMessage('')
         setSuccessful(false)
         setLoading(true)

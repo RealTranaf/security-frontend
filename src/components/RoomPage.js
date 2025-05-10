@@ -58,7 +58,7 @@ function RoomPage() {
                     error.message ||
                     error.toString()
 
-                setError(errorMessage);
+                setError(errorMessage)
             }
         }
 
@@ -155,12 +155,6 @@ function RoomPage() {
     const handleClearUserAdd = (userId) => {
         setSelectedUsersAdd((prev) => prev.filter((user) => user.id !== userId))
     }
-
-    // const handleSelectUserRemove = (user) => {
-    //     if (!selectedUsersRemove.some((selected) => selected.id === user.id)) {
-    //         setSelectedUsersRemove((prev) => [...prev, user])
-    //     }
-    // }
 
     const onSearchChange = (e) => {
         setSearchQuery(e.target.value)

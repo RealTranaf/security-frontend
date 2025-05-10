@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 
-import { logout } from '../services/auth-service';
-// import { getCurrentUser } from '../services/user-service';
-import eventBus from '../services/eventBus';
+import { logout } from '../services/auth-service'
+// import { getCurrentUser } from '../services/user-service'
+import eventBus from '../services/eventBus'
 
 function NavBar() {
     const [showTeacherBoard, setShowTeacherBoard] = useState(false)
@@ -17,9 +17,9 @@ function NavBar() {
                 // const user = response.data
                 const user = JSON.parse(localStorage.getItem('user'))
                 if (user) {
-                    setCurrentUser(user);
-                    setShowTeacherBoard(user.role === "TEACHER");
-                    setShowAdminBoard(user.role === "ADMIN");
+                    setCurrentUser(user)
+                    setShowTeacherBoard(user.role === "TEACHER")
+                    setShowAdminBoard(user.role === "ADMIN")
                 }
             } catch (error) {
                 if (error.response && error.response.status === 403) {
@@ -39,7 +39,7 @@ function NavBar() {
         return () => {
             eventBus.remove("logout")
         }
-    }, []);
+    }, [])
 
     const logOut = () => {
         logout()

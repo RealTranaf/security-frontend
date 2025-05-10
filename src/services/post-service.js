@@ -10,3 +10,11 @@ export async function getPostsByRoom (roomId, page, size) {
 export async function createPost(roomId, post) {
     return await axios.post(`${API_URL}/${roomId}/posts/create`, { content: post }, { headers: authHeader() })
 }
+
+export async function deletePost(roomId, postId) {
+    return await axios.delete(`${API_URL}/${roomId}/posts/${postId}`, { headers: authHeader() });
+}
+
+export async function editPost(roomId, postId, updatedContent) {
+    return await axios.put(`${API_URL}/${roomId}/posts/${postId}`, { content: updatedContent }, { headers: authHeader() });
+}

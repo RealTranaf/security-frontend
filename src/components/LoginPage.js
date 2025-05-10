@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-import { login } from '../services/auth-service';
+import { login } from '../services/auth-service'
 import logo from '../resource/logo.jpg'
 
 function LoginPage() {
@@ -71,8 +71,8 @@ function LoginPage() {
 
     }
     const redirectToVerify = () => {
-        navigate('/verify', { state: { username } });
-    };
+        navigate('/verify', { state: { username } })
+    }
 
     return (
         <div className='container d-flex justify-content-center align-items-center'>

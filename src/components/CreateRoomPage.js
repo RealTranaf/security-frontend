@@ -4,7 +4,7 @@ import { createRoom } from '../services/room-service'
 function CreateRoomPage() {
   const [roomName, setRoomName] = useState('')
   const [message, setMessage] = useState('')
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({})
   const [successful, setSuccessful] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -21,7 +21,7 @@ function CreateRoomPage() {
   }
 
   const handleCreateRoom = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     setMessage('')
     setSuccessful(false)
     setLoading(true)

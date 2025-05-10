@@ -10,3 +10,11 @@ export async function getCommentsByPost(postId, page, size) {
 export async function createComment(postId, comment) {
     return await axios.post(`${API_URL}/${postId}/comments/create`, { content: comment }, { headers: authHeader() })
 }
+
+export async function editComment(postId, commentId, updatedContent) {
+    return await axios.put(`${API_URL}/${postId}/comments/${commentId}`, { content: updatedContent }, { headers: authHeader() });
+}
+
+export async function deleteComment(postId, commentId) {
+    return await axios.delete(`${API_URL}/${postId}/comments/${commentId}`, { headers: authHeader() });
+}

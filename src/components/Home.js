@@ -24,7 +24,7 @@ function Home() {
                 //     error.message ||
                 //     error.toString()
 
-                // setError(errorMessage);
+                // setError(errorMessage)
                 if (error.response && error.response.status === 403) {
                     window.location.href = "/login"
                 } else {

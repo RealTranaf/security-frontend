@@ -14,7 +14,11 @@ export async function getAllUser(){
 }
 
 export async function getCurrentUser() {
-    return axios.get(`${API_URL}/users/me`, { headers: authHeader() })
+    return axios.get(`${API_URL}/users/me`, { headers: authHeader() })  
+}
+
+export async function getUser(username) {
+    return axios.get(`${API_URL}/users/${username}`, { headers: authHeader() })
 }
 
 export async function basic() {

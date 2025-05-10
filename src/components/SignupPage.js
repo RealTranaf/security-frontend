@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
-import { signup } from '../services/auth-service';
+import { signup } from '../services/auth-service'
 import logo from '../resource/logo.jpg'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 function SignupPage() {
 
@@ -42,7 +42,7 @@ function SignupPage() {
             newErrors.role = "Role is required!"
         }
         setErrors(newErrors)
-        return Object.keys(newErrors).length === 0;
+        return Object.keys(newErrors).length === 0
     }
     const onChangeUsername = (e) => {
         const username = e.target.value
@@ -88,7 +88,7 @@ function SignupPage() {
     }
 
     const redirectToVerify = () => {
-        navigate('/verify', { state: { username } });
+        navigate('/verify', { state: { username } })
     }
 
     return (

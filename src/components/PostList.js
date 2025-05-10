@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { getCommentsByPost, createComment } from '../services/comment-service'
-import { getPostsByRoom, createPost } from '../services/post-service'
+import React, { useEffect, useState, useCallback } from 'react'
+import { getCommentsByPost, createComment, editComment, deleteComment } from '../services/comment-service'
+import { getPostsByRoom, createPost, deletePost, editPost } from '../services/post-service'
+import Linkify from 'linkify-react'
+import { Link } from 'react-router-dom'
 
 function PostList({ roomId, currentUser }) {
 
@@ -14,19 +16,18 @@ function PostList({ roomId, currentUser }) {
     const [currentPage, setCurrentPage] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
 
-    // const [currentCommentPage, setCurrentCommentPage] = useState(0)
-    // const [totalCommentPages, setTotalCommentPages] = useState(0)
+    const [editingPostId, setEditingPostId] = useState(null)
+    const [editingPostContent, setEditingPostContent] = useState('')
+
+    const [editingCommentId, setEditingCommentId] = useState(null)
+    const [editingCommentContent, setEditingCommentContent] = useState('')
 
     const [commentPagination, setCommentPagination] = useState({})
 
     const postsPerPage = 3;
     const commentsPerPage = 5;
 
-    useEffect(() => {
-        fetchPosts(currentPage)
-    }, [currentPage])
-
-    const fetchPosts = async (page) => {
+    const fetchPosts = useCallback(async (page) => {
         try {
             const response = await getPostsByRoom(roomId, page, postsPerPage)
             const sortedPosts = response.data.posts.sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime))
@@ -39,7 +40,11 @@ function PostList({ roomId, currentUser }) {
         } catch (error) {
             console.error('Failed to fetch posts:', error)
         }
-    }
+    }, [roomId, postsPerPage])
+
+    useEffect(() => {
+        fetchPosts(currentPage)
+    }, [currentPage, fetchPosts])
 
     const handleAddPost = async () => {
         if (!newPostContent.trim) {
@@ -52,6 +57,44 @@ function PostList({ roomId, currentUser }) {
             fetchPosts(0)
         } catch (error) {
             console.error('Failed to create post:', error)
+        }
+    }
+
+    const handleDeletePost = async (postId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?")
+        if (!confirmDelete) {
+            return
+        }
+        try {
+            await deletePost(roomId, postId)
+            setPosts((prev) => prev.filter((post) => post.id !== postId))
+            fetchPosts(currentPage)
+        } catch (error) {
+            console.log("Failed to delete post: ", error)
+        }
+    }
+
+    const handleEditPost = (postId, content) => {
+        setEditingPostId(postId)
+        setEditingPostContent(content)
+    }
+
+    const handleSaveEditPost = async () => {
+        const confirmEdit = window.confirm("Are you sure you want to save the changes to this post?")
+        if (!confirmEdit) {
+            return
+        }
+        try {
+            await editPost(roomId, editingPostId, editingPostContent)
+            setPosts((prev) =>
+                prev.map((post) =>
+                    post.id === editingPostId ? { ...post, content: editingPostContent } : post
+                )
+            )
+            setEditingPostId(null)
+            setEditingPostContent('')
+        } catch (error) {
+            console.error("Failed to edit post:", error);
         }
     }
 
@@ -83,6 +126,47 @@ function PostList({ roomId, currentUser }) {
             fetchComments(postId, 0)
         } catch (error) {
             console.error(`Failed to add comment for post ${postId}:`, error);
+        }
+    }
+
+    const handleEditComment = (commmentId, content) => {
+        setEditingCommentId(commmentId)
+        setEditingCommentContent(content)
+    }
+
+    const handleSaveEditComment = async (postId) => {
+        const confirmEdit = window.confirm("Are you sure you want to save the changes to this comment?")
+        if (!confirmEdit) {
+            return
+        }
+        try {
+            await editComment(postId, editingCommentId, editingCommentContent)
+            setComments((prev) => ({
+                ...prev,
+                [postId]: prev[postId].map((comment) =>
+                    comment.id === editingCommentId ? { ...comment, content: editingCommentContent } : comment
+                ),
+            }))
+            setEditingCommentId(null)
+            setEditingCommentContent('')
+        } catch (error) {
+            console.error("Failed to edit comment: ", error)
+        }
+    }
+
+    const handleDeleteComment = async (postId, commentId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this comment?")
+        if (!confirmDelete) {
+            return;
+        }
+        try {
+            await deleteComment(postId, commentId)
+            setComments((prev) => ({
+                ...prev,
+                [postId]: prev[postId].filter((comment) => comment.id !== commentId),
+            }))
+        } catch (error) {
+            console.error("Failed to delete comment:", error)
         }
     }
 
@@ -318,11 +402,71 @@ function PostList({ roomId, currentUser }) {
                 posts.map((post) => (
                     <div key={post.id} className='card mb-3'>
                         <div className='card-body'>
-                            <h6 className='card-title' style={{ fontWeight: 'bold' }}>{post.author}</h6>
+                            <div className='d-flex justify-content-between align-items-center'>
+                                <Link
+                                    to={`/profile/${post.author}`}
+                                    target='_blank'
+                                    className='text-decoration-none'
+                                    style={{ fontWeight: 'bold', color: 'inherit' }}
+                                >
+                                    <h3 className='card-title' style={{ fontWeight: 'bold', color: 'inherit' }}>{post.author}</h3>
+                                </Link>
+                                {(currentUser?.username === post.author || currentUser?.role === "ADMIN") && (
+                                    <div className='d-flex justify-content-end'>
+                                        <span
+                                            className='text-warning me-2'
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => handleEditPost(post.id, post.content)}
+                                            title='Edit'
+                                        >
+                                            <i className="bi bi-pencil-square fs-3"></i>
+                                        </span>
+                                        <span
+                                            className='text-danger me-2'
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => handleDeletePost(post.id)}
+                                            title='Delete'
+                                        >
+                                            <i className="bi bi-trash-fill fs-3"></i>
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                             <p className='text-muted small'>
                                 {new Date(post.createdTime).toLocaleString()}
                             </p>
-                            <p className='card-text'>{post.content}</p>
+                            {editingPostId === post.id ? (
+                                <div>
+                                    <textarea
+                                        className='form-control mb-2'
+                                        value={editingPostContent}
+                                        onChange={(e) => setEditingPostContent(e.target.value)}
+                                    >
+                                    </textarea>
+                                    <button
+                                        className='btn btn-sm btn-success me-2'
+                                        onClick={handleSaveEditPost}
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        className='btn btn-sm btn-secondary me-2'
+                                        onClick={() => setEditingPostId(null)}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            ) : (
+                                <p
+                                    className='card-text'
+                                    style={{ whiteSpace: 'pre-wrap' }}
+                                >
+                                    <Linkify options={{ target: '_blank', rel: 'noopener noreferrer' }}>
+                                        {post.content}
+                                    </Linkify>
+                                </p>
+                            )}
+
                             <hr />
                             <h6>Comments</h6>
                             {loadingComments[post.id] ? (
@@ -336,37 +480,76 @@ function PostList({ roomId, currentUser }) {
                                             <ul className="list-group mb-3">
                                                 {comments[post.id]?.map((comment) => (
                                                     <li key={comment.id} className="list-group-item">
-                                                        <strong>{comment.author}:</strong>
+                                                        <div className='d-flex justify-content-between align-items-center'>
+                                                            <Link
+                                                                to={`/profile/${comment.author}`}
+                                                                className="text-decoration-none"
+                                                                style={{ fontWeight: 'bold', color: 'inherit' }}
+                                                                target='_blank'
+                                                            >
+                                                                {comment.author}
+                                                            </Link>
+                                                            {(currentUser?.username === comment.author || currentUser?.role === "ADMIN") && (
+                                                                <div className='d-flex justify-content-end'>
+                                                                    <span
+                                                                        className='text-warning me-2'
+                                                                        style={{ cursor: 'pointer' }}
+                                                                        onClick={() => handleEditComment(comment.id, comment.content)}
+                                                                        title='Edit'
+                                                                    >
+                                                                        <i className="bi bi-pencil-square"></i>
+                                                                    </span>
+                                                                    <span
+                                                                        className='text-danger me-2'
+                                                                        style={{ cursor: 'pointer' }}
+                                                                        onClick={() => handleDeleteComment(post.id, comment.id)}
+                                                                        title='Delete'
+                                                                    >
+                                                                        <i className="bi bi-trash-fill"></i>
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                         <p className="text-muted small">
                                                             {new Date(comment.createdTime).toLocaleString()}
                                                         </p>
-                                                        {comment.content}
+                                                        {editingCommentId === comment.id ? (
+                                                            <div>
+                                                                <textarea
+                                                                    className="form-control mb-2"
+                                                                    value={editingCommentContent}
+                                                                    onChange={(e) => setEditingCommentContent(e.target.value)}
+                                                                ></textarea>
+                                                                <button
+                                                                    className="btn btn-sm btn-success me-2"
+                                                                    onClick={() => handleSaveEditComment(post.id)}
+                                                                >
+                                                                    Save
+                                                                </button>
+                                                                <button
+                                                                    className="btn btn-sm btn-secondary"
+                                                                    onClick={() => setEditingCommentId(null)}
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <p style={{ whiteSpace: 'pre-wrap' }}>
+                                                                <Linkify options={{ target: '_blank', rel: 'noopener noreferrer' }}>
+                                                                    {comment.content}
+                                                                </Linkify>
+                                                            </p>
+                                                        )}
                                                     </li>
                                                 ))}
                                             </ul>
                                             {renderCommentPagination(post.id)}
                                         </>
                                     )}
-                                    {/* <ul className="list-group mb-3">
-                                        {comments[post.id].length === 0 ? (
-                                            <p>No comments yet.</p>
-                                        ) : ( 
-                                            comments[post.id]?.map((comment) => (
-                                                <li key={comment.id} className="list-group-item">
-                                                    <strong>{comment.author}:</strong>
-                                                    <p className="text-muted small">
-                                                        {new Date(comment.createdTime).toLocaleString()}
-                                                    </p>
-                                                    {comment.content}
-                                                </li>
-                                            ))
-                                        )}
-                                    </ul> */}
-                                    {/* {renderCommentPagination(post.id)} */}
                                 </>
                             )}
                             <div className='d-flex'>
-                                <input
+                                <textarea
                                     type='text'
                                     className='form-control me-2'
                                     value={newCommentContent[post.id] || ''}
@@ -378,7 +561,7 @@ function PostList({ roomId, currentUser }) {
                                     }
                                     placeholder='Write a comment...'
                                 >
-                                </input>
+                                </textarea>
                                 <button
                                     className='btn btn-primary'
                                     onClick={() => handleAddComment(post.id)}

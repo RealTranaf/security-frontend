@@ -18,7 +18,7 @@ function UserBoard() {
 
                 // setContent(_content)
                 if (error.response && error.response.status === 401) {
-                    eventBus.dispatch("logout");
+                    eventBus.dispatch("logout")
                 }
                 if (error.response && error.response.status === 403) {
                     window.location.href = "/login"

@@ -1,6 +1,7 @@
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import "bootstrap-icons/font/bootstrap-icons.css"
 import NavBar from './components/NavBar';
 
 import LoginPage from './components/LoginPage';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/create-room" element={<CreateRoomPage />} />
           <Route path="/rooms/:roomId" element={<RoomPage />} />
+          <Route path="/profile/:username" element={<Profile />} />
         </Routes>
       </div>
     </div>
