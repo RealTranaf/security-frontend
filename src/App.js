@@ -17,6 +17,7 @@ import ResetPasswordPage from './components/ResetPasswordPage';
 import CreateRoomPage from './components/CreateRoomPage';
 import { Routes, Route} from "react-router-dom";
 import RoomPage from './components/RoomPage';
+import RoomUsersPage from './components/RoomUsersPage';
 function App() {
   return (
     <div>
@@ -37,6 +38,7 @@ function App() {
           <Route path="/create-room" element={<CreateRoomPage />} />
           <Route path="/rooms/:roomId" element={<RoomPage />} />
           <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/rooms/:roomId/users" element={<RoomUsersPage />} />
         </Routes>
       </div>
     </div>

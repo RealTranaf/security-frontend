@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { getCommentsByPost, createComment, editComment, deleteComment } from '../services/comment-service'
 import { getPostsByRoom, createPost, deletePost, editPost } from '../services/post-service'
 import Linkify from 'linkify-react'
@@ -21,6 +21,11 @@ function PostList({ roomId, currentUser }) {
 
     const [editingCommentId, setEditingCommentId] = useState(null)
     const [editingCommentContent, setEditingCommentContent] = useState('')
+
+    const [selectedFiles, setSelectedFiles] = useState([])
+    const [selectedEditFiles, setSelectedEditFiles] = useState([])
+    const fileInputRef = useRef(null)
+    const [filesToDelete, setFilesToDelete] = useState([])
 
     const [commentPagination, setCommentPagination] = useState({})
 
@@ -47,12 +52,25 @@ function PostList({ roomId, currentUser }) {
     }, [currentPage, fetchPosts])
 
     const handleAddPost = async () => {
-        if (!newPostContent.trim) {
+        if (!newPostContent.trim && selectedFiles.length === 0) {
             return
         }
+
+        for (const file of selectedFiles) {
+            if (file.size > 100 * 1024 * 1024) {
+                alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                return
+            }
+        }
+
         try {
-            await createPost(roomId, newPostContent)
+            await createPost(roomId, newPostContent, selectedFiles)
             setNewPostContent('')
+            setSelectedFiles([])
+
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
 
             fetchPosts(0)
         } catch (error) {
@@ -85,7 +103,8 @@ function PostList({ roomId, currentUser }) {
             return
         }
         try {
-            await editPost(roomId, editingPostId, editingPostContent)
+
+            await editPost(roomId, editingPostId, editingPostContent, selectedEditFiles, filesToDelete)
             setPosts((prev) =>
                 prev.map((post) =>
                     post.id === editingPostId ? { ...post, content: editingPostContent } : post
@@ -93,6 +112,12 @@ function PostList({ roomId, currentUser }) {
             )
             setEditingPostId(null)
             setEditingPostContent('')
+            setSelectedEditFiles([])
+            setFilesToDelete([])
+            fetchPosts(currentPage)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
         } catch (error) {
             console.error("Failed to edit post:", error);
         }
@@ -149,6 +174,7 @@ function PostList({ roomId, currentUser }) {
             }))
             setEditingCommentId(null)
             setEditingCommentContent('')
+            fetchPosts(currentPage)
         } catch (error) {
             console.error("Failed to edit comment: ", error)
         }
@@ -168,6 +194,20 @@ function PostList({ roomId, currentUser }) {
         } catch (error) {
             console.error("Failed to delete comment:", error)
         }
+    }
+
+    const handleRemoveFile = (fileUrl) => {
+        setFilesToDelete((prev) => [...prev, fileUrl])
+        setPosts((prev) =>
+            prev.map((post) =>
+                post.id === editingPostId
+                    ? {
+                        ...post,
+                        fileUrls: post.fileUrls.filter((url) => url !== fileUrl),
+                    }
+                    : post
+            )
+        )
     }
 
     const renderPageNummbers = () => {
@@ -390,6 +430,14 @@ function PostList({ roomId, currentUser }) {
                     onChange={(e) => setNewPostContent(e.target.value)}
                 >
                 </textarea>
+                <input
+                    type='file'
+                    className='form-control mt-2'
+                    multiple
+                    ref={fileInputRef}
+                    onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
+                >
+                </input>
                 <button className='btn btn-primary mt-2' onClick={handleAddPost}>
                     Post
                 </button>
@@ -443,6 +491,13 @@ function PostList({ roomId, currentUser }) {
                                         onChange={(e) => setEditingPostContent(e.target.value)}
                                     >
                                     </textarea>
+                                    <input
+                                        type='file'
+                                        className='form-control mt-2'
+                                        multiple
+                                        onChange={(e) => setSelectedEditFiles(Array.from(e.target.files))}
+                                    >
+                                    </input>
                                     <button
                                         className='btn btn-sm btn-success me-2'
                                         onClick={handleSaveEditPost}
@@ -465,6 +520,31 @@ function PostList({ roomId, currentUser }) {
                                         {post.content}
                                     </Linkify>
                                 </p>
+                            )}
+
+                            {post.fileUrls && post.fileUrls.length > 0 && (
+                                <div className='mt-3'>
+                                    {post.fileUrls.map((fileUrl, index) => {
+                                        const fileName = fileUrl.split('/').pop()
+                                        return (
+                                            <div key={index}>   
+                                                <a href={fileUrl} download={fileName}>
+                                                    {fileName}
+                                                </a>
+                                                {editingPostId === post.id && (
+                                                    <span
+                                                        className='btn btn-sm btn-danger'
+                                                        onClick={() => handleRemoveFile(fileUrl)}
+                                                        style={{ cursor: 'pointer' }}
+                                                        title='Delete'
+                                                    >
+                                                        <i className="bi bi-x-lg"></i>
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
                             )}
 
                             <hr />
