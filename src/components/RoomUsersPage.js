@@ -30,7 +30,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
             }
         }
         search()
-    }, [searchQuery])
+    }, [searchQuery, room.userList])
 
     const handleAddUsers = async (e) => {
         e.preventDefault()
@@ -73,6 +73,11 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
 
             setError(errorMessage)
         }
+    }
+
+    const refreshPage = async() => {
+        const response = await getRoomDetail(roomId)
+            setRoom(response.data)
     }
 
     const handleSelectUserAdd = (user) => {
@@ -120,20 +125,47 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                 )}
             </div>
             <div className='mt-4'>
-                <h2>{room.name}</h2>
-                <div>
-                    <div><strong>Room ID: </strong>{room.id}</div>
-                    <div className='mt-2'><strong>Room Creator:</strong> {room.createdBy}</div>
-                </div>
-                <div className='mt-3'>
-                    <strong>Users in this room:</strong>
-                    <ul>
-                        {room.userList.map((user) => (
-                            <li key={user.id}>
-                                {user.username} - {user.email} ({user.role})
-                            </li>
-                        ))}
-                    </ul>
+                <h3>Users in this room:</h3>
+                <div className='table-responsive'>
+                    <table className='table table-bordered align-middle'>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {room.userList.map((user) => {
+                                const isCurrentUser = currentUser && user.username === currentUser.username;
+                                const isAdmin = user.role === 'ADMIN';
+                                return (
+                                    <tr key={user.id}>
+                                        <td>{user.username} {isCurrentUser && <span className="text-muted">(You)</span>}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.role}</td>
+                                        <td>
+                                            <button
+                                                className='btn btn-sm btn-danger'
+                                                disabled={isCurrentUser || isAdmin}
+                                                onClick={async () => {
+                                                    const confirmed = window.confirm(`Are you sure you want to remove ${user.username} from the room?`)
+                                                    if (confirmed){
+                                                        await removeUsersFromRoom(roomId, [user.username])
+                                                        refreshPage()
+                                                    }
+                                                }}
+                                            >
+                                                Remove
+                                            </button>
+                                            {isAdmin && <span className="text-muted ms-2">(ADMIN)</span>}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             {/* Add user modal */}
@@ -258,30 +290,41 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                         <div className='modal-body'>
                             <h6>Select users to remove:</h6>
                             <ul className='list-group'>
-                                {room && room.userList.map((user) => (
-                                    <li
-                                        key={user.id}
-                                        className='list-group-item d-flex justify-content-between align-items-center'
-                                    >
-                                        <div>
-                                            <input
-                                                type='checkbox'
-                                                className='form-check-input me-2'
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedUsersRemove((prev) => [...prev, { username: user.username }])
-                                                    } else {
-                                                        setSelectedUsersRemove((prev) =>
-                                                            prev.filter((selected) => selected.username !== user.username)
-                                                        )
-                                                    }
-                                                }}
-                                            >
-                                            </input>
-                                            {user.username}
-                                        </div>
-                                    </li>
-                                ))}
+                                {room && room.userList.map((user) => {
+                                    const isCurrentUser = currentUser && user.username === currentUser.username;
+                                    const isAdmin = user.role === 'ADMIN';
+                                    return (
+                                        <li
+                                            key={user.id}
+                                            className='list-group-item d-flex justify-content-between align-items-center'
+                                        >
+                                            <div>
+                                                <input
+                                                    type='checkbox'
+                                                    className='form-check-input me-2'
+                                                    disabled={isCurrentUser || isAdmin}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedUsersRemove((prev) => [...prev, { username: user.username }])
+                                                        } else {
+                                                            setSelectedUsersRemove((prev) =>
+                                                                prev.filter((selected) => selected.username !== user.username)
+                                                            )
+                                                        }
+                                                    }}
+                                                >
+                                                </input>
+                                                {user.username}
+                                                {isCurrentUser && (
+                                                    <span className="text-muted ms-2">(You)</span>
+                                                )}
+                                                {isAdmin && (
+                                                    <span className="text-muted ms-2">(ADMIN)</span>
+                                                )}
+                                            </div>
+                                        </li>
+                                    )
+                                })}
                             </ul>
                         </div>
                         <div className='modal-footer'>
