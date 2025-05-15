@@ -75,6 +75,13 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
         }
     }
 
+    const sortedUserList = [...room.userList].sort((a, b) => {
+        if (a.role < b.role) return -1
+        if (a.role > b.role) return 1
+
+        return a.username.localeCompare(b.username, undefined, { sensitivity: 'base'})
+    })
+
     const refreshPage = async() => {
         const response = await getRoomDetail(roomId)
             setRoom(response.data)
@@ -137,7 +144,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {room.userList.map((user) => {
+                            {sortedUserList.map((user) => {
                                 const isCurrentUser = currentUser && user.username === currentUser.username;
                                 const isAdmin = user.role === 'ADMIN';
                                 return (

@@ -27,6 +27,11 @@ function PostList({ roomId, currentUser }) {
     const fileInputRef = useRef(null)
     const [filesToDelete, setFilesToDelete] = useState([])
 
+    const [selectedCommentFiles, setSelectedCommentFiles] = useState({})
+    const [selectedEditCommentFiles, setSelectedEditCommentFiles] = useState({})
+    const [commentFilesToDelete, setCommentFilesToDelete] = useState({})
+    const commentFileInputRefs = useRef({})
+
     const [commentPagination, setCommentPagination] = useState({})
 
     const postsPerPage = 3;
@@ -142,12 +147,25 @@ function PostList({ roomId, currentUser }) {
     }
 
     const handleAddComment = async (postId) => {
-        if (!newCommentContent[postId]?.trim()) {
+        if (!newCommentContent[postId]?.trim() && (!selectedCommentFiles[postId] || selectedCommentFiles[postId].length === 0)) {
             return
         }
         try {
-            await createComment(postId, newCommentContent[postId])
+            // const content = newCommentContent[postId]
+            for (const file of selectedCommentFiles[postId]) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                    return
+                }
+            }
+            await createComment(postId, newCommentContent[postId], selectedCommentFiles[postId] || [])
             setNewCommentContent((prev) => ({ ...prev, [postId]: '' }))
+            setSelectedCommentFiles((prev) => ({ ...prev, [postId]: [] }))
+
+            if (commentFileInputRefs.current[postId]) {
+                commentFileInputRefs.current[postId].value = '';
+            }
+
             fetchComments(postId, 0)
         } catch (error) {
             console.error(`Failed to add comment for post ${postId}:`, error);
@@ -165,7 +183,7 @@ function PostList({ roomId, currentUser }) {
             return
         }
         try {
-            await editComment(postId, editingCommentId, editingCommentContent)
+            await editComment(postId, editingCommentId, editingCommentContent, selectedEditCommentFiles[editingCommentId] || [], commentFilesToDelete[editingCommentId] || [])
             setComments((prev) => ({
                 ...prev,
                 [postId]: prev[postId].map((comment) =>
@@ -174,6 +192,11 @@ function PostList({ roomId, currentUser }) {
             }))
             setEditingCommentId(null)
             setEditingCommentContent('')
+            setSelectedEditCommentFiles(prev => ({ ...prev, [editingCommentId]: [] }))
+            setCommentFilesToDelete(prev => ({ ...prev, [editingCommentId]: [] }))
+            if (commentFileInputRefs.current[postId]) {
+                commentFileInputRefs.current[postId].value = '';
+            }
             fetchPosts(currentPage)
         } catch (error) {
             console.error("Failed to edit comment: ", error)
@@ -208,6 +231,28 @@ function PostList({ roomId, currentUser }) {
                     : post
             )
         )
+    }
+
+    const handleCommentFileChange = (postId, files) => {
+        setSelectedCommentFiles(prev => ({
+            ...prev,
+            [postId]: Array.from(files)
+        }))
+    }
+
+    const handleEditCommentFileChange = (commentId, files) => {
+        setSelectedEditCommentFiles(prev => ({
+            ...prev,
+            [commentId]: Array.from(files)
+        }))
+    }
+
+    const handleRemoveCommentFile = (commentId, fileUrl) => {
+        setCommentFilesToDelete(prev => ({
+            ...prev,
+            // [commentId]: [...(prev[commentId] || []), fileUrl]
+            [commentId]: [...new Set([...(prev[commentId] || []), fileUrl])]
+        }))
     }
 
     const renderPageNummbers = () => {
@@ -527,10 +572,11 @@ function PostList({ roomId, currentUser }) {
                                     {post.fileUrls.map((fileUrl, index) => {
                                         const fileName = fileUrl.split('/').pop()
                                         return (
-                                            <div key={index}>   
-                                                <a href={fileUrl} download={fileName}>
+                                            <div key={index}>
+                                                {/* <a href={fileUrl} download={fileName}>
                                                     {fileName}
-                                                </a>
+                                                </a> */}
+                                                <a href={fileUrl} target="_blank" rel="noopener noreferrer">{fileName}</a>
                                                 {editingPostId === post.id && (
                                                     <span
                                                         className='btn btn-sm btn-danger'
@@ -600,6 +646,43 @@ function PostList({ roomId, currentUser }) {
                                                                     value={editingCommentContent}
                                                                     onChange={(e) => setEditingCommentContent(e.target.value)}
                                                                 ></textarea>
+                                                                <input
+                                                                    type='file'
+                                                                    className='form-control mt-2'
+                                                                    multiple
+                                                                    ref={el => commentFileInputRefs.current[post.id] = el}
+                                                                    onChange={e => handleEditCommentFileChange(comment.id, e.target.files)}
+                                                                >
+                                                                </input>
+                                                                {comment.fileUrls && comment.fileUrls.length > 0 && (
+                                                                    <div className='mt-2'>
+                                                                        {comment.fileUrls
+                                                                        .filter(fileUrl => !(commentFilesToDelete[comment.id] || []).includes(fileUrl))
+                                                                        .map((fileUrl, index) => {
+                                                                            const fileName = fileUrl.split('/').pop()
+                                                                            return (
+                                                                                <div key={index}>
+                                                                                    <a href={fileUrl} download={fileName}>{fileName}</a>
+                                                                                    <span
+                                                                                        onClick={() => handleRemoveCommentFile(comment.id, fileUrl)}
+                                                                                        style={{ cursor: 'pointed' }}
+                                                                                        title='Delete'
+                                                                                        className='btn btn-sm btn-danger'
+                                                                                    >
+                                                                                        <i className='bi bi-x-lg'></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            )
+                                                                        })}
+                                                                    </div>
+                                                                )}
+                                                                {selectedEditCommentFiles[comment.id] && selectedEditCommentFiles[comment.id].length > 0 && (
+                                                                    <div className='mt-2'>
+                                                                        {selectedEditCommentFiles[comment.id].map((file, index) => (
+                                                                            <span key={index} className='badge bg-secondary me-2'>{file.name}</span>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                                 <button
                                                                     className="btn btn-sm btn-success me-2"
                                                                     onClick={() => handleSaveEditComment(post.id)}
@@ -619,6 +702,33 @@ function PostList({ roomId, currentUser }) {
                                                                     {comment.content}
                                                                 </Linkify>
                                                             </p>
+                                                        )}
+                                                        {comment.fileUrls && comment.fileUrls.length > 0 && (
+                                                            <div className='mt-2'>
+                                                                {comment.fileUrls
+                                                                .filter(fileUrl => !(commentFilesToDelete[comment.id] || []).includes(fileUrl))
+                                                                .map((fileUrl, index) => {
+                                                                    const fileName = fileUrl.split('/').pop()
+                                                                    return (
+                                                                        <div key={index}>
+                                                                            <a href={fileUrl} download={fileName}>{fileName}</a>
+                                                                            {editingCommentId === comment.id && (
+                                                                                <span
+                                                                                    onClick={() => {
+                                                                                        handleRemoveCommentFile(comment.id, fileUrl)
+                                                                                        console.log(commentFilesToDelete)
+                                                                                    }}
+                                                                                    style={{ cursor: 'pointed' }}
+                                                                                    title='Delete'
+                                                                                    className='btn btn-sm btn-danger'
+                                                                                >
+                                                                                    <i className='bi bi-x-lg'></i>
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    )
+                                                                })}
+                                                            </div>
                                                         )}
                                                     </li>
                                                 ))}
@@ -642,6 +752,15 @@ function PostList({ roomId, currentUser }) {
                                     placeholder='Write a comment...'
                                 >
                                 </textarea>
+                                <input
+                                    type='file'
+                                    className='form-control ms-2'
+                                    multiple
+                                    ref={el => commentFileInputRefs.current[post.id] = el}
+                                    onChange={e => handleCommentFileChange(post.id, e.target.files)}
+                                    style={{ maxWidth: 180 }}
+                                >
+                                </input>
                                 <button
                                     className='btn btn-primary'
                                     onClick={() => handleAddComment(post.id)}
@@ -649,6 +768,18 @@ function PostList({ roomId, currentUser }) {
                                     Comment
                                 </button>
                             </div>
+                            {selectedCommentFiles[post.id] && selectedCommentFiles[post.id].length > 0 && (
+                                <div className='mt-2'>
+                                    {selectedCommentFiles[post.id].map((file, index) => (
+                                        <span
+                                            key={index}
+                                            className='badge bg-secondary me-2'
+                                        >
+                                            {file.name}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 ))
