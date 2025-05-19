@@ -19,12 +19,12 @@ function Home() {
                 )
                 setRooms(sortedRooms)
             } catch (error) {
-                // const errorMessage =
-                //     (error.response && error.response.data) ||
-                //     error.message ||
-                //     error.toString()
+                const errorMessage =
+                    (error.response && error.response.data) ||
+                    error.message ||
+                    error.toString()
 
-                // setError(errorMessage)
+                setError(errorMessage)
                 if (error.response && error.response.status === 403) {
                     window.location.href = "/login"
                 } else {

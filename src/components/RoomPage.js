@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getRoomDetail} from '../services/room-service'
+import { getRoomDetail } from '../services/room-service'
 import { getCurrentUser } from '../services/user-service'
 
 import '../App.css'
 import PostList from './PostList'
 import RoomSideBar from './RoomSidebar'
 import RoomUsersPage from './RoomUsersPage'
+import WeeklyReportPage from './WeeklyReportPage'
 
 function RoomPage() {
     const { roomId } = useParams()
@@ -86,6 +87,9 @@ function RoomPage() {
                     )}
                     {selectedPage === 'users' && (
                         <RoomUsersPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></RoomUsersPage>
+                    )}
+                    {selectedPage === 'weekly-report' && (
+                        <WeeklyReportPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></WeeklyReportPage>
                     )}
                 </div>
             </div>

@@ -17,7 +17,12 @@ function RoomSidebar({ room, selectedPage, setSelectedPage }) {
                 >
                     Manage Users
                 </button>
-
+                <button
+                    className={`btn btn-outline-secondary${selectedPage === 'weekly-report' ? ' active' : ''}`}
+                    onClick={() => setSelectedPage('weekly-report')}
+                >
+                    Weekly Report
+                </button>
             </div>
         </div>
     )
