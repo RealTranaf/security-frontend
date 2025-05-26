@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getRoomDetail } from '../services/room-service'
-import { getCurrentUser } from '../services/user-service'
+import { getRoomDetail } from '../../services/room-service'
+import { getCurrentUser } from '../../services/user-service'
 
-import '../App.css'
-import PostList from './PostList'
+import '../../App.css'
+import PostList from './post/PostList'
 import RoomSideBar from './RoomSidebar'
-import RoomUsersPage from './RoomUsersPage'
-import WeeklyReportPage from './WeeklyReportPage'
+import RoomUsersPage from './userlist/RoomUsersPage'
+import WeeklyReportPage from './assignment/WeeklyReportPage'
 
 function RoomPage() {
     const { roomId } = useParams()

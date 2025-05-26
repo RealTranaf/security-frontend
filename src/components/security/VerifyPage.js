@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { resendCode, verify } from '../services/auth-service'
+import { resendCode, verify } from '../../services/auth-service'
 import { useLocation } from 'react-router-dom'
 
 function VerifyPage() {

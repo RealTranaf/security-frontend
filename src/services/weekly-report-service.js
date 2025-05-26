@@ -16,10 +16,11 @@ export function createWeeklyReportPost(roomId, title, content, deadline, files) 
     return axios.post(`${API_URL}/${roomId}/weekly-reports/create`, formData, { headers: authHeader() })
 }
 
-export function editWeeklyReportPost(roomId, reportPostId, title, content, files, filesToDelete) {
+export function editWeeklyReportPost(roomId, reportPostId, title, content, deadline, files, filesToDelete) {
     const formData = new FormData()
     formData.append('title', title)
     formData.append('content', content)
+    formData.append('deadline', deadline)
     files.forEach(file => formData.append('files', file))
     filesToDelete.forEach(fileUrl => formData.append('filesToDelete', fileUrl))
     return axios.put(`${API_URL}/${roomId}/weekly-reports/${reportPostId}/edit`, formData, { headers: authHeader() })

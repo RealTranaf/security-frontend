@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { getRoomDetail, addUserstoRoom, removeUsersFromRoom } from '../services/room-service'
-import { searchUsers } from '../services/user-service'
+import { getRoomDetail, addUserstoRoom, removeUsersFromRoom } from '../../../services/room-service'
+import { searchUsers } from '../../../services/user-service'
 
 function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
 

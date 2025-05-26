@@ -1,7 +1,7 @@
 import React from 'react'
-import { downloadFile } from '../services/download-service'
+import { downloadFile } from '../../../services/download-service'
 
-function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId, editingPostTitle, setEditingPostTitle, editingPostContent, setEditingPostContent, selectedEditFiles, setSelectedEditFiles, filesToDelete, setFilesToDelete, editFileInputRef, handleSelectPost, handleEditPost, handleDeletePost, handleRemoveFile, handleSaveEditPost, setEditingPostId }) {
+function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId, editingPostTitle, setEditingPostTitle, editingPostContent, setEditingPostContent, editingPostDeadline, setEditingPostDeadline, selectedEditFiles, setSelectedEditFiles, filesToDelete, setFilesToDelete, editFileInputRef, handleSelectPost, handleEditPost, handleDeletePost, handleRemoveFile, handleSaveEditPost, setEditingPostId }) {
     return (
         <>
             {posts.length === 0 ? (
@@ -38,8 +38,13 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                         <strong>Status:</strong>{" "}
                                         {mySub ?
                                             <>
-                                                <span className='text-success'>Submitted</span>
+                                                <span className='text-success'>Submitted </span>
                                                 {mySub.isLate && <span className="badge bg-danger ms-2">Late</span>}
+                                                <span>{new Date(mySub.submittedAt).toLocaleString()}</span>
+                                                {mySub.late
+                                                    ? <span className='badge bg-danger ms-2'>Late</span>
+                                                    : <span className='badge bg-success ms-2'>On Time</span>
+                                                }
                                             </>
                                             : <span className='text-danger'>Not Submitted</span>
                                         }
@@ -61,6 +66,12 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                             onChange={e => setEditingPostContent(e.target.value)}
                                         >
                                         </textarea>
+                                        <input
+                                            className='form-control mb-2'
+                                            type='datetime-local'
+                                            value={editingPostDeadline}
+                                            onChange={e => setEditingPostDeadline(e.target.value)}
+                                        />
                                         <input
                                             type='file'
                                             className='form-control mb-2'

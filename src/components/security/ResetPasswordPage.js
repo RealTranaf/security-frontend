@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { resetPassword, validateResetToken } from '../services/auth-service'
+import { resetPassword, validateResetToken } from '../../services/auth-service'
 
 function ResetPasswordPage() {
     const location = useLocation()

@@ -10,12 +10,6 @@ function AdminBoard() {
                 const response = await testAdmin()
                 setContent(response.data)
             } catch (error) {
-                // const _content =
-                //     (error.response && error.response.data) ||
-                //     error.message ||
-                //     error.toString()
-
-                // setContent(_content)
                 if (error.response && error.response.status === 401) {
                     eventBus.dispatch("logout")
                 }

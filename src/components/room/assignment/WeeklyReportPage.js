@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { getWeeklyReportPosts, createWeeklyReportPost, submitWeeklyReport, getWeeklyReportSubmissions, gradeWeeklyReportSubmission, handleExportExcel, resubmitWeeklyReport, editWeeklyReportPost, deleteWeeklyReportPost, getUserWeeklyReportSubmissions } from '../services/weekly-report-service'
-import { downloadFile } from '../services/download-service'
+import { getWeeklyReportPosts, createWeeklyReportPost, submitWeeklyReport, getWeeklyReportSubmissions, gradeWeeklyReportSubmission, handleExportExcel, resubmitWeeklyReport, editWeeklyReportPost, deleteWeeklyReportPost, getUserWeeklyReportSubmissions } from '../../../services/weekly-report-service'
+import { downloadFile } from '../../../services/download-service'
 import GradeForm from './GradeForm'
 import WeeklyReportPostList from './WeeklyReportPostList'
 
@@ -21,6 +21,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
     const [editingPostId, setEditingPostId] = useState(null)
     const [editingPostTitle, setEditingPostTitle] = useState('')
     const [editingPostContent, setEditingPostContent] = useState('')
+    const [editingPostDeadline, setEditingPostDeadline] = useState('')
     const [selectedEditFiles, setSelectedEditFiles] = useState([])
     const [filesToDelete, setFilesToDelete] = useState([])
     const editFileInputRef = useRef(null)
@@ -82,6 +83,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
         setEditingPostId(post.id)
         setEditingPostTitle(post.title)
         setEditingPostContent(post.content)
+        setEditingPostDeadline(post.deadline ? post.deadline.substring(0, 16) : '')
         setSelectedEditFiles([])
         setFilesToDelete([])
         if (editFileInputRef.current) {
@@ -98,10 +100,11 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
             return
         }
         try {
-            await editWeeklyReportPost(roomId, editingPostId, editingPostTitle, editingPostContent, selectedEditFiles, filesToDelete)
+            await editWeeklyReportPost(roomId, editingPostId, editingPostTitle, editingPostContent, editingPostDeadline, selectedEditFiles, filesToDelete)
             setEditingPostId(null)
             setEditingPostTitle('')
             setEditingPostContent('')
+            setEditingPostDeadline('')
             setSelectedEditFiles([])
             setFilesToDelete([])
             if (editFileInputRef.current) {
@@ -272,6 +275,8 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                     setEditingPostTitle={setEditingPostTitle}
                     editingPostContent={editingPostContent}
                     setEditingPostContent={setEditingPostContent}
+                    editingPostDeadline={editingPostDeadline}
+                    setEditingPostDeadline={setEditingPostDeadline}
                     selectedEditFiles={selectedEditFiles}
                     setSelectedEditFiles={setSelectedEditFiles}
                     filesToDelete={filesToDelete}

@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-import { login } from '../services/auth-service'
-import logo from '../resource/logo.jpg'
+import { login } from '../../services/auth-service'
+import logo from '../../resource/logo.jpg'
 
 function LoginPage() {
 

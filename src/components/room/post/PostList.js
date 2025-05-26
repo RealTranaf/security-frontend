@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { getCommentsByPost, createComment, editComment, deleteComment } from '../services/comment-service'
-import { getPostsByRoom, createPost, deletePost, editPost } from '../services/post-service'
+import { getCommentsByPost, createComment, editComment, deleteComment } from '../../../services/comment-service'
+import { getPostsByRoom, createPost, deletePost, editPost } from '../../../services/post-service'
 import Linkify from 'linkify-react'
 import { Link } from 'react-router-dom'
-import { downloadFile } from '../services/download-service'
+import { downloadFile } from '../../../services/download-service'
 
 function PostList({ roomId, currentUser }) {
 

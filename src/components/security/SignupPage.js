@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
-import { signup } from '../services/auth-service'
-import logo from '../resource/logo.jpg'
+import { signup } from '../../services/auth-service'
+import logo from '../../resource/logo.jpg'
 import { useNavigate } from 'react-router-dom'
 
 function SignupPage() {
