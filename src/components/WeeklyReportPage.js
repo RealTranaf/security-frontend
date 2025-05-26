@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { getWeeklyReportPosts, createWeeklyReportPost, submitWeeklyReport, getWeeklyReportSubmissions, gradeWeeklyReportSubmission } from '../services/weekly-report-service'
+import { getWeeklyReportPosts, createWeeklyReportPost, submitWeeklyReport, getWeeklyReportSubmissions, gradeWeeklyReportSubmission, handleExportExcel, resubmitWeeklyReport, editWeeklyReportPost, deleteWeeklyReportPost, getUserWeeklyReportSubmissions } from '../services/weekly-report-service'
 import { downloadFile } from '../services/download-service'
 import GradeForm from './GradeForm'
+import WeeklyReportPostList from './WeeklyReportPostList'
 
 function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
 
@@ -17,7 +18,18 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
     const [reportContent, setReportContent] = useState('')
     const [reportFiles, setReportFiles] = useState([])
 
+    const [editingPostId, setEditingPostId] = useState(null)
+    const [editingPostTitle, setEditingPostTitle] = useState('')
+    const [editingPostContent, setEditingPostContent] = useState('')
+    const [selectedEditFiles, setSelectedEditFiles] = useState([])
+    const [filesToDelete, setFilesToDelete] = useState([])
+    const editFileInputRef = useRef(null)
+
+    const [mySubmissions, setMySubmissions] = useState([])
+
     const [showPostModal, setShowPostModal] = useState(false)
+
+    const [showExpired, setShowExpired] = useState(false)
 
     const fetchPosts = useCallback(async () => {
         try {
@@ -31,6 +43,20 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
     useEffect(() => {
         fetchPosts()
     }, [roomId, fetchPosts])
+
+    useEffect(() => {
+        const fetchUserSubmissions = async () => {
+            if (currentUser.role === 'STUDENT') {
+                try {
+                    const response = await getUserWeeklyReportSubmissions(roomId, currentUser.username)
+                    setMySubmissions(response.data.studentSubmissions)
+                } catch (error) {
+                    console.error('Failed to get subs:', error)
+                }
+            }
+        }
+        fetchUserSubmissions()
+    }, [roomId, currentUser])
 
     const handleCreatePost = async () => {
         if (!newPostTitle.trim() || !newPostContent.trim()) {
@@ -49,6 +75,52 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
             fetchPosts()
         } catch (error) {
             console.error('Failed to create posts:', error)
+        }
+    }
+
+    const handleEditPost = (post) => {
+        setEditingPostId(post.id)
+        setEditingPostTitle(post.title)
+        setEditingPostContent(post.content)
+        setSelectedEditFiles([])
+        setFilesToDelete([])
+        if (editFileInputRef.current) {
+            editFileInputRef.current.value = ''
+        }
+    }
+
+    const handleRemoveFile = (fileUrl) => {
+        setFilesToDelete(prev => [...new Set([...prev, fileUrl])])
+    }
+
+    const handleSaveEditPost = async () => {
+        if (!editingPostTitle.trim() || !editingPostContent.trim()) {
+            return
+        }
+        try {
+            await editWeeklyReportPost(roomId, editingPostId, editingPostTitle, editingPostContent, selectedEditFiles, filesToDelete)
+            setEditingPostId(null)
+            setEditingPostTitle('')
+            setEditingPostContent('')
+            setSelectedEditFiles([])
+            setFilesToDelete([])
+            if (editFileInputRef.current) {
+                editFileInputRef.current.value = ''
+            }
+            fetchPosts()
+        } catch (error) {
+            console.error('Failed to edit post: ', error)
+        }
+    }
+
+    const handleDeletePost = async (reportPostId) => {
+        if (window.confirm('Are you sure you want to delete this post?')) {
+            try {
+                await deleteWeeklyReportPost(roomId, reportPostId)
+                fetchPosts()
+            } catch (error) {
+                console.error('Failed to delete post: ', error)
+            }
         }
     }
 
@@ -80,7 +152,11 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
         }
 
         try {
-            await submitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
+            if (getMySubmission()) {
+                await resubmitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
+            } else {
+                await submitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
+            }
             setReportContent('')
             setReportFiles([])
             fetchPosts()
@@ -119,6 +195,12 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
         setReportContent('')
         setReportFiles([])
     }
+
+    // console.log(submissions)
+    console.log(posts)
+
+    const expiredPosts = posts.filter(post => post.expired)
+    const currentPosts = posts.filter(post => !post.expired)
 
     return (
         <div className='mt-3'>
@@ -164,52 +246,50 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
             )}
 
             <h5>Weekly Report Posts</h5>
+            <div className="mb-3">
+                <button
+                    className={`btn btn-sm me-2 ${!showExpired ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    onClick={() => setShowExpired(false)}
+                >
+                    Current
+                </button>
+                <button
+                    className={`btn btn-sm ${showExpired ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    onClick={() => setShowExpired(true)}
+                >
+                    Expired
+                </button>
+            </div>
             {posts.length === 0 ? (
                 <p>No weekly report assignment yet.</p>
             ) : (
-                posts.map((post) => (
-                    <div key={post.id} className='card mb-3'>
-                        <div className='card-body'>
-                            <div className='d-flex justify-content-between align-items-center'>
-                                <h4 className='card-title' style={{ fontWeight: 'bold' }}>{post.title}</h4>
-                                <button className='btn btn-outline-info btn-sm' onClick={() => handleSelectPost(post)}>
-                                    View
-                                </button>
-                            </div>
-                            <p className='text-muted small'>
-                                Deadline: {new Date(post.deadline).toLocaleString()}
-                            </p>
-                            <p>{post.content}</p>
-                            {post.fileUrls && post.fileUrls.length > 0 && (
-                                <div className='mt-3'>
-                                    <strong>Attachments:</strong>
-                                    <div>
-                                        {post.fileUrls.map((fileUrl, index) => {
-                                            const fileName = fileUrl.split('/').pop()
-                                            const originalName = fileName.substring(fileName.indexOf('_') + 1)
-                                            return (
-                                                <div key={index}>
-                                                    <span
-                                                        className='btn btn-link p-0'
-                                                        style={{ textDecoration: 'underline' }}
-                                                        onClick={() => downloadFile(fileUrl, fileName)}
-                                                    >
-                                                        {originalName}
-                                                    </span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ))
+                <WeeklyReportPostList
+                    posts={showExpired ? expiredPosts : currentPosts}
+                    mySubmissions={mySubmissions}
+                    currentUser={currentUser}
+                    editingPostId={editingPostId}
+                    editingPostTitle={editingPostTitle}
+                    setEditingPostTitle={setEditingPostTitle}
+                    editingPostContent={editingPostContent}
+                    setEditingPostContent={setEditingPostContent}
+                    selectedEditFiles={selectedEditFiles}
+                    setSelectedEditFiles={setSelectedEditFiles}
+                    filesToDelete={filesToDelete}
+                    setFilesToDelete={setFilesToDelete}
+                    editFileInputRef={editFileInputRef}
+                    handleSelectPost={handleSelectPost}
+                    handleEditPost={handleEditPost}
+                    handleDeletePost={handleDeletePost}
+                    handleRemoveFile={handleRemoveFile}
+                    handleSaveEditPost={handleSaveEditPost}
+                    setEditingPostId={setEditingPostId}
+                >
+                </WeeklyReportPostList>
             )}
 
             {showPostModal && selectedPost && (
                 <div className='modal show d-block' tabIndex='-1' style={{ background: 'rgba(0,0,0,0.5)' }}>
-                    <div className='modal-dialog modal-lg modal-dialog-scrollable'>
+                    <div className='modal-dialog modal-xl modal-dialog-scrollable'>
                         <div className='modal-content'>
                             <div className='modal-header'>
                                 <h4 className='modal-title'>{selectedPost.title}</h4>
@@ -229,7 +309,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                     <div key={index}>
                                                         <span
                                                             className='btn btn-link p-0'
-                                                            style={{ textDecoration: 'underline'}}
+                                                            style={{ textDecoration: 'underline' }}
                                                             onClick={() => downloadFile(fileUrl, fileName)}
                                                         >
                                                             {originalName}
@@ -243,7 +323,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
 
                                 {currentUser.role === 'STUDENT' && (
                                     <div className='mt-3'>
-                                        <h5>Submit Your Report</h5>
+                                        <h5>{getMySubmission() ? 'Resubmit Your Report?' : 'Submit Your Report'}</h5>
                                         <textarea
                                             className='form-control mb-2'
                                             placeholder='Your report...'
@@ -259,10 +339,15 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                             onChange={e => setReportFiles(Array.from(e.target.files))}
                                         >
                                         </input>
-                                        <button className='btn btn-success' onClick={handleSubmitReport}>Submit</button>
+                                        <button
+                                            className='btn btn-success'
+                                            onClick={handleSubmitReport}
+                                        >
+                                            {getMySubmission() ? 'Resubmit' : 'Submit'}
+                                        </button>
                                         {submissions && getMySubmission() && (
                                             <div className='mt-3'>
-                                                <h6>Your Submissions:</h6>
+                                                <h6 style={{ fontWeight: 'bold' }}>Your Submissions:</h6>
                                                 <div>{getMySubmission().content}</div>
                                                 <div>
                                                     {getMySubmission().fileUrls && getMySubmission().fileUrls.length > 0 && (
@@ -299,7 +384,12 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                 {currentUser.role === 'TEACHER' && (
                                     <div className='mt-4'>
                                         <h5>Student Submission</h5>
-                                        <table className='table'>
+                                        {selectedPost.author === currentUser.username && (
+                                            <button className='btn btn-outline-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.deadline)}>
+                                                Export to Excel
+                                            </button>
+                                        )}
+                                        <table className='table table-striped'>
                                             <thead>
                                                 <tr>
                                                     <th>Student</th>
@@ -308,48 +398,79 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                     <th>Files</th>
                                                     <th>Grade</th>
                                                     <th>Note</th>
+                                                    <th>Submission Date</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {submissions.map(sub => (
-                                                    <tr key={sub.id}>
-                                                        <td>{sub.author || sub.id}</td>
-                                                        <td>{sub.submittedAt ? 'Turned In' : 'Not Turned In'}</td>
-                                                        <td>{sub.content}</td>
-                                                        <td>
-                                                            {sub.fileUrls && sub.fileUrls.length > 0 && (
-                                                                <div>
-                                                                    {sub.fileUrls.map((fileUrl, index) => {
-                                                                        const fileName = fileUrl.split('/').pop()
-                                                                        const originalName = fileName.substring(fileName.indexOf('_') + 1)
-                                                                        return (
-                                                                            <div key={index}>
-                                                                                <span
-                                                                                    className='btn btn-link p-0'
-                                                                                    style={{ textDecoration: 'underline' }}
-                                                                                    onClick={() => downloadFile(fileUrl, fileName)}
-                                                                                >
-                                                                                    {originalName}
-                                                                                </span>
-                                                                            </div>
-                                                                        )
-                                                                    })}
-                                                                </div>
+                                                {submissions.map((sub) => {
+                                                    const user = room.userList.find(u => u.username === sub.author)
+                                                    return (
+                                                        <tr key={user ? user.id : sub.author}>
+                                                            <td>{user ? user.username : sub.author}</td>
+                                                            <td>
+                                                                Turned In
+                                                                {sub.late
+                                                                    ? <span className="badge bg-danger ms-2">Late</span>
+                                                                    : <span className="badge bg-success ms-2">On Time</span>
+                                                                }
+                                                            </td>
+                                                            <td>{sub.content}</td>
+                                                            <td>
+                                                                {sub.fileUrls && sub.fileUrls.length > 0 ? (
+                                                                    <div>
+                                                                        {sub.fileUrls.map((fileUrl, index) => {
+                                                                            const fileName = fileUrl.split('/').pop()
+                                                                            const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                                            return (
+                                                                                <div key={index}>
+                                                                                    <span
+                                                                                        className='btn btn-link p-0'
+                                                                                        style={{ textDecoration: 'underline' }}
+                                                                                        onClick={() => downloadFile(fileUrl, fileName)}
+                                                                                    >
+                                                                                        {originalName}
+                                                                                    </span>
+                                                                                </div>
+                                                                            )
+                                                                        })}
+                                                                    </div>
+                                                                ) : '-'}
+                                                            </td>
+                                                            <td>{sub.grade || '-'}</td>
+                                                            <td>{sub.teacherNote || '-'}</td>
+                                                            <td>{new Date(sub.submittedAt).toLocaleString().split(',')[0]}</td>
+                                                            {selectedPost.author === currentUser.username && (
+                                                                <td>
+                                                                    <GradeForm
+                                                                        initialGrade={sub.grade}
+                                                                        initialNote={sub.teacherNote}
+                                                                        onSave={(grade, note) => handleGrade(sub.id, grade, note)}
+                                                                    />
+                                                                </td>
                                                             )}
-                                                        </td>
-                                                        <td>{sub.grade || '-'}</td>
-                                                        <td>{sub.teacherNote || '-'}</td>
-                                                        <td>
-                                                            <GradeForm
-                                                                initialGrade={sub.grade}
-                                                                initialNote={sub.teacherNote}
-                                                                onSave={(grade, note) => handleGrade(sub.id, grade, note)}
+                                                        </tr>
+                                                    )
+                                                })}
+
+                                                {room.userList
+                                                    .filter(user => user.role === 'STUDENT' && !submissions.some(sub => sub.author === user.username))
+                                                    .map(user => {
+                                                        return (
+                                                            <tr
+                                                                key={user.id}
                                                             >
-                                                            </GradeForm>
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                                <td>{user.username}</td>
+                                                                <td>Not Turned In</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                            </tr>
+                                                        )
+                                                    })}
                                             </tbody>
                                         </table>
                                     </div>
