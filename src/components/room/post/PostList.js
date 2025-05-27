@@ -60,7 +60,7 @@ function PostList({ roomId, currentUser }) {
     }, [currentPage, fetchPosts])
 
     const handleAddPost = async () => {
-        if (!newPostContent.trim && selectedFiles.length === 0) {
+        if ((!newPostTitle.trim() && !newPostContent.trim()) && selectedFiles.length === 0) {
             return
         }
 
@@ -482,7 +482,7 @@ function PostList({ roomId, currentUser }) {
 
     return (
         <div className='mt-4'>
-            <h5>Create a Post</h5>
+            <h5 className='mb-3'>Create a Post</h5>
             <div className='mb-3'>
                 <input
                     className='form-control mb-2'
@@ -518,16 +518,15 @@ function PostList({ roomId, currentUser }) {
                 <p>No posts yet. Be the first one to post!</p>
             ) : (
                 posts.map((post) => (
-                    <div key={post.id} className='card mb-3'>
+                    <div key={post.id} className='post-card'>
                         <div className='card-body'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <Link
                                     to={`/profile/${post.author}`}
                                     target='_blank'
-                                    className='text-decoration-none'
-                                    style={{ fontWeight: 'bold', color: 'inherit' }}
+                                    className='text-decoration-none post-author'
                                 >
-                                    <h3 className='card-title' style={{ fontWeight: 'bold', color: 'inherit' }}>{post.author}</h3>
+                                    <h3 style={{ fontWeight: 'bold', color: 'inherit' }}>{post.author}</h3>
                                 </Link>
                                 {(currentUser?.username === post.author || currentUser?.role === "ADMIN") && (
                                     <div className='d-flex justify-content-end'>

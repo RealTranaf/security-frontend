@@ -8,6 +8,7 @@ import PostList from './post/PostList'
 import RoomSideBar from './RoomSidebar'
 import RoomUsersPage from './userlist/RoomUsersPage'
 import WeeklyReportPage from './assignment/WeeklyReportPage'
+import ChooseTopics from './choose-topics/ChooseTopic'
 
 function RoomPage() {
     const { roomId } = useParams()
@@ -76,26 +77,22 @@ function RoomPage() {
     }
 
     return (
-        <div className='container-fluid'>
-            <div className='d-flex'>
-                <div className='flex-grow-3'>
-                    <RoomSideBar room={room} selectedPage={selectedPage} setSelectedPage={setSelectedPage}></RoomSideBar>
-                </div>
-                <div className='flex-grow-1 ms-4'>
-                    {selectedPage === 'posts' && (
-                        <PostList roomId={roomId} currentUser={currentUser}></PostList>
-                    )}
-                    {selectedPage === 'users' && (
-                        <RoomUsersPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></RoomUsersPage>
-                    )}
-                    {selectedPage === 'weekly-report' && (
-                        <WeeklyReportPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></WeeklyReportPage>
-                    )}
-                </div>
+        <div className='d-flex' style={{background: 'rgb(255, 251, 195)'}}>
+            <RoomSideBar room={room} selectedPage={selectedPage} setSelectedPage={setSelectedPage}></RoomSideBar>
+            <div className='flex-grow-1 ms-4 px-5'>
+                {selectedPage === 'posts' && (
+                    <PostList roomId={roomId} currentUser={currentUser}></PostList>
+                )}
+                {selectedPage === 'choose-topics' && (
+                    <ChooseTopics></ChooseTopics>
+                )}
+                {selectedPage === 'users' && (
+                    <RoomUsersPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></RoomUsersPage>
+                )}
+                {selectedPage === 'weekly-report' && (
+                    <WeeklyReportPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></WeeklyReportPage>
+                )}
             </div>
-
-
-
         </div>
     )
 }

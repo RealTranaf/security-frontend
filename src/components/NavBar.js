@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom"
 
 import { logout } from '../services/auth-service'
-// import { getCurrentUser } from '../services/user-service'
 import eventBus from '../services/eventBus'
 
 function NavBar() {
@@ -50,9 +49,9 @@ function NavBar() {
 
     return (
         <div>
-            <nav className='navbar navbar-expand navbar-dark bg-dark'>
+            <nav className='navbar navbar-expand navbar-dark' style={{background: 'rgb(122, 36, 36)', color: 'rgb(236, 236, 236)'}}>
                 <Link to={"/"} className="navbar-brand" style={{ paddingLeft: "10px" }}>
-                    The App
+                    The App 
                 </Link>
                 <div className='navbar-nav me-auto'>
 

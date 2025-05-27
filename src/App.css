@@ -1,11 +1,13 @@
+html {
+  font-family: 'Times New Roman', Times, serif;
+}
 label {
   display: block;
   margin-top: 10px;
 }
-
 .card-container.card {
   max-width: 600px !important;
-  width: 400px;
+  width: 300px;
   padding: 40px 40px;
 }
 
@@ -31,7 +33,7 @@ label {
   -webkit-border-radius: 50%;
   border-radius: 50%;
 }
-
+/* room card in the home page  */
 .room-card {
   height: 150px;
   width: 150px;
@@ -65,4 +67,113 @@ label {
   margin-bottom: 10px;
   font-size: 0.9rem;
   color: #555;
+}
+/* sidebar */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    color: #e3e3e3;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+}
+.sidebar-link.active,
+.sidebar-link:hover {
+    color: #fff;
+    background: #232323;
+}
+.sidebar-link .bi {
+    font-size: 1.35rem;
+    min-width: 1.35rem;
+}
+
+/* post cards  */
+.post-card {
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  margin-bottom: 2.5rem;
+  transition: box-shadow 0.2s;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+}
+
+.post-author {
+  font-weight: bold;
+  color: #222;
+  font-size: 1.15rem;
+}
+
+.post-date {
+  color: #888;
+  font-size: 0.95rem;
+  margin-top: 0.2rem;
+}
+
+.post-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.post-content {
+  font-size: 1.08rem;
+  margin-bottom: 1.2rem;
+  white-space: pre-wrap;
+}
+
+.post-attachments {
+  margin-bottom: 1.2rem;
+}
+
+.post-attachments .bi {
+  margin-right: 0.4rem;
+}
+
+.post-attachment-link {
+  color: #1976d2;
+  text-decoration: underline;
+  font-size: 1rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.post-actions {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.post-actions .bi {
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.post-actions .bi-pencil-square {
+  color: #ffc107;
+}
+
+.post-actions .bi-trash-fill {
+  color: #dc3545;
+}
+
+.post-actions .bi:hover {
+  opacity: 0.8;
 }
