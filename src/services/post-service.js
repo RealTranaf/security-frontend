@@ -1,7 +1,7 @@
-import axios from "axios"
-import authHeader from "./auth-header"
+import axios from 'axios'
+import authHeader from './auth-header'
 
-const API_URL = "http://localhost:8080/rooms"
+const API_URL = 'http://localhost:8080/rooms'
 
 export async function getPostsByRoom (roomId, page, size) {
     return await axios.get(`${API_URL}/${roomId}/posts?page=${page}&size=${size}`, { headers: authHeader() })
@@ -17,7 +17,7 @@ export async function createPost(roomId, title, content, files) {
 }
 
 export async function deletePost(roomId, postId) {
-    return await axios.delete(`${API_URL}/${roomId}/posts/${postId}`, { headers: authHeader() });
+    return await axios.delete(`${API_URL}/${roomId}/posts/${postId}`, { headers: authHeader() })
 }
 
 export async function editPost(roomId, postId, title, content, addedFiles, deletedFiles) {
@@ -28,5 +28,5 @@ export async function editPost(roomId, postId, title, content, addedFiles, delet
     addedFiles.forEach((file) => formData.append('files', file))
     deletedFiles.forEach((fileUrl) => formData.append('filesToDelete', fileUrl))
 
-    return await axios.put(`${API_URL}/${roomId}/posts/${postId}`, formData, { headers: { ...authHeader(), 'Content-Type': 'multipart/form-data' } });
+    return await axios.put(`${API_URL}/${roomId}/posts/${postId}`, formData, { headers: { ...authHeader(), 'Content-Type': 'multipart/form-data' } })
 }

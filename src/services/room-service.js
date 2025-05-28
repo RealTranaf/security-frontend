@@ -1,10 +1,10 @@
-import axios from "axios";
-import authHeader from "./auth-header";
+import axios from 'axios'
+import authHeader from './auth-header'
 
-const API_URL = "http://localhost:8080/rooms"
+const API_URL = 'http://localhost:8080/rooms'
 
 export async function createRoom (roomName){
-    return await axios.post(API_URL + "/create", { name: roomName }, { headers: authHeader() })
+    return await axios.post(API_URL + '/create', { name: roomName }, { headers: authHeader() })
 }
 
 export async function getRoomList() {
@@ -21,7 +21,7 @@ export async function addUserstoRoom(roomId, usernames){
 
 export async function removeUsersFromRoom(roomId, usernames) {
     // return await axios.delete(API_URL + `/${roomId}/remove-users`, { data: {usernames} }, { headers: authHeader() })
-    const queryParams = usernames.map((username) => `username=${encodeURIComponent(username)}`).join("&")
+    const queryParams = usernames.map((username) => `username=${encodeURIComponent(username)}`).join('&')
     return await axios.delete(`${API_URL}/${roomId}/remove-users?${queryParams}`, {
         headers: authHeader()
     })

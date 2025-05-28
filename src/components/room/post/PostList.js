@@ -39,8 +39,8 @@ function PostList({ roomId, currentUser }) {
 
     const [commentPagination, setCommentPagination] = useState({})
 
-    const postsPerPage = 3;
-    const commentsPerPage = 5;
+    const postsPerPage = 3
+    const commentsPerPage = 5
 
     const fetchPosts = useCallback(async (page) => {
         try {
@@ -50,7 +50,7 @@ function PostList({ roomId, currentUser }) {
             setTotalPages(response.data.totalPages)
 
             sortedPosts.forEach((post) => {
-                fetchComments(post.id, 0);
+                fetchComments(post.id, 0)
             })
         } catch (error) {
             console.error('Failed to fetch posts:', error)
@@ -142,7 +142,7 @@ function PostList({ roomId, currentUser }) {
                 fileInputRef.current.value = ''
             }
         } catch (error) {
-            console.error('Failed to edit post:', error);
+            console.error('Failed to edit post:', error)
         }
     }
 
@@ -181,12 +181,12 @@ function PostList({ roomId, currentUser }) {
             setSelectedCommentFiles((prev) => ({ ...prev, [postId]: [] }))
 
             if (commentFileInputRefs.current[postId]) {
-                commentFileInputRefs.current[postId].value = '';
+                commentFileInputRefs.current[postId].value = ''
             }
 
             fetchComments(postId, 0)
         } catch (error) {
-            console.error(`Failed to add comment for post ${postId}:`, error);
+            console.error(`Failed to add comment for post ${postId}:`, error)
         }
     }
 
@@ -213,7 +213,7 @@ function PostList({ roomId, currentUser }) {
             setSelectedEditCommentFiles(prev => ({ ...prev, [editingCommentId]: [] }))
             setCommentFilesToDelete(prev => ({ ...prev, [editingCommentId]: [] }))
             if (commentFileInputRefs.current[postId]) {
-                commentFileInputRefs.current[postId].value = '';
+                commentFileInputRefs.current[postId].value = ''
             }
             fetchPosts(currentPage)
         } catch (error) {
@@ -224,7 +224,7 @@ function PostList({ roomId, currentUser }) {
     const handleDeleteComment = async (postId, commentId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this comment?')
         if (!confirmDelete) {
-            return;
+            return
         }
         try {
             await deleteComment(postId, commentId)
@@ -248,7 +248,7 @@ function PostList({ roomId, currentUser }) {
         setFilesToDelete(prev => ({
             ...prev,
             [postId]: [...new Set([...(prev[postId] || []), fileUrl])]
-        }));
+        }))
         setPosts((prev) =>
             prev.map((post) =>
                 post.id === postId
@@ -459,7 +459,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, 0)}
                             >
-                                &#171;
+                                &#171
                             </button>
                         </li>
                         <li className={`page-item ${currentCommentPage === 0 ? 'disabled' : ''}`}>
@@ -467,7 +467,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, currentCommentPage - 1)}
                             >
-                                &#8249;
+                                &#8249
                             </button>
                         </li>
                         <li className={`page-item ${currentCommentPage === totalCommentPages - 1 ? 'disabled' : ''}`}>
@@ -475,7 +475,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, currentCommentPage + 1)}
                             >
-                                &#8250;
+                                &#8250
                             </button>
                         </li>
                         <li className={`page-item ${currentCommentPage === totalCommentPages - 1 ? 'disabled' : ''}`}>
@@ -483,7 +483,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, totalCommentPages - 1)}
                             >
-                                &#187;
+                                &#187
                             </button>
                         </li>
                     </ul>
@@ -775,13 +775,13 @@ function PostList({ roomId, currentUser }) {
                                                                     >
                                                                     </textarea>
                                                                     <button
-                                                                        type="button"
-                                                                        className="attach-btn-inside-textarea"
+                                                                        type='button'
+                                                                        className='attach-btn-inside-textarea'
                                                                         onClick={() => commentFileInputRefs.current[post.id] && commentFileInputRefs.current[post.id].click()}
                                                                         tabIndex={-1}
-                                                                        aria-label="Attach files"
+                                                                        aria-label='Attach files'
                                                                     >
-                                                                        <i className="bi bi-paperclip fs-4" style={{ color: '#7a2424' }}></i>
+                                                                        <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
                                                                     </button>
                                                                     <input
                                                                         type='file'
@@ -933,7 +933,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => handlePageChange(0)}
                             >
-                                &#171;
+                                &#171
                             </button>
                         </li>
                         <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
@@ -941,7 +941,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={handlePreviousPage}
                             >
-                                &#8249;
+                                &#8249
                             </button>
                         </li>
                         {renderPageNummbers()}
@@ -950,7 +950,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={handleNextPage}
                             >
-                                &#8250;
+                                &#8250
                             </button>
                         </li>
                         <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
@@ -958,7 +958,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => handlePageChange(totalPages - 1)}
                             >
-                                &#187;
+                                &#187
                             </button>
                         </li>
                     </ul>

@@ -1,7 +1,7 @@
-import axios from "axios"
-import authHeader from "./auth-header"
+import axios from 'axios'
+import authHeader from './auth-header'
 
-const API_URL = "http://localhost:8080"
+const API_URL = 'http://localhost:8080'
 
 export async function downloadFile(fileUrl, fileName) {
     try {

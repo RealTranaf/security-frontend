@@ -1,8 +1,8 @@
 import './App.css'
-import "bootstrap/dist/css/bootstrap.min.css"
+import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import "bootstrap-icons/font/bootstrap-icons.css"
-import { Routes, Route } from "react-router-dom"
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import { Routes, Route } from 'react-router-dom'
 
 import NavBar from './components/NavBar'
 import LoginPage from './components/security/LoginPage'
@@ -26,26 +26,26 @@ function App() {
             <NavBar></NavBar>
             <div>
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/user" element={<UserBoard />} />
-                    <Route path="/teacher" element={<TeacherBoard />} />
-                    <Route path="/admin" element={<AdminBoard />} />
-                    <Route path="/verify" element={<VerifyPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/create-room" element={<CreateRoomPage />} />
-                    <Route path="/rooms/:roomId" element={<RoomPage />} />
-                    <Route path="/profile/:username" element={<Profile />} />
-                    <Route path="/rooms/:roomId/users" element={<RoomUsersPage />} />
-                    <Route path="/rooms/:roomId/weekly-report" element={<WeeklyReportPage />} />
+                    <Route path='/' element={<Home />} />
+                    <Route path='/home' element={<Home />} />
+                    <Route path='/login' element={<LoginPage />} />
+                    <Route path='/signup' element={<SignupPage />} />
+                    <Route path='/profile' element={<Profile />} />
+                    <Route path='/user' element={<UserBoard />} />
+                    <Route path='/teacher' element={<TeacherBoard />} />
+                    <Route path='/admin' element={<AdminBoard />} />
+                    <Route path='/verify' element={<VerifyPage />} />
+                    <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+                    <Route path='/reset-password' element={<ResetPasswordPage />} />
+                    <Route path='/create-room' element={<CreateRoomPage />} />
+                    <Route path='/rooms/:roomId' element={<RoomPage />} />
+                    <Route path='/profile/:username' element={<Profile />} />
+                    <Route path='/rooms/:roomId/users' element={<RoomUsersPage />} />
+                    <Route path='/rooms/:roomId/weekly-report' element={<WeeklyReportPage />} />
                 </Routes>
             </div>
         </div>
-    );
+    )
 }
 
-export default App;
+export default App

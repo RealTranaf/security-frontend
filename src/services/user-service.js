@@ -1,9 +1,9 @@
-import axios from "axios";
-import authHeader from "./auth-header";
+import axios from 'axios'
+import authHeader from './auth-header'
 
-const API_URL = "http://localhost:8080"
+const API_URL = 'http://localhost:8080'
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 export async function getPublicHello(){
     return axios.get(`${API_URL}/public`, { headers: authHeader() })

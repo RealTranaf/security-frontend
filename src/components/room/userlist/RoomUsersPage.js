@@ -145,8 +145,8 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                         </thead>
                         <tbody>
                             {sortedUserList.map((user) => {
-                                const isCurrentUser = currentUser && user.username === currentUser.username;
-                                const isAdmin = user.role === 'ADMIN';
+                                const isCurrentUser = currentUser && user.username === currentUser.username
+                                const isAdmin = user.role === 'ADMIN'
                                 return (
                                     <tr key={user.id}>
                                         <td>{user.username} {isCurrentUser && <span className='text-muted'>(You)</span>}</td>
@@ -298,8 +298,8 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                             <h6>Select users to remove:</h6>
                             <ul className='list-group'>
                                 {room && room.userList.map((user) => {
-                                    const isCurrentUser = currentUser && user.username === currentUser.username;
-                                    const isAdmin = user.role === 'ADMIN';
+                                    const isCurrentUser = currentUser && user.username === currentUser.username
+                                    const isAdmin = user.role === 'ADMIN'
                                     return (
                                         <li
                                             key={user.id}
