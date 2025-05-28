@@ -149,7 +149,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                 const isAdmin = user.role === 'ADMIN';
                                 return (
                                     <tr key={user.id}>
-                                        <td>{user.username} {isCurrentUser && <span className="text-muted">(You)</span>}</td>
+                                        <td>{user.username} {isCurrentUser && <span className='text-muted'>(You)</span>}</td>
                                         <td>{user.email}</td>
                                         <td>{user.role}</td>
                                         <td>
@@ -166,7 +166,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                             >
                                                 Remove
                                             </button>
-                                            {isAdmin && <span className="text-muted ms-2">(ADMIN)</span>}
+                                            {isAdmin && <span className='text-muted ms-2'>(ADMIN)</span>}
                                         </td>
                                     </tr>
                                 )
@@ -323,10 +323,10 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                                 </input>
                                                 {user.username}
                                                 {isCurrentUser && (
-                                                    <span className="text-muted ms-2">(You)</span>
+                                                    <span className='text-muted ms-2'>(You)</span>
                                                 )}
                                                 {isAdmin && (
-                                                    <span className="text-muted ms-2">(ADMIN)</span>
+                                                    <span className='text-muted ms-2'>(ADMIN)</span>
                                                 )}
                                             </div>
                                         </li>

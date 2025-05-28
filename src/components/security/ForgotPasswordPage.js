@@ -12,9 +12,9 @@ function ForgotPasswordPage() {
         const errors = {}
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!email) {
-            errors.email = "Email is required!"
+            errors.email = 'Email is required!'
         } else if (!emailRegex.test(email)) {
-            errors.email = "This is not a valid email!"
+            errors.email = 'This is not a valid email!'
         }
         setErrors(errors)
         return Object.keys(errors).length === 0
@@ -32,7 +32,7 @@ function ForgotPasswordPage() {
                 setMessage(response.data.message)
                 setSuccessful(true)
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error has occured"
+                const resMessage = (error.response?.data?.message) || error.message || 'An error has occured'
                 setMessage(resMessage)
                 setSuccessful(false)
                 setLoading(false)
@@ -75,10 +75,10 @@ function ForgotPasswordPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="d-grid mb-3">
-                                <button className="btn btn-primary" disabled={loading}>
+                            <div className='d-grid mb-3'>
+                                <button className='btn btn-primary' disabled={loading}>
                                     {loading && (
-                                        <span className="spinner-border spinner-border-sm me-2"></span>
+                                        <span className='spinner-border spinner-border-sm me-2'></span>
                                     )}
                                     Send Reset Link
                                 </button>
@@ -87,7 +87,7 @@ function ForgotPasswordPage() {
                     )}
                     {message && (
                         <div className='mb-3'>
-                            <div className={successful ? "alert alert-success text-center" : "alert alert-danger text-center"} role="alert">
+                            <div className={successful ? 'alert alert-success text-center' : 'alert alert-danger text-center'} role='alert'>
                                 {message}
                             </div>
                         </div>

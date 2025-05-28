@@ -26,9 +26,9 @@ function Home() {
 
                 setError(errorMessage)
                 if (error.response && error.response.status === 403) {
-                    window.location.href = "/login"
+                    window.location.href = '/login'
                 } else {
-                    console.error("Failed to fetch user:", error)
+                    console.error('Failed to fetch user:', error)
                 }
             }
         }
@@ -40,21 +40,21 @@ function Home() {
     }
 
     return (
-        <div className="container">
-            <div className="p-5 rounded">
+        <div className='container'>
+            <div className='p-5 rounded'>
                 <h3>Your classes</h3>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <div className="row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr)" }}>
+                {error && <div className='alert alert-danger'>{error}</div>}
+                <div className='row' style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr)' }}>
                     {rooms.map((room) => (
-                        <div className="col-md-6" key={room.id}>
+                        <div className='col-md-6' key={room.id}>
                             <div
-                                className="room-card"
+                                className='room-card'
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => handleRoomClick(room.id)}
                             >
-                                <div className="card-body">
-                                    <h5 className="room-card-title">{room.name}</h5>
-                                    <p className="room-card-text">
+                                <div className='card-body'>
+                                    <h5 className='room-card-title'>{room.name}</h5>
+                                    <p className='room-card-text'>
                                         Created by: {room.createdBy}
                                     </p>
                                 </div>

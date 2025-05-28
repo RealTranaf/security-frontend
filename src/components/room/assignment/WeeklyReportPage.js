@@ -29,6 +29,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
     const [mySubmissions, setMySubmissions] = useState([])
 
     const [showPostModal, setShowPostModal] = useState(false)
+    const [showCreateModal, setShowCreateModal] = useState(false)
 
     const [showExpired, setShowExpired] = useState(false)
 
@@ -66,10 +67,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
 
         try {
             await createWeeklyReportPost(roomId, newPostTitle, newPostContent, newPostDeadline, newPostFiles)
-            setNewPostTitle('')
-            setNewPostContent('')
-            setNewPostDeadline('')
-            setNewPostFiles([])
+            closeCreateModal()
             if (fileInputRef.current) {
                 fileInputRef.current.value = ''
             }
@@ -199,6 +197,21 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
         setReportFiles([])
     }
 
+    const openCreateModal = () => {
+        setShowCreateModal(true)
+    }
+
+    const closeCreateModal = () => {
+        setShowCreateModal(false)
+        setNewPostTitle('')
+        setNewPostContent('')
+        setNewPostDeadline('')
+        setNewPostFiles([])
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
     // console.log(submissions)
     console.log(posts)
 
@@ -206,60 +219,86 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
     const currentPosts = posts.filter(post => !post.expired)
 
     return (
-        <div className='mt-3'>
+        <div className='mt-4'>
             {currentUser.role === 'TEACHER' && (
                 <>
-                    <h5>Create a Weekly Report Post</h5>
-                    <div className='mb-3'>
-                        <input
-                            className='form-control mb-2'
-                            placeholder='Add a title...'
-                            value={newPostTitle}
-                            required
-                            onChange={e => setNewPostTitle(e.target.value)}
-                        >
-                        </input>
-                        <textarea
-                            className='form-control'
-                            placeholder='Describe the report request...'
-                            value={newPostContent}
-                            onChange={e => setNewPostContent(e.target.value)}
-                        >
-                        </textarea>
-                        <input
-                            className='form-control mt-2'
-                            type='datetime-local'
-                            value={newPostDeadline}
-                            onChange={e => setNewPostDeadline(e.target.value)}
-                        >
-                        </input>
-                        <input
-                            type='file'
-                            className='form-control mt-2'
-                            multiple
-                            ref={fileInputRef}
-                            onChange={e => setNewPostFiles(Array.from(e.target.files))}
-                        >
-                        </input>
-                        <button className='btn btn-primary mt-2' onClick={handleCreatePost}>
-                            Post
+                    <div className='d-flex justify-content-between align-items-center mb-3'>
+                        <button className='btn btn-primary' onClick={openCreateModal}>
+                            <i className='bi bi-plus-circle me-2'></i>
+                            Create Weekly Report Post
                         </button>
                     </div>
+                    {showCreateModal && (
+                        <div className='modal show d-block' tabIndex='-1' style={{ background: 'rgba(0,0,0,0.5)' }}>
+                            <div className='modal-dialog modal-lg modal-dialog-centered'>
+                                <div className='modal-content'>
+                                    <div className='modal-header'>
+                                        <h5 className='modal-title'>Create a Weekly Report Post</h5>
+                                        <button type='button' className='btn-close' onClick={closeCreateModal}></button>
+                                    </div>
+                                    <div className='modal-body'>
+                                        <input
+                                            className='form-control mb-2'
+                                            placeholder='Add a title...'
+                                            value={newPostTitle}
+                                            required
+                                            onChange={e => setNewPostTitle(e.target.value)}
+                                        >
+                                        </input>
+                                        <textarea
+                                            className='form-control'
+                                            placeholder='Describe the report request...'
+                                            value={newPostContent}
+                                            onChange={e => setNewPostContent(e.target.value)}
+                                        >
+                                        </textarea>
+                                        <input
+                                            className='form-control mt-2'
+                                            type='datetime-local'
+                                            value={newPostDeadline}
+                                            onChange={e => setNewPostDeadline(e.target.value)}
+                                        >
+                                        </input>
+                                        <input
+                                            type='file'
+                                            className='form-control mt-2'
+                                            multiple
+                                            ref={fileInputRef}
+                                            onChange={e => setNewPostFiles(Array.from(e.target.files))}
+                                        >
+                                        </input>
+                                    </div>
+                                    <div className='modal-footer'>
+                                        <button className='btn btn-secondary' onClick={closeCreateModal}>
+                                            <i className='bi bi-x-lg me-1'></i>
+                                            Cancel
+                                        </button>
+                                        <button className='btn btn-primary' onClick={handleCreatePost}>
+                                            <i className='bi bi-send me-1'></i>
+                                            Post
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </>
             )}
 
             <h5>Weekly Report Posts</h5>
-            <div className="mb-3">
+            <div className='mb-3'>
                 <button
                     className={`btn btn-sm me-2 ${!showExpired ? 'btn-primary' : 'btn-outline-secondary'}`}
                     onClick={() => setShowExpired(false)}
                 >
+                    <i className='bi bi-list-task me-1'></i>
                     Current
                 </button>
                 <button
                     className={`btn btn-sm ${showExpired ? 'btn-primary' : 'btn-outline-secondary'}`}
                     onClick={() => setShowExpired(true)}
                 >
+                    <i className='bi bi-archive me-1'></i>
                     Expired
                 </button>
             </div>
@@ -317,6 +356,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                             style={{ textDecoration: 'underline' }}
                                                             onClick={() => downloadFile(fileUrl, fileName)}
                                                         >
+                                                            <i className='bi bi-paperclip me-1'></i>
                                                             {originalName}
                                                         </span>
                                                     </div>
@@ -348,6 +388,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                             className='btn btn-success'
                                             onClick={handleSubmitReport}
                                         >
+                                            <i className={`bi ${getMySubmission() ? 'bi-arrow-repeat' : 'bi-upload'} me-1`}></i>
                                             {getMySubmission() ? 'Resubmit' : 'Submit'}
                                         </button>
                                         {submissions && getMySubmission() && (
@@ -367,6 +408,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                                             style={{ textDecoration: 'underline' }}
                                                                             onClick={() => downloadFile(fileUrl, fileName)}
                                                                         >
+                                                                            <i className='bi bi-paperclip me-1'></i>
                                                                             {originalName}
                                                                         </span>
                                                                     </div>
@@ -390,7 +432,8 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                     <div className='mt-4'>
                                         <h5>Student Submission</h5>
                                         {selectedPost.author === currentUser.username && (
-                                            <button className='btn btn-outline-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.deadline)}>
+                                            <button className='btn btn-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.deadline)}>
+                                                <i class='bi bi-filetype-xls me-2'></i>
                                                 Export to Excel
                                             </button>
                                         )}
@@ -416,8 +459,8 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                             <td>
                                                                 Turned In
                                                                 {sub.late
-                                                                    ? <span className="badge bg-danger ms-2">Late</span>
-                                                                    : <span className="badge bg-success ms-2">On Time</span>
+                                                                    ? <span className='badge bg-danger ms-2'>Late</span>
+                                                                    : <span className='badge bg-success ms-2'>On Time</span>
                                                                 }
                                                             </td>
                                                             <td>{sub.content}</td>
@@ -434,6 +477,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                                                         style={{ textDecoration: 'underline' }}
                                                                                         onClick={() => downloadFile(fileUrl, fileName)}
                                                                                     >
+                                                                                        <i className='bi bi-paperclip me-1'></i>
                                                                                         {originalName}
                                                                                     </span>
                                                                                 </div>
@@ -482,7 +526,10 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                 )}
                             </div>
                             <div className='modal-footer'>
-                                <button className='btn btn-secondary' onClick={closePostModal}>Close</button>
+                                <button className='btn btn-secondary' onClick={closePostModal}>
+                                    <i className='bi bi-x-lg me-1'></i>
+                                    Close
+                                </button>
                             </div>
                         </div>
                     </div>

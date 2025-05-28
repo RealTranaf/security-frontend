@@ -1,27 +1,27 @@
-html {
-  font-family: 'Times New Roman', Times, serif;
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+
+div {
+  font-family: 'Roboto'
 }
 label {
   display: block;
   margin-top: 10px;
 }
 .card-container.card {
-  max-width: 600px !important;
+  max-width: 600px;
   width: 300px;
   padding: 40px 40px;
 }
 
 .card {
-  background-color: #f7f7f7;
-  padding: 20px 25px 30px;
+  background-color:#f1f2f6 !important;
+  width: 800px;
+  padding: 5px 5px;
   margin: 0 auto 25px;
   margin-top: 50px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
   border-radius: 2px;
-  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(0, 0, 0, 0.3);
 }
 
 .profile-img-card {
@@ -29,8 +29,6 @@ label {
   height: 96px;
   margin: 0 auto 10px;
   display: block;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
   border-radius: 50%;
 }
 /* room card in the home page  */
@@ -92,88 +90,52 @@ label {
     min-width: 1.35rem;
 }
 
-/* post cards  */
-.post-card {
-  background: #fff;
-  border-radius: 7px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  padding: 2rem 2.5rem 1.5rem 2.5rem;
-  margin-bottom: 2.5rem;
-  transition: box-shadow 0.2s;
+.btn-primary {
+  background-color: #8f2a2a !important;
+  border-color: #8f2a2a !important;
 }
 
-.post-card:hover {
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: #622222 !important;
+  border-color: #622222 !important;
+}
+/* pagination */
+.page-link {
+  color: #fff !important;
+  background-color: #8f2a2a !important;
+  border: 1px solid #8f2a2a !important;
+  transition: background 0.2s, color 0.2s;
 }
 
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.2rem;
+.page-link:hover,
+.page-link:focus,
+.page-link:active {
+  color: #fff !important;
+  background-color: #622222 !important;
+  border-color: #622222 !important;
 }
 
-.post-author {
-  font-weight: bold;
-  color: #222;
-  font-size: 1.15rem;
+.page-item.active .page-link {
+  color: #fff !important;
+  background-color: #622222 !important;
+  border-color: #622222 !important;
 }
 
-.post-date {
-  color: #888;
-  font-size: 0.95rem;
-  margin-top: 0.2rem;
+.page-item.disabled .page-link {
+  color: #ccc !important;
+  background-color: #f1f2f6 !important;
+  border-color: #e0e0e0 !important;
+  cursor: not-allowed;
 }
 
-.post-title {
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin-bottom: 0.7rem;
-  margin-top: 0.5rem;
-}
-
-.post-content {
-  font-size: 1.08rem;
-  margin-bottom: 1.2rem;
-  white-space: pre-wrap;
-}
-
-.post-attachments {
-  margin-bottom: 1.2rem;
-}
-
-.post-attachments .bi {
-  margin-right: 0.4rem;
-}
-
-.post-attachment-link {
-  color: #1976d2;
-  text-decoration: underline;
-  font-size: 1rem;
-  margin-right: 1rem;
-  cursor: pointer;
-}
-
-.post-actions {
-  display: flex;
-  gap: 0.7rem;
-}
-
-.post-actions .bi {
-  font-size: 1.3rem;
-  cursor: pointer;
-  transition: color 0.15s;
-}
-
-.post-actions .bi-pencil-square {
-  color: #ffc107;
-}
-
-.post-actions .bi-trash-fill {
-  color: #dc3545;
-}
-
-.post-actions .bi:hover {
-  opacity: 0.8;
+.attach-btn-inside-textarea {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
 }

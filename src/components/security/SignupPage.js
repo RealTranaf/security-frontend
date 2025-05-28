@@ -8,38 +8,38 @@ function SignupPage() {
     const form = useRef()
     const navigate = useNavigate()
 
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [role, setRole] = useState("")
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [role, setRole] = useState('')
     const [successful, setSuccessful] = useState(false)
-    const [message, setMessage] = useState("")
+    const [message, setMessage] = useState('')
     const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
 
     const validateForm = () => {
         const newErrors = {}
         if (!username) {
-            newErrors.username = "Username is required"
+            newErrors.username = 'Username is required'
         } else if (username.length < 3 || username.length > 20) {
-            newErrors.username = "Username must be between 3 and 20 characters!"
+            newErrors.username = 'Username must be between 3 and 20 characters!'
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!email) {
-            newErrors.email = "Email is required!"
+            newErrors.email = 'Email is required!'
         } else if (!emailRegex.test(email)) {
-            newErrors.email = "This is not a valid email!"
+            newErrors.email = 'This is not a valid email!'
         }
 
         if (!password) {
-            newErrors.password = "Password is required!"
+            newErrors.password = 'Password is required!'
         } else if (password.length < 6 || password.length > 40) {
-            newErrors.password = "Password must be between 6 and 40 characters!"
+            newErrors.password = 'Password must be between 6 and 40 characters!'
         }
 
         if (!role) {
-            newErrors.role = "Role is required!"
+            newErrors.role = 'Role is required!'
         }
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
@@ -67,7 +67,7 @@ function SignupPage() {
     const handleSignup = async (e) => {
         e.preventDefault()
 
-        setMessage("")
+        setMessage('')
         setSuccessful(false)
         setLoading(true)
 
@@ -77,7 +77,7 @@ function SignupPage() {
                 setMessage(response.data.message)
                 setSuccessful(true)
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error occurred during signup."
+                const resMessage = (error.response?.data?.message) || error.message || 'An error occurred during signup.'
                 setMessage(resMessage)
                 setSuccessful(false)
                 setLoading(false)
@@ -97,8 +97,8 @@ function SignupPage() {
                 <div className='text-center mb-3'>
                     <img
                         src={logo}
-                        alt="profile-img"
-                        className="profile-img-card"
+                        alt='profile-img'
+                        className='profile-img-card'
                     />
                 </div>
                 <form onSubmit={handleSignup} ref={form}>
@@ -160,10 +160,10 @@ function SignupPage() {
                                     value={role}
                                     onChange={onChangeRole}
                                 >
-                                    <option value="">Select a role</option>
-                                    <option value="STUDENT">Student</option>
-                                    <option value="ADMIN">Admin</option>
-                                    <option value="TEACHER">Teacher</option>
+                                    <option value=''>Select a role</option>
+                                    <option value='STUDENT'>Student</option>
+                                    <option value='ADMIN'>Admin</option>
+                                    <option value='TEACHER'>Teacher</option>
                                 </select>
                                 {errors.role && (
                                     <div className='alert alert-danger' role='alert'>
@@ -171,10 +171,10 @@ function SignupPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="d-grid mb-3">
-                                <button className="btn btn-primary" disabled={loading}>
+                            <div className='d-grid mb-3'>
+                                <button className='btn btn-primary' disabled={loading}>
                                     {loading && (
-                                        <span className="spinner-border spinner-border-sm me-2"></span>
+                                        <span className='spinner-border spinner-border-sm me-2'></span>
                                     )}
                                     Sign Up
                                 </button>
@@ -183,18 +183,18 @@ function SignupPage() {
                     )}
                     {message && (
                         <div className='mb-3'>
-                            <div className={successful ? "alert alert-success text-center" : "alert alert-danger text-center"} role="alert">
+                            <div className={successful ? 'alert alert-success text-center' : 'alert alert-danger text-center'} role='alert'>
                                 {message}
                             </div>
                         </div>
                     )}
                     {successful && (
-                        <div className="d-grid mb-3">
+                        <div className='d-grid mb-3'>
                             To complete the signup process, you will need to verify your account!
                             <button
-                                className="btn btn-primary"
+                                className='btn btn-primary'
                                 onClick={redirectToVerify}
-                                style={{margin: "20px"}}
+                                style={{margin: '20px'}}
                             >
                                 Go to Verification
                             </button>

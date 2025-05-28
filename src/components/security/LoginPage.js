@@ -10,22 +10,22 @@ function LoginPage() {
 
     const form = useRef()
 
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
-    const [message, setMessage] = useState("")
+    const [message, setMessage] = useState('')
     const [errors, setErrors] = useState({})
     const [enableVerify, setEnableVerify] = useState()
 
     const validateForm = () => {
         const errors = {}
         if (!username.trim()) {
-            errors.username = "Username is required."
+            errors.username = 'Username is required.'
         }
         if (!password.trim()) {
-            errors.password = "Password is required."
+            errors.password = 'Password is required.'
         } else if (password.length < 6) {
-            errors.password = "Password must be at least 6 characters long."
+            errors.password = 'Password must be at least 6 characters long.'
         }
         setErrors(errors)
         return Object.keys(errors).length === 0
@@ -46,7 +46,7 @@ function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault()
 
-        setMessage("")
+        setMessage('')
         setLoading(true)
 
         // form.current.validateAll()
@@ -54,11 +54,11 @@ function LoginPage() {
         if (validateForm()) {
             try {
                 await login(username, password)
-                navigate("/profile")
+                navigate('/profile')
                 window.location.reload()
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error occurred during login."
-                if (resMessage === "User is disabled"){
+                const resMessage = (error.response?.data?.message) || error.message || 'An error occurred during login.'
+                if (resMessage === 'User is disabled'){
                     setEnableVerify(true)
                 }
                 setMessage(resMessage)
@@ -80,7 +80,7 @@ function LoginPage() {
                 <div className='text-center mb-3'>
                     <img
                         src={logo}
-                        alt="profile-img"
+                        alt='profile-img'
                         className='profile-img-card'
                     />
                 </div>
@@ -118,26 +118,26 @@ function LoginPage() {
                         )}
                     </div>
                     <div className='d-grid mb-3'>
-                        <button className="btn btn-primary" disabled={loading}>
+                        <button className='btn btn-primary' disabled={loading}>
                             {loading && (
-                                <span className="spinner-border spinner-border-sm me-2"></span>
+                                <span className='spinner-border spinner-border-sm me-2'></span>
                             )}
                             Login
                         </button>
                     </div>
                     {message && (
-                        <div className="alert alert-danger text-center" role="alert">
+                        <div className='alert alert-danger text-center' role='alert'>
                             {message}
                         </div>
                     )}
                 </form>
                 {enableVerify && <div className='d-grid mb-3'>
-                    <button className="btn btn-primary" onClick={redirectToVerify}>
+                    <button className='btn btn-primary' onClick={redirectToVerify}>
                         Go to verification
                     </button>
                 </div>}
-                <div className="text-center mt-3">
-                    <Link to="/forgot-password">Forgot your password?</Link>
+                <div className='text-center mt-3'>
+                    <Link to='/forgot-password'>Forgot your password?</Link>
                 </div>
             </div>
         </div>

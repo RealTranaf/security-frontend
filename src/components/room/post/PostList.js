@@ -35,6 +35,8 @@ function PostList({ roomId, currentUser }) {
     const [commentFilesToDelete, setCommentFilesToDelete] = useState({})
     const commentFileInputRefs = useRef({})
 
+    const [showPostModal, setShowPostModal] = useState(false)
+
     const [commentPagination, setCommentPagination] = useState({})
 
     const postsPerPage = 3;
@@ -59,6 +61,17 @@ function PostList({ roomId, currentUser }) {
         fetchPosts(currentPage)
     }, [currentPage, fetchPosts])
 
+    const openPostModal = () => setShowPostModal(true)
+    const closePostModal = () => {
+        setShowPostModal(false)
+        setNewPostTitle('')
+        setNewPostContent('')
+        setSelectedFiles([])
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
     const handleAddPost = async () => {
         if ((!newPostTitle.trim() && !newPostContent.trim()) && selectedFiles.length === 0) {
             return
@@ -76,19 +89,18 @@ function PostList({ roomId, currentUser }) {
             setNewPostContent('')
             setNewPostTitle('')
             setSelectedFiles([])
-
             if (fileInputRef.current) {
                 fileInputRef.current.value = ''
             }
-
             fetchPosts(0)
+            closePostModal()
         } catch (error) {
             console.error('Failed to create post:', error)
         }
     }
 
     const handleDeletePost = async (postId) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?")
+        const confirmDelete = window.confirm('Are you sure you want to delete this post?')
         if (!confirmDelete) {
             return
         }
@@ -97,7 +109,7 @@ function PostList({ roomId, currentUser }) {
             setPosts((prev) => prev.filter((post) => post.id !== postId))
             fetchPosts(currentPage)
         } catch (error) {
-            console.log("Failed to delete post: ", error)
+            console.log('Failed to delete post: ', error)
         }
     }
 
@@ -108,7 +120,7 @@ function PostList({ roomId, currentUser }) {
     }
 
     const handleSaveEditPost = async () => {
-        const confirmEdit = window.confirm("Are you sure you want to save the changes to this post?")
+        const confirmEdit = window.confirm('Are you sure you want to save the changes to this post?')
         if (!confirmEdit) {
             return
         }
@@ -130,7 +142,7 @@ function PostList({ roomId, currentUser }) {
                 fileInputRef.current.value = ''
             }
         } catch (error) {
-            console.error("Failed to edit post:", error);
+            console.error('Failed to edit post:', error);
         }
     }
 
@@ -184,7 +196,7 @@ function PostList({ roomId, currentUser }) {
     }
 
     const handleSaveEditComment = async (postId) => {
-        const confirmEdit = window.confirm("Are you sure you want to save the changes to this comment?")
+        const confirmEdit = window.confirm('Are you sure you want to save the changes to this comment?')
         if (!confirmEdit) {
             return
         }
@@ -205,12 +217,12 @@ function PostList({ roomId, currentUser }) {
             }
             fetchPosts(currentPage)
         } catch (error) {
-            console.error("Failed to edit comment: ", error)
+            console.error('Failed to edit comment: ', error)
         }
     }
 
     const handleDeleteComment = async (postId, commentId) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this comment?")
+        const confirmDelete = window.confirm('Are you sure you want to delete this comment?')
         if (!confirmDelete) {
             return;
         }
@@ -221,7 +233,7 @@ function PostList({ roomId, currentUser }) {
                 [postId]: prev[postId].filter((comment) => comment.id !== commentId),
             }))
         } catch (error) {
-            console.error("Failed to delete comment:", error)
+            console.error('Failed to delete comment:', error)
         }
     }
 
@@ -307,8 +319,8 @@ function PostList({ roomId, currentUser }) {
                     )
                 }
                 pageNumbers.push(
-                    <li key="ellipsis-end" className="page-item disabled">
-                        <span className="page-link">...</span>
+                    <li key='ellipsis-end' className='page-item disabled'>
+                        <span className='page-link'>...</span>
                     </li>
                 )
                 for (let i = totalPages - 2; i < totalPages; i++) {
@@ -343,8 +355,8 @@ function PostList({ roomId, currentUser }) {
                     )
                 }
                 pageNumbers.push(
-                    <li key="ellipsis-end" className="page-item disabled">
-                        <span className="page-link">...</span>
+                    <li key='ellipsis-end' className='page-item disabled'>
+                        <span className='page-link'>...</span>
                     </li>
                 )
                 for (let i = totalPages - 5; i < totalPages; i++) {
@@ -377,8 +389,8 @@ function PostList({ roomId, currentUser }) {
                     </li>
                 )
                 pageNumbers.push(
-                    <li key="ellipsis-start" className="page-item disabled">
-                        <span className="page-link">...</span>
+                    <li key='ellipsis-start' className='page-item disabled'>
+                        <span className='page-link'>...</span>
                     </li>
                 )
                 for (let i = currentPage - 1; i <= currentPage + 1; i++) {
@@ -397,8 +409,8 @@ function PostList({ roomId, currentUser }) {
                     )
                 }
                 pageNumbers.push(
-                    <li key="ellipsis-end" className="page-item disabled">
-                        <span className="page-link">...</span>
+                    <li key='ellipsis-end' className='page-item disabled'>
+                        <span className='page-link'>...</span>
                     </li>
                 )
                 pageNumbers.push(
@@ -482,69 +494,112 @@ function PostList({ roomId, currentUser }) {
 
     return (
         <div className='mt-4'>
-            <h5 className='mb-3'>Create a Post</h5>
-            <div className='mb-3'>
-                <input
-                    className='form-control mb-2'
-                    placeholder='Add a title...'
-                    value={newPostTitle}
-                    required
-                    onChange={(e) => setNewPostTitle(e.target.value)}
-                >
-
-                </input>
-                <textarea
-                    className='form-control'
-                    placeholder='Write a new post...'
-                    value={newPostContent}
-                    onChange={(e) => setNewPostContent(e.target.value)}
-                >
-                </textarea>
-                <input
-                    type='file'
-                    className='form-control mt-2'
-                    multiple
-                    ref={fileInputRef}
-                    onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
-                >
-                </input>
-                <button className='btn btn-primary mt-2' onClick={handleAddPost}>
-                    Post
+            <div className='d-flex justify-content-between align-items-center mb-3'>
+                <button className='btn btn-primary' onClick={openPostModal}>
+                    <i className='bi bi-plus-circle me-2'></i>
+                    Create a Post
                 </button>
             </div>
+            {/* Modal to create post */}
+            {showPostModal && (
+                <div className='modal show d-block' tabIndex='-1' style={{ background: 'rgba(0,0,0,0.5)' }}>
+                    <div className='modal-dialog modal-lg'>
+                        <div className='modal-content'>
+                            <div className='modal-header'>
+                                <h5 className='modal-title'>Create a Post</h5>
+                                <button type='button' className='btn-close' onClick={closePostModal}></button>
+                            </div>
+                            <div className='modal-body'>
+                                <input
+                                    className='form-control mb-2'
+                                    placeholder='Add a title...'
+                                    value={newPostTitle}
+                                    required
+                                    onChange={(e) => setNewPostTitle(e.target.value)}
+                                >
+                                </input>
 
-            <h5>Posts</h5>
+                                <div style={{ position: 'relative' }}>
+                                    <textarea
+                                        className='form-control'
+                                        placeholder='Write a new post...'
+                                        value={newPostContent}
+                                        onChange={(e) => setNewPostContent(e.target.value)}
+                                        style={{ paddingRight: 40 }}
+                                    >
+                                    </textarea>
+                                    <button
+                                        type='button'
+                                        className='attach-btn-inside-textarea'
+                                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                        tabIndex={-1}
+                                        aria-label='Attach files'
+                                    >
+                                        <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                    </button>
+                                    <input
+                                        type='file'
+                                        className='d-none'
+                                        multiple
+                                        ref={fileInputRef}
+                                        onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
+                                    >
+                                    </input>
+                                </div>
+                                {selectedFiles.length > 0 && (
+                                    <div className='mt-2'>
+                                        {selectedFiles.map((file, index) => (
+                                            <span key={index} className='badge bg-secondary me-2'>{file.name}</span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className='modal-footer'>
+                                <button className='btn btn-secondary' onClick={closePostModal}>
+                                    <i className='bi bi-x-lg me-1'></i>
+                                    Cancel
+                                </button>
+                                <button className='btn btn-primary' onClick={handleAddPost}>
+                                    <i className='bi bi-send me-1'></i>
+                                    Post
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {posts.length === 0 ? (
                 <p>No posts yet. Be the first one to post!</p>
             ) : (
                 posts.map((post) => (
-                    <div key={post.id} className='post-card'>
+                    <div key={post.id} className='card mb-3'>
                         <div className='card-body'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <Link
                                     to={`/profile/${post.author}`}
                                     target='_blank'
-                                    className='text-decoration-none post-author'
+                                    className='text-decoration-none'
+                                    style={{ fontWeight: 'bold', color: 'inherit' }}
                                 >
-                                    <h3 style={{ fontWeight: 'bold', color: 'inherit' }}>{post.author}</h3>
+                                    <h3 className='card-title' style={{ fontWeight: 'bold', color: 'inherit' }}>{post.author}</h3>
                                 </Link>
-                                {(currentUser?.username === post.author || currentUser?.role === "ADMIN") && (
+                                {(currentUser?.username === post.author || currentUser?.role === 'ADMIN') && (
                                     <div className='d-flex justify-content-end'>
                                         <span
-                                            className='text-warning me-2'
-                                            style={{ cursor: 'pointer' }}
+                                            className='btn btn-link p-0 me-2'
+                                            style={{ color: '#ffc107' }}
                                             onClick={() => handleEditPost(post.id, post.content)}
                                             title='Edit'
                                         >
-                                            <i className="bi bi-pencil-square fs-3"></i>
+                                            <i className='bi bi-pencil-square fs-3'></i>
                                         </span>
                                         <span
-                                            className='text-danger me-2'
-                                            style={{ cursor: 'pointer' }}
+                                            className='btn btn-link p-0'
+                                            style={{ color: '#dc3545' }}
                                             onClick={() => handleDeletePost(post.id)}
                                             title='Delete'
                                         >
-                                            <i className="bi bi-trash-fill fs-3"></i>
+                                            <i className='bi bi-trash-fill fs-3'></i>
                                         </span>
                                     </div>
                                 )}
@@ -561,29 +616,50 @@ function PostList({ roomId, currentUser }) {
                                         required
                                         onChange={(e) => setEditingPostTitle(e.target.value)}
                                     ></input>
-                                    <textarea
-                                        className='form-control mb-2'
-                                        value={editingPostContent}
-                                        onChange={(e) => setEditingPostContent(e.target.value)}
-                                    >
-                                    </textarea>
-                                    <input
-                                        type='file'
-                                        className='form-control mt-2 mb-3'
-                                        multiple
-                                        onChange={e => handleEditPostFileChange(post.id, e.target.files)}
-                                    >
-                                    </input>
+                                    <div style={{ position: 'relative' }}>
+                                        <textarea
+                                            className='form-control mb-2'
+                                            value={editingPostContent}
+                                            onChange={(e) => setEditingPostContent(e.target.value)}
+                                            style={{ paddingRight: 40 }}
+                                        >
+                                        </textarea>
+                                        <button
+                                            type='button'
+                                            className='attach-btn-inside-textarea'
+                                            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                            tabIndex={-1}
+                                        >
+                                            <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                        </button>
+                                        <input
+                                            type='file'
+                                            className='d-none'
+                                            multiple
+                                            ref={fileInputRef}
+                                            onChange={e => handleEditPostFileChange(post.id, e.target.files)}
+                                        >
+                                        </input>
+                                    </div>
+                                    {selectedEditFiles[post.id] && selectedEditFiles[post.id].length > 0 && (
+                                        <div className='mt-2'>
+                                            {selectedEditFiles[post.id].map((file, index) => (
+                                                <span key={index} className='badge bg-secondary me-2'>{file.name}</span>
+                                            ))}
+                                        </div>
+                                    )}
                                     <button
                                         className='btn btn-sm btn-success me-2'
                                         onClick={handleSaveEditPost}
                                     >
+                                        <i className='bi bi-check-lg me-1'></i>
                                         Save
                                     </button>
                                     <button
                                         className='btn btn-sm btn-secondary me-2'
                                         onClick={() => setEditingPostId(null)}
                                     >
+                                        <i className='bi bi-x-lg me-1'></i>
                                         Cancel
                                     </button>
                                 </div>
@@ -613,20 +689,21 @@ function PostList({ roomId, currentUser }) {
                                             return (
                                                 <div key={index}>
                                                     <span
-                                                        className="btn btn-link p-0"
+                                                        className='btn btn-link p-0'
                                                         style={{ textDecoration: 'underline' }}
                                                         onClick={() => downloadFile(fileUrl, fileName)}
                                                     >
+                                                        <i className='bi bi-paperclip me-1'></i>
                                                         {originalName}
                                                     </span>
                                                     {editingPostId === post.id && (
                                                         <span
-                                                            className='btn btn-sm btn-danger'
+                                                            className='btn btn-sm'
                                                             onClick={() => handleRemoveFile(post.id, fileUrl)}
                                                             style={{ cursor: 'pointer' }}
                                                             title='Delete'
                                                         >
-                                                            <i className="bi bi-x-lg"></i>
+                                                            <i className='bi bi-x-lg'></i>
                                                         </span>
                                                     )}
                                                 </div>
@@ -651,57 +728,70 @@ function PostList({ roomId, currentUser }) {
                                         <p>No comments yet.</p>
                                     ) : (
                                         <>
-                                            <ul className="list-group mb-3">
+                                            <ul className='list-group mb-3'>
                                                 {comments[post.id]?.map((comment) => (
-                                                    <li key={comment.id} className="list-group-item">
+                                                    <li key={comment.id} className='list-group-item'>
                                                         <div className='d-flex justify-content-between align-items-center'>
                                                             <Link
                                                                 to={`/profile/${comment.author}`}
-                                                                className="text-decoration-none"
+                                                                className='text-decoration-none'
                                                                 style={{ fontWeight: 'bold', color: 'inherit' }}
                                                                 target='_blank'
                                                             >
                                                                 {comment.author}
                                                             </Link>
-                                                            {(currentUser?.username === comment.author || currentUser?.role === "ADMIN") && (
+                                                            {(currentUser?.username === comment.author || currentUser?.role === 'ADMIN') && (
                                                                 <div className='d-flex justify-content-end'>
                                                                     <span
-                                                                        className='text-warning me-2'
-                                                                        style={{ cursor: 'pointer' }}
+                                                                        className='btn btn-link p-0 me-2'
+                                                                        style={{ color: '#ffc107' }}
                                                                         onClick={() => handleEditComment(comment.id, comment.content)}
                                                                         title='Edit'
                                                                     >
-                                                                        <i className="bi bi-pencil-square"></i>
+                                                                        <i className='bi bi-pencil-square'></i>
                                                                     </span>
                                                                     <span
-                                                                        className='text-danger me-2'
-                                                                        style={{ cursor: 'pointer' }}
+                                                                        className='btn btn-link p-0'
+                                                                        style={{ color: '#dc3545' }}
                                                                         onClick={() => handleDeleteComment(post.id, comment.id)}
                                                                         title='Delete'
                                                                     >
-                                                                        <i className="bi bi-trash-fill"></i>
+                                                                        <i className='bi bi-trash-fill'></i>
                                                                     </span>
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <p className="text-muted small">
+                                                        <p className='text-muted small'>
                                                             {new Date(comment.createdTime).toLocaleString()}
                                                         </p>
                                                         {editingCommentId === comment.id ? (
                                                             <div>
-                                                                <textarea
-                                                                    className="form-control mb-2"
-                                                                    value={editingCommentContent}
-                                                                    onChange={(e) => setEditingCommentContent(e.target.value)}
-                                                                ></textarea>
-                                                                <input
-                                                                    type='file'
-                                                                    className='form-control mt-2 mb-3'
-                                                                    multiple
-                                                                    ref={el => commentFileInputRefs.current[post.id] = el}
-                                                                    onChange={e => handleEditCommentFileChange(comment.id, e.target.files)}
-                                                                >
-                                                                </input>
+                                                                <div style={{ position: 'relative' }}>
+                                                                    <textarea
+                                                                        className='form-control mb-2'
+                                                                        value={editingCommentContent}
+                                                                        onChange={(e) => setEditingCommentContent(e.target.value)}
+                                                                        style={{ paddingRight: 40 }}
+                                                                    >
+                                                                    </textarea>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="attach-btn-inside-textarea"
+                                                                        onClick={() => commentFileInputRefs.current[post.id] && commentFileInputRefs.current[post.id].click()}
+                                                                        tabIndex={-1}
+                                                                        aria-label="Attach files"
+                                                                    >
+                                                                        <i className="bi bi-paperclip fs-4" style={{ color: '#7a2424' }}></i>
+                                                                    </button>
+                                                                    <input
+                                                                        type='file'
+                                                                        className='d-none'
+                                                                        multiple
+                                                                        ref={el => commentFileInputRefs.current[post.id] = el}
+                                                                        onChange={e => handleEditCommentFileChange(comment.id, e.target.files)}
+                                                                    >
+                                                                    </input>
+                                                                </div>
                                                                 {selectedEditCommentFiles[comment.id] && selectedEditCommentFiles[comment.id].length > 0 && (
                                                                     <div className='mt-2'>
                                                                         {selectedEditCommentFiles[comment.id].map((file, index) => (
@@ -710,15 +800,17 @@ function PostList({ roomId, currentUser }) {
                                                                     </div>
                                                                 )}
                                                                 <button
-                                                                    className="btn btn-sm btn-success me-2"
+                                                                    className='btn btn-sm btn-success me-2'
                                                                     onClick={() => handleSaveEditComment(post.id)}
                                                                 >
+                                                                    <i className='bi bi-check-lg me-1'></i>
                                                                     Save
                                                                 </button>
                                                                 <button
-                                                                    className="btn btn-sm btn-secondary"
+                                                                    className='btn btn-sm btn-secondary'
                                                                     onClick={() => setEditingCommentId(null)}
                                                                 >
+                                                                    <i className='bi bi-x-lg me-1'></i>
                                                                     Cancel
                                                                 </button>
                                                             </div>
@@ -743,10 +835,11 @@ function PostList({ roomId, currentUser }) {
                                                                         return (
                                                                             <div key={index}>
                                                                                 <span
-                                                                                    className="btn btn-link p-0"
+                                                                                    className='btn btn-link p-0'
                                                                                     style={{ textDecoration: 'underline' }}
                                                                                     onClick={() => downloadFile(fileUrl, fileName)}
                                                                                 >
+                                                                                    <i className='bi bi-paperclip me-1'></i>
                                                                                     {originalName}
                                                                                 </span>
                                                                                 {editingCommentId === comment.id && (
@@ -757,7 +850,7 @@ function PostList({ roomId, currentUser }) {
                                                                                         }}
                                                                                         style={{ cursor: 'pointed' }}
                                                                                         title='Delete'
-                                                                                        className='btn btn-sm btn-danger'
+                                                                                        className='btn btn-sm'
                                                                                     >
                                                                                         <i className='bi bi-x-lg'></i>
                                                                                     </span>
@@ -776,33 +869,43 @@ function PostList({ roomId, currentUser }) {
                                 </>
                             )}
                             <div className='d-flex'>
-                                <textarea
-                                    type='text'
-                                    className='form-control me-2'
-                                    value={newCommentContent[post.id] || ''}
-                                    onChange={(e) =>
-                                        setNewCommentContent((prev) => ({
-                                            ...prev,
-                                            [post.id]: e.target.value
-                                        }))
-                                    }
-                                    placeholder='Write a comment...'
-                                >
-                                </textarea>
-                                <input
-                                    type='file'
-                                    className='form-control ms-2 me-3'
-                                    multiple
-                                    ref={el => commentFileInputRefs.current[post.id] = el}
-                                    onChange={e => handleCommentFileChange(post.id, e.target.files)}
-                                    style={{ maxWidth: 180 }}
-                                >
-                                </input>
+                                <div style={{ position: 'relative', flex: 1 }}>
+                                    <textarea
+                                        type='text'
+                                        className='form-control me-2'
+                                        value={newCommentContent[post.id] || ''}
+                                        onChange={(e) =>
+                                            setNewCommentContent((prev) => ({
+                                                ...prev,
+                                                [post.id]: e.target.value
+                                            }))
+                                        }
+                                        placeholder='Write a comment...'
+                                        style={{ paddingRight: 40 }}
+                                    >
+                                    </textarea>
+                                    <button
+                                        type='button'
+                                        className='attach-btn-inside-textarea'
+                                        onClick={() => commentFileInputRefs.current[post.id] && commentFileInputRefs.current[post.id].click()}
+                                        tabIndex={-1}
+                                    >
+                                        <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                    </button>
+                                    <input
+                                        type='file'
+                                        className='d-none'
+                                        multiple
+                                        ref={el => commentFileInputRefs.current[post.id] = el}
+                                        onChange={e => handleCommentFileChange(post.id, e.target.files)}
+                                    >
+                                    </input>
+                                </div>
                                 <button
-                                    className='btn btn-primary'
+                                    className='btn btn-primary ms-2'
                                     onClick={() => handleAddComment(post.id)}
                                 >
-                                    Comment
+                                    <i className='bi bi-send me-1'></i>
                                 </button>
                             </div>
                             {selectedCommentFiles[post.id] && selectedCommentFiles[post.id].length > 0 && (

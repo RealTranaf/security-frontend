@@ -18,12 +18,12 @@ function ResetPasswordPage() {
                 await validateResetToken(token)
                 setIsValidToken(true)
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error has occured"
+                const resMessage = (error.response?.data?.message) || error.message || 'An error has occured'
                 setMessage(resMessage)
                 if (error.response && error.response.status === 403) {
-                    window.location.href = "/login"
+                    window.location.href = '/login'
                 } else {
-                    console.error("Failed to fetch user:", error)
+                    console.error('Failed to fetch user:', error)
                 }
             }
         }
@@ -33,9 +33,9 @@ function ResetPasswordPage() {
     const validateForm = () => {
         const errors = {}
         if (!newPassword) {
-            errors.newPassword = "Password is required!"
+            errors.newPassword = 'Password is required!'
         } else if (newPassword.length < 6 || newPassword.length > 40) {
-            errors.newPassword = "Password must be between 6 and 40 characters!"
+            errors.newPassword = 'Password must be between 6 and 40 characters!'
         }
         setErrors(errors)
         return Object.keys(errors).length === 0
@@ -53,7 +53,7 @@ function ResetPasswordPage() {
                 setMessage(response.data.message)
                 setSuccessful(true)
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error has occured"
+                const resMessage = (error.response?.data?.message) || error.message || 'An error has occured'
                 setMessage(resMessage)
                 setSuccessful(false)
                 setLoading(false)
@@ -73,8 +73,8 @@ function ResetPasswordPage() {
 
     if (!isValidToken) {
         return (
-            <div className="container d-flex justify-content-center align-items-center">
-                <div className="alert alert-danger text-center">
+            <div className='container d-flex justify-content-center align-items-center'>
+                <div className='alert alert-danger text-center'>
                     {/* {message || 'Validating token...'} */}
                     NO
                 </div>
@@ -107,10 +107,10 @@ function ResetPasswordPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="d-grid mb-3">
-                                <button className="btn btn-primary" disabled={loading}>
+                            <div className='d-grid mb-3'>
+                                <button className='btn btn-primary' disabled={loading}>
                                     {loading && (
-                                        <span className="spinner-border spinner-border-sm me-2"></span>
+                                        <span className='spinner-border spinner-border-sm me-2'></span>
                                     )}
                                     Change Password
                                 </button>
@@ -119,7 +119,7 @@ function ResetPasswordPage() {
                     )}
                     {message && (
                         <div className='mb-3'>
-                            <div className={successful ? "alert alert-success text-center" : "alert alert-danger text-center"} role="alert">
+                            <div className={successful ? 'alert alert-success text-center' : 'alert alert-danger text-center'} role='alert'>
                                 {message}
                             </div>
                         </div>

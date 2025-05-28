@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { testAdmin } from '../services/user-service'
 import eventBus from '../services/eventBus'
 function AdminBoard() {
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -11,12 +11,12 @@ function AdminBoard() {
                 setContent(response.data)
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    eventBus.dispatch("logout")
+                    eventBus.dispatch('logout')
                 }
                 if (error.response && error.response.status === 403) {
-                    window.location.href = "/login"
+                    window.location.href = '/login'
                 } else {
-                    console.error("Failed to fetch user:", error)
+                    console.error('Failed to fetch user:', error)
                 }
             }
         }
@@ -26,8 +26,8 @@ function AdminBoard() {
 
 
     return (
-        <div className="container">
-            <div className="bg-light p-5 rounded">
+        <div className='container'>
+            <div className='bg-light p-5 rounded'>
                 <h3>{content}</h3>
             </div>
         </div>

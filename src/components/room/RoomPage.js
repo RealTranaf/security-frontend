@@ -77,9 +77,9 @@ function RoomPage() {
     }
 
     return (
-        <div className='d-flex' style={{background: 'rgb(255, 251, 195)'}}>
+        <div className='d-flex' style={{background: '#FFFAED'}}>
             <RoomSideBar room={room} selectedPage={selectedPage} setSelectedPage={setSelectedPage}></RoomSideBar>
-            <div className='flex-grow-1 ms-4 px-5'>
+            <div className='flex-grow-1 px-5'>
                 {selectedPage === 'posts' && (
                     <PostList roomId={roomId} currentUser={currentUser}></PostList>
                 )}

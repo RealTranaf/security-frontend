@@ -18,7 +18,7 @@ function VerifyPage() {
     const validateForm = () => {
         const errors = {}
         if (!verificationCode.trim() || verificationCode.length !== 6) {
-            errors.verificationCode = "Please enter a 6 digit code!"
+            errors.verificationCode = 'Please enter a 6 digit code!'
         }
         setErrors(errors)
         return Object.keys(errors).length === 0
@@ -34,7 +34,7 @@ function VerifyPage() {
                 setMessage(response.data.message)
                 setSuccessful(true)
             } catch (error) {
-                const resMessage = (error.response?.data?.message) || error.message || "An error occurred during verification!"
+                const resMessage = (error.response?.data?.message) || error.message || 'An error occurred during verification!'
                 setMessage(resMessage)
                 setSuccessful(false)
             }
@@ -52,7 +52,7 @@ function VerifyPage() {
             setMessage(response.data.message)
             setSuccessful(true)
         } catch (error) {
-            const resMessage = (error.response?.data?.message) || error.message || "An error occurred during resending!"
+            const resMessage = (error.response?.data?.message) || error.message || 'An error occurred during resending!'
             setMessage(resMessage)
             setSuccessful(false)
             setLoading(false)
@@ -67,7 +67,7 @@ function VerifyPage() {
         <div className='container d-flex justify-content-center align-items-center'>
             <div className='card card-container'>
                 <h3 className='text-center'>Verify Your Account</h3>
-                <p className="mb-2">
+                <p className='mb-2'>
                     Enter the 6-digit verification code sent to your e-mail address here!
                 </p>
                 <form onSubmit={handleVerification}>
@@ -88,12 +88,12 @@ function VerifyPage() {
                             </div>
                         )}
                     </div>
-                    <div className="d-grid mb-3">
-                        <button className="btn btn-primary">Verify</button>
+                    <div className='d-grid mb-3'>
+                        <button className='btn btn-primary'>Verify</button>
                     </div>
                     {message && (
                         <div className='mb-3'>
-                            <div className={successful ? "alert alert-success text-center" : "alert alert-danger text-center"} role="alert">
+                            <div className={successful ? 'alert alert-success text-center' : 'alert alert-danger text-center'} role='alert'>
                                 {message}
                             </div>
                         </div>
@@ -101,12 +101,12 @@ function VerifyPage() {
                 </form>
                 <div className='d-grid mb-3'>
                     <button 
-                        className="btn btn-primary" 
+                        className='btn btn-primary' 
                         style={{ margin: '20px' }} 
                         onClick={handleResendCode}
                         disabled={loading}>
                         {loading && (
-                            <span className="spinner-border spinner-border-sm me-2"></span>
+                            <span className='spinner-border spinner-border-sm me-2'></span>
                         )}
                         Resend code
                     </button>

@@ -11,6 +11,7 @@ function GradeForm({ initialGrade, initialNote, onSave }) {
                 e.preventDefault()
                 onSave(grade, note)
             }}
+            className='d-flex flex-column align-items-start'
         >
             <input 
                 className='form-control mb-1' 
@@ -28,9 +29,10 @@ function GradeForm({ initialGrade, initialNote, onSave }) {
 
             </input>
             <button
-                className='btn btn-sm btn-primary'
+                className='btn btn-sm btn-success'
                 type='submit'
             >
+                <i className='bi bi-check-lg me-1'></i>
                 Save
             </button>
         </form>
