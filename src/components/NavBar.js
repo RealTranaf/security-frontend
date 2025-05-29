@@ -68,11 +68,11 @@ function NavBar() {
                                     Teacher Board
                                 </Link>
                             </li>
-                            <li className='nav-item'>
+                            {/* <li className='nav-item'>
                                 <Link to={'/create-room'} className='nav-link'>
                                     Create Room
                                 </Link>
-                            </li>
+                            </li> */}
                         </>
                     )}
 

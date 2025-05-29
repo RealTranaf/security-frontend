@@ -51,6 +51,12 @@ label {
   transform: scale(1.05);
 }
 
+.room-card-hover:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    background: #fffde7 !important;
+}
+
 .room-card-title {
   margin: 0;
   font-size: 1.5rem;
@@ -138,4 +144,10 @@ label {
     border: none;
     outline: none;
     padding: 0;
+}
+
+.card-title.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

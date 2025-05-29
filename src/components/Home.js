@@ -1,38 +1,57 @@
 import React, { useEffect, useState } from 'react'
-// import { getPublicHello } from '../services/user-service'
+import { getCurrentUser } from '../services/user-service'
 import { getRoomList } from '../services/room-service'
+import CreateRoomModal from './CreateRoomModal'
 import { useNavigate } from 'react-router-dom'
 
 function Home() {
     const [rooms, setRooms] = useState([])
     const [error, setError] = useState('')
+    const [currentUser, setCurrentUser] = useState()
+    const [showCreateModal, setShowCreateModal] = useState(false)
 
     const navigate = useNavigate()
 
-    useEffect(() => {
-        const fetchRoom = async () => {
-            try {
-                const response = await getRoomList()
+    const fetchRoom = async () => {
+        try {
+            const response = await getRoomList()
+            const sortedRooms = response.data.sort((a, b) =>
+                a.name.localeCompare(b.name)
+            )
+            setRooms(sortedRooms)
+        } catch (error) {
+            const errorMessage =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString()
 
-                const sortedRooms = response.data.sort((a, b) =>
-                    a.name.localeCompare(b.name)
-                )
-                setRooms(sortedRooms)
-            } catch (error) {
-                const errorMessage =
-                    (error.response && error.response.data) ||
-                    error.message ||
-                    error.toString()
-
-                setError(errorMessage)
-                if (error.response && error.response.status === 403) {
-                    window.location.href = '/login'
-                } else {
-                    console.error('Failed to fetch user:', error)
-                }
+            setError(errorMessage)
+            if (error.response && error.response.status === 403) {
+                window.location.href = '/login'
+            } else {
+                console.error('Failed to fetch user:', error)
             }
         }
+    }
+    const fetchUser = async () => {
+        try {
+            const response = await getCurrentUser()
+            const user = response.data
+            if (user) {
+                setCurrentUser(user)
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 403) {
+                window.location.href = '/login'
+            } else {
+                console.error('Failed to fetch user:', error)
+            }
+        }
+    }
+
+    useEffect(() => {
         fetchRoom()
+        fetchUser()
     }, [])
 
     const handleRoomClick = (roomId) => {
@@ -40,29 +59,61 @@ function Home() {
     }
 
     return (
-        <div className='container'>
-            <div className='p-5 rounded'>
-                <h3>Your classes</h3>
-                {error && <div className='alert alert-danger'>{error}</div>}
-                <div className='row' style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr)' }}>
-                    {rooms.map((room) => (
-                        <div className='col-md-6' key={room.id}>
+        <div className='container mt-5'>
+            <div className='d-flex justify-content-between align-items-center mb-4'>
+                <h3 className='fw-bold mb-0'>Your classes</h3>
+                {currentUser && currentUser.role === 'TEACHER' && (
+                    <button className='btn btn-primary' onClick={() => setShowCreateModal(true)}>
+                        <i className='bi bi-plus-circle me-1'></i>
+                        Create Room
+                    </button>
+                )}
+            </div>
+            {error && <div className='alert alert-danger'>{error}</div>}
+            <div className='row g-4'>
+                {rooms.length === 0 ? (
+                    <div className='col-12 text-center text-muted'>
+                        <i className='bi bi-door-closed fs-1 mb-2'></i>
+                        <div>No classes found</div>
+                    </div>
+                ) : (
+                    rooms.map((room) => (
+                        <div className='col-12 col-sm-6 col-md-4 col-lg-3 d-flex' key={room.id}>
                             <div
-                                className='room-card'
-                                style={{ cursor: 'pointer' }}
+                                className='card shadow-sm room-card-hover flex-fill'
+                                style={{
+                                    cursor: 'pointer',
+                                    border: '1.5px solid #e0e0e0',
+                                    borderRadius: '18px',
+                                    transition: 'transform 0.15s, box-shadow 0.15s',
+                                    minWidth: 0,
+                                    background: 'rgb(167, 26, 26)',
+                                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+                                }}
                                 onClick={() => handleRoomClick(room.id)}
                             >
-                                <div className='card-body'>
-                                    <h5 className='room-card-title'>{room.name}</h5>
-                                    <p className='room-card-text'>
-                                        Created by: {room.createdBy}
-                                    </p>
+                                <div className='card-body d-flex flex-column align-item-center justify-content-between' style={{ minHeight: 140 }}>
+                                    <div className='w-100 text-center'>
+                                        <i className="bi bi-door-open fs-2 mb-2 text-primary"></i>
+                                        <h5 className='card-title fw-semibold mb-2 text-truncate'>
+                                            {room.name}
+                                        </h5>
+                                        <p className='card-text mb-1 text-muted'>
+                                            Created by: <span className='fw-semibold'>{room.createdBy}</span>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    ))}
-                </div>
+                    ))
+                )}
             </div>
+            <CreateRoomModal
+                show={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSuccess={fetchRoom}
+            >
+            </CreateRoomModal>
         </div>
     )
 }

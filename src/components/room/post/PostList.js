@@ -125,7 +125,12 @@ function PostList({ roomId, currentUser }) {
             return
         }
         try {
-
+            for (const file of selectedEditFiles[editingPostId] || []) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                    return
+                }
+            }
             await editPost(roomId, editingPostId, editingPostTitle, editingPostContent, selectedEditFiles[editingPostId] || [], filesToDelete[editingPostId] || [])
             setPosts((prev) =>
                 prev.map((post) =>
@@ -201,6 +206,12 @@ function PostList({ roomId, currentUser }) {
             return
         }
         try {
+            for (const file of selectedEditCommentFiles[editingCommentId] || []) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                    return
+                }
+            }
             await editComment(postId, editingCommentId, editingCommentContent, selectedEditCommentFiles[editingCommentId] || [], commentFilesToDelete[editingCommentId] || [])
             setComments((prev) => ({
                 ...prev,
@@ -278,7 +289,6 @@ function PostList({ roomId, currentUser }) {
     const handleRemoveCommentFile = (commentId, fileUrl) => {
         setCommentFilesToDelete(prev => ({
             ...prev,
-            // [commentId]: [...(prev[commentId] || []), fileUrl]
             [commentId]: [...new Set([...(prev[commentId] || []), fileUrl])]
         }))
     }
@@ -459,7 +469,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, 0)}
                             >
-                                &#171
+                                &#171;
                             </button>
                         </li>
                         <li className={`page-item ${currentCommentPage === 0 ? 'disabled' : ''}`}>
@@ -467,7 +477,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, currentCommentPage - 1)}
                             >
-                                &#8249
+                                &#8249;
                             </button>
                         </li>
                         <li className={`page-item ${currentCommentPage === totalCommentPages - 1 ? 'disabled' : ''}`}>
@@ -475,7 +485,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, currentCommentPage + 1)}
                             >
-                                &#8250
+                                &#8250;
                             </button>
                         </li>
                         <li className={`page-item ${currentCommentPage === totalCommentPages - 1 ? 'disabled' : ''}`}>
@@ -483,7 +493,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => fetchComments(postId, totalCommentPages - 1)}
                             >
-                                &#187
+                                &#187;
                             </button>
                         </li>
                     </ul>
@@ -588,7 +598,7 @@ function PostList({ roomId, currentUser }) {
                                         <span
                                             className='btn btn-link p-0 me-2'
                                             style={{ color: '#ffc107' }}
-                                            onClick={() => handleEditPost(post.id, post.content)}
+                                            onClick={() => handleEditPost(post.id, post.title, post.content)}
                                             title='Edit'
                                         >
                                             <i className='bi bi-pencil-square fs-3'></i>
@@ -933,7 +943,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => handlePageChange(0)}
                             >
-                                &#171
+                                &#171;
                             </button>
                         </li>
                         <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
@@ -941,7 +951,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={handlePreviousPage}
                             >
-                                &#8249
+                                &#8249;
                             </button>
                         </li>
                         {renderPageNummbers()}
@@ -950,7 +960,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={handleNextPage}
                             >
-                                &#8250
+                                &#8250;
                             </button>
                         </li>
                         <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
@@ -958,7 +968,7 @@ function PostList({ roomId, currentUser }) {
                                 className='page-link'
                                 onClick={() => handlePageChange(totalPages - 1)}
                             >
-                                &#187
+                                &#187;
                             </button>
                         </li>
                     </ul>

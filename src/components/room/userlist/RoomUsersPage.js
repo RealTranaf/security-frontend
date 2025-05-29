@@ -79,12 +79,12 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
         if (a.role < b.role) return -1
         if (a.role > b.role) return 1
 
-        return a.username.localeCompare(b.username, undefined, { sensitivity: 'base'})
+        return a.username.localeCompare(b.username, undefined, { sensitivity: 'base' })
     })
 
-    const refreshPage = async() => {
+    const refreshPage = async () => {
         const response = await getRoomDetail(roomId)
-            setRoom(response.data)
+        setRoom(response.data)
     }
 
     const handleSelectUserAdd = (user) => {
@@ -110,71 +110,87 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
     }
 
     return (
-        <div className='mt-4'>
-            <div className='d-flex justify-content-between align-items-center'>
-                {currentUser && (currentUser.role === 'TEACHER' || currentUser.role === 'ADMIN') && (
-                    <div className='d-flex justify-content-center'>
-                        <button
-                            className='btn btn-primary me-2'
-                            data-bs-toggle='modal'
-                            data-bs-target='#searchAndAddUsersModal'
-                        >
-                            Add Users
-                        </button>
-                        <button
-                            className='btn btn-danger me-2'
-                            data-bs-toggle='modal'
-                            data-bs-target='#removeUsersModal'
-                        >
-                            Remove Users
-                        </button>
+        <div className='container mt-4'>
+            <div className='card shadow-sm'>
+                <div className='card-body' style={{ background: '#f5f6fa' }}>
+                    <div className='d-flex justify-content-between align-items-center'>
+                        <div>
+                            <h2 className='fw-bold mb-0'>Users</h2>
+                            <div className='text-muted small mt-1'>Manage users in this room</div>
+                        </div>
+                        {currentUser && (currentUser.role === 'TEACHER' || currentUser.role === 'ADMIN') && (
+                            <div className='d-flex justify-content-center'>
+                                <button
+                                    className='btn btn-primary me-2'
+                                    data-bs-toggle='modal'
+                                    data-bs-target='#searchAndAddUsersModal'
+                                >
+                                    <i className="bi bi-person-plus"></i>
+                                </button>
+                                <button
+                                    className='btn btn-secondary'
+                                    data-bs-toggle='modal'
+                                    data-bs-target='#removeUsersModal'
+                                >
+                                    <i className="bi bi-person-dash"></i>
+                                </button>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
-            <div className='mt-4'>
-                <h3>Users in this room:</h3>
-                <div className='table-responsive'>
-                    <table className='table table-bordered align-middle'>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sortedUserList.map((user) => {
-                                const isCurrentUser = currentUser && user.username === currentUser.username
-                                const isAdmin = user.role === 'ADMIN'
-                                return (
-                                    <tr key={user.id}>
-                                        <td>{user.username} {isCurrentUser && <span className='text-muted'>(You)</span>}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.role}</td>
-                                        <td>
-                                            <button
-                                                className='btn btn-sm btn-danger'
-                                                disabled={isCurrentUser || isAdmin}
-                                                onClick={async () => {
-                                                    const confirmed = window.confirm(`Are you sure you want to remove ${user.username} from the room?`)
-                                                    if (confirmed){
-                                                        await removeUsersFromRoom(roomId, [user.username])
-                                                        refreshPage()
-                                                    }
-                                                }}
-                                            >
-                                                Remove
-                                            </button>
-                                            {isAdmin && <span className='text-muted ms-2'>(ADMIN)</span>}
-                                        </td>
+                    <div className='mt-4'>
+                        <div className='table-responsive'>
+                            <table className='table table-bordered align-middle'>
+                                <thead className='table-light'>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
                                     </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                    {sortedUserList.map((user) => {
+                                        const isCurrentUser = currentUser && user.username === currentUser.username
+                                        const isAdmin = user.role === 'ADMIN'
+                                        return (
+                                            <tr key={user.id}>
+                                                <td>
+                                                    <span className='fw-semibold'>{user.username}</span>
+                                                    {isCurrentUser && <span className='text-muted ms-1'>(You)</span>}
+                                                </td>
+                                                <td>{user.email}</td>
+                                                <td>
+                                                    <span className={`badge ${isAdmin ? 'bg-warning text-dark' : 'bg-secondary'}`}>
+                                                       {user.role} 
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        className='btn btn-sm btn-danger'
+                                                        disabled={isCurrentUser || isAdmin}
+                                                        onClick={async () => {
+                                                            const confirmed = window.confirm(`Are you sure you want to remove ${user.username} from the room?`)
+                                                            if (confirmed) {
+                                                                await removeUsersFromRoom(roomId, [user.username])
+                                                                refreshPage()
+                                                            }
+                                                        }}
+                                                    >
+                                                        <i className="bi bi-person-x me-1"></i>
+                                                        Remove
+                                                    </button>
+                                                    {isAdmin && <span className='text-muted ms-2'>(ADMIN)</span>}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             {/* Add user modal */}
             <div
                 className='modal fade'
@@ -217,12 +233,12 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                             key={user.id}
                                             className='list-group-item d-flex justify-content-between align-items-center'
                                         >
-                                            {user.username}
+                                            <span>{user.username}</span>
                                             <button
                                                 className='btn btn-sm btn-primary'
                                                 onClick={() => handleSelectUserAdd(user)}
                                             >
-                                                Add
+                                                <i className="bi bi-plus-lg"></i>
                                             </button>
                                         </li>
                                     ))}
@@ -243,10 +259,10 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                     >
                                         {user.username}
                                         <button
-                                            className='btn btn-sm btn-danger'
+                                            className='btn btn-sm btn-secondary'
                                             onClick={() => handleClearUserAdd(user.id)}
                                         >
-                                            Remove
+                                            <i className="bi bi-x-lg"></i>
                                         </button>
                                     </li>
                                 ))}
@@ -266,7 +282,8 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                 onClick={handleAddUsers}
                                 disabled={selectedUsersAdd.length === 0}
                             >
-                                Add Selected Users
+                                <i className="bi bi-person-plus me-1"></i>
+                                Add
                             </button>
                         </div>
                     </div>
@@ -321,7 +338,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                                     }}
                                                 >
                                                 </input>
-                                                {user.username}
+                                                <span>{user.username}</span>
                                                 {isCurrentUser && (
                                                     <span className='text-muted ms-2'>(You)</span>
                                                 )}
@@ -351,7 +368,8 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                 }
                                 disabled={selectedUsersRemove.length === 0}
                             >
-                                Remove Selected Users
+                                <i className="bi bi-person-dash me-1"></i>
+                                Remove
                             </button>
                         </div>
                     </div>

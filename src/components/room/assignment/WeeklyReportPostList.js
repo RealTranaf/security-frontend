@@ -74,27 +74,37 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                             onChange={e => setEditingPostTitle(e.target.value)}
                                         >
                                         </input>
-                                        <textarea
-                                            className='form-control mb-2'
-                                            placeholder='Edit content...'
-                                            value={editingPostContent}
-                                            onChange={e => setEditingPostContent(e.target.value)}
-                                        >
-                                        </textarea>
+                                        <div style={{ position: 'relative' }}>
+                                            <textarea
+                                                className='form-control mb-2'
+                                                placeholder='Edit content...'
+                                                value={editingPostContent}
+                                                onChange={e => setEditingPostContent(e.target.value)}
+                                            >
+                                            </textarea>
+                                            <button
+                                                type='button'
+                                                className='attach-btn-inside-textarea'
+                                                onClick={() => editFileInputRef.current && editFileInputRef.current.click()}
+                                                tabIndex={-1}
+                                            >
+                                                <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                            </button>
+                                            <input
+                                                type='file'
+                                                className='d-none'
+                                                multiple
+                                                ref={editFileInputRef}
+                                                onChange={e => setSelectedEditFiles(Array.from(e.target.files))}
+                                            >
+                                            </input>
+                                        </div>
                                         <input
                                             className='form-control mb-2'
                                             type='datetime-local'
                                             value={editingPostDeadline}
                                             onChange={e => setEditingPostDeadline(e.target.value)}
                                         />
-                                        <input
-                                            type='file'
-                                            className='form-control mb-2'
-                                            multiple
-                                            ref={editFileInputRef}
-                                            onChange={e => setSelectedEditFiles(Array.from(e.target.files))}
-                                        >
-                                        </input>
                                         <div>
                                             <strong>Current Attachments: </strong>
                                             <div>

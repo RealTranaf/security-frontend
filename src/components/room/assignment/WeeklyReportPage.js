@@ -66,6 +66,12 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
         }
 
         try {
+            for (const file of newPostFiles || []) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                    return
+                }
+            }
             await createWeeklyReportPost(roomId, newPostTitle, newPostContent, newPostDeadline, newPostFiles)
             closeCreateModal()
             if (fileInputRef.current) {
@@ -98,6 +104,12 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
             return
         }
         try {
+            for (const file of selectedEditFiles || []) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                    return
+                }
+            }
             await editWeeklyReportPost(roomId, editingPostId, editingPostTitle, editingPostContent, editingPostDeadline, selectedEditFiles, filesToDelete)
             setEditingPostId(null)
             setEditingPostTitle('')
@@ -153,6 +165,12 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
         }
 
         try {
+            for (const file of reportFiles || []) {
+                if (file.size > 100 * 1024 * 1024) {
+                    alert(`File ${file.name} exceeds the 100MB limit. Please upload smaller files.`)
+                    return
+                }
+            }
             if (getMySubmission()) {
                 await resubmitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
             } else {
@@ -245,26 +263,44 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                             onChange={e => setNewPostTitle(e.target.value)}
                                         >
                                         </input>
-                                        <textarea
-                                            className='form-control'
-                                            placeholder='Describe the report request...'
-                                            value={newPostContent}
-                                            onChange={e => setNewPostContent(e.target.value)}
-                                        >
-                                        </textarea>
+                                        <div style={{ position: 'relative' }}>
+                                            <textarea
+                                                className='form-control'
+                                                placeholder='Describe the report request...'
+                                                value={newPostContent}
+                                                onChange={e => setNewPostContent(e.target.value)}
+                                                style={{ paddingRight: 40 }}
+                                            >
+                                            </textarea>
+                                            <button
+                                                type='button'
+                                                className='attach-btn-inside-textarea'
+                                                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                                tabIndex={-1}
+                                            >
+                                                <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                            </button>
+                                            <input
+                                                type='file'
+                                                className='d-none'
+                                                multiple
+                                                ref={fileInputRef}
+                                                onChange={e => setNewPostFiles(Array.from(e.target.files))}
+                                            >
+                                            </input>
+                                        </div>
+                                        {newPostFiles.length > 0 && (
+                                            <div className='mt-2'>
+                                                {newPostFiles.map((file, idx) => (
+                                                    <span key={idx} className='badge bg-secondary me-2'>{file.name}</span>
+                                                ))}
+                                            </div>
+                                        )}
                                         <input
                                             className='form-control mt-2'
                                             type='datetime-local'
                                             value={newPostDeadline}
                                             onChange={e => setNewPostDeadline(e.target.value)}
-                                        >
-                                        </input>
-                                        <input
-                                            type='file'
-                                            className='form-control mt-2'
-                                            multiple
-                                            ref={fileInputRef}
-                                            onChange={e => setNewPostFiles(Array.from(e.target.files))}
                                         >
                                         </input>
                                     </div>

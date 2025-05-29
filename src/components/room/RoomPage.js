@@ -43,14 +43,11 @@ function RoomPage() {
         fetchUser()
     }, [])
 
-    //get room details
     useEffect(() => {
         const fetchRoomDetails = async () => {
             try {
                 const response = await getRoomDetail(roomId)
-                // console.log(response.data)
                 setRoom(response.data)
-                // console.log(response)
             } catch (error) {
                 const errorMessage =
                     (error.response && error.response.data) ||
