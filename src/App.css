@@ -1,12 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
 
-div {
-  font-family: 'Roboto'
+:root {
+  --main-red: #7a2424;
 }
-label {
-  display: block;
-  margin-top: 10px;
+
+div, option {
+  font-family: 'Roboto' !important;
 }
+
 .card-container.card {
   max-width: 600px;
   width: 300px;
@@ -24,13 +25,41 @@ label {
   border: 2px solid rgba(0, 0, 0, 0.3);
 }
 
-.profile-img-card {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 10px;
-  display: block;
-  border-radius: 50%;
+/* security */
+.security-bg {
+    min-height: 100vh;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
 }
+
+.bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    z-index: 0;
+}
+
+.security-card {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 18px;
+}
+
+.security-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 2px solid var(--main-red);
+}
+
 /* room card in the home page  */
 .room-card {
   height: 150px;
@@ -97,8 +126,8 @@ label {
 }
 
 .btn-primary {
-  background-color: #8f2a2a !important;
-  border-color: #8f2a2a !important;
+  background-color: var(--main-red) !important;
+  border-color: black !important;
 }
 
 .btn-primary:hover,
@@ -110,8 +139,8 @@ label {
 /* pagination */
 .page-link {
   color: #fff !important;
-  background-color: #8f2a2a !important;
-  border: 1px solid #8f2a2a !important;
+  background-color: var(--main-red) !important;
+  border: black !important;
   transition: background 0.2s, color 0.2s;
 }
 

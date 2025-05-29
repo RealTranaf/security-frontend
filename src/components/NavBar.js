@@ -49,7 +49,7 @@ function NavBar() {
 
     return (
         <div>
-            <nav className='navbar navbar-expand navbar-dark' style={{background: 'rgb(122, 36, 36)', color: 'rgb(236, 236, 236)'}}>
+            <nav className='navbar navbar-expand navbar-dark' style={{background: 'var(--main-red)', color: 'rgb(236, 236, 236)'}}>
                 <Link to={'/'} className='navbar-brand' style={{ paddingLeft: '10px' }}>
                     The App 
                 </Link>

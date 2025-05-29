@@ -18,5 +18,5 @@ export async function submitCustomTopic(roomId, title, description, files) {
     formData.append('title', title)
     formData.append('description', description)
     files.forEach((file) => formData.append('files', file))
-    return await axios.post(`${API_URL}/${roomId}/topics/select`, formData, { headers: authHeader() })
+    return await axios.post(`${API_URL}/${roomId}/topics/custom`, formData, { headers: authHeader() })
 }

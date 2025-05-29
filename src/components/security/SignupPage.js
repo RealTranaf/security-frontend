@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react'
 import { signup } from '../../services/auth-service'
 import logo from '../../resource/logo.jpg'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import backgroundImg from '../../resource/bkhn-c1.jpg'
 
 function SignupPage() {
-
     const form = useRef()
     const navigate = useNavigate()
 
@@ -45,28 +45,23 @@ function SignupPage() {
         return Object.keys(newErrors).length === 0
     }
     const onChangeUsername = (e) => {
-        const username = e.target.value
-        setUsername(username)
+        setUsername(e.target.value)
     }
 
     const onChangeEmail = (e) => {
-        const email = e.target.value
-        setEmail(email)
+        setEmail(e.target.value)
     }
 
     const onChangePassword = (e) => {
-        const password = e.target.value
-        setPassword(password)
+        setPassword(e.target.value)
     }
 
     const onChangeRole = (e) => {
-        const role = e.target.value
-        setRole(role)
+        setRole(e.target.value)
     }
 
     const handleSignup = async (e) => {
         e.preventDefault()
-
         setMessage('')
         setSuccessful(false)
         setLoading(true)
@@ -92,87 +87,93 @@ function SignupPage() {
     }
 
     return (
-        <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card card-container'>
+        <div className='container-fluid d-flex justify-content-center align-items-start min-vh-100 position-relative security-bg'>
+            <div
+                className='bg-overlay'
+                style={{ backgroundImage: `url(${backgroundImg})` }}
+            >
+            </div>
+            <div className='card shadow-lg p-4 security-card' style={{ zIndex: 1}}>
                 <div className='text-center mb-3'>
                     <img
                         src={logo}
                         alt='profile-img'
-                        className='profile-img-card'
+                        className='rounded-circle mb-2 security-logo'
                     />
+                    <h3 className='fw-bold mb-0' style={{ color: 'var(--main-red)' }}>Sign Up</h3>
                 </div>
-                <form onSubmit={handleSignup} ref={form}>
+                <form onSubmit={handleSignup} ref={form} autoComplete='off'>
                     {!successful && (
-                        <div className='container'>
+                        <div>
                             <div className='mb-3'>
-                                <label htmlFor='username'>Username</label>
+                                <label htmlFor='username' className='form-label fw-semibold'>Username</label>
                                 <input
                                     type='text'
-                                    className='form-control'
+                                    className={`form-control ${errors.username ? 'is-invalid' : ''}`}
                                     name='username'
                                     value={username}
                                     onChange={onChangeUsername}
+                                    autoFocus
                                 >
                                 </input>
                                 {errors.username && (
-                                    <div className='alert alert-danger' role='alert'>
+                                    <div className='invalid-feedback'>
                                         {errors.username}
                                     </div>
                                 )}
                             </div>
                             <div className='mb-3'>
-                                <label htmlFor='email'>Email</label>
+                                <label htmlFor='email' className='form-label fw-semibold'>Email</label>
                                 <input
                                     type='text'
-                                    className='form-control'
+                                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                                     name='email'
                                     value={email}
                                     onChange={onChangeEmail}
                                 >
                                 </input>
                                 {errors.email && (
-                                    <div className='alert alert-danger' role='alert'>
+                                    <div className='invalid-feedback'>
                                         {errors.email}
                                     </div>
                                 )}
                             </div>
                             <div className='mb-3'>
-                                <label htmlFor='password'>Password</label>
+                                <label htmlFor='password' className='form-label fw-semibold'>Password</label>
                                 <input
                                     type='password'
-                                    className='form-control'
+                                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                                     name='password'
                                     value={password}
                                     onChange={onChangePassword}
                                 >
                                 </input>
                                 {errors.password && (
-                                    <div className='alert alert-danger' role='alert'>
+                                    <div className='invalid-feedback'>
                                         {errors.password}
                                     </div>
                                 )}
                             </div>
                             <div className='mb-3'>
-                                <label htmlFor='role'>Role</label>
+                                <label htmlFor='role' className='form-label fw-semibold'>Role</label>
                                 <select
-                                    className='form-control'
+                                    className={`form-control ${errors.role ? 'is-invalid' : ''}`}
                                     name='role'
                                     value={role}
                                     onChange={onChangeRole}
                                 >
                                     <option value=''>Select a role</option>
                                     <option value='STUDENT'>Student</option>
-                                    <option value='ADMIN'>Admin</option>
                                     <option value='TEACHER'>Teacher</option>
                                 </select>
                                 {errors.role && (
-                                    <div className='alert alert-danger' role='alert'>
+                                    <div className='invalid-feedback'>
                                         {errors.role}
                                     </div>
                                 )}
                             </div>
                             <div className='d-grid mb-3'>
-                                <button className='btn btn-primary' disabled={loading}>
+                                <button className='btn btn-primary btn-lg' disabled={loading}>
                                     {loading && (
                                         <span className='spinner-border spinner-border-sm me-2'></span>
                                     )}
@@ -190,17 +191,25 @@ function SignupPage() {
                     )}
                     {successful && (
                         <div className='d-grid mb-3'>
-                            To complete the signup process, you will need to verify your account!
+                            <div className='mb-2'>
+                                To complete the signup process, you will need to verify your account!
+                            </div>
                             <button
                                 className='btn btn-primary'
                                 onClick={redirectToVerify}
-                                style={{margin: '20px'}}
+                                type='button'
                             >
                                 Go to Verification
                             </button>
                         </div>
                     )}
                 </form>
+                <div className='text-center mt-2'>
+                    <span className='text-muted small'>Already have an account? </span>
+                    <Link to='/login' className='small text-decoration-none'>
+                        Login
+                    </Link>
+                </div>
             </div>
         </div>
     )

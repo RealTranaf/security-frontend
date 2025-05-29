@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { forgotPassword } from '../../services/auth-service'
+import backgroundImg from '../../resource/bkhn-c1.jpg'
 
 function ForgotPasswordPage() {
     const [email, setEmail] = useState('')
@@ -43,40 +44,44 @@ function ForgotPasswordPage() {
     }
 
     const onChangeEmail = (e) => {
-        const email = e.target.value
-        setEmail(email)
+        setEmail(e.target.value)
     }
 
     return (
-        <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card card-container'>
-                <h3 className='text-center'>
+        <div className='container-fluid d-flex justify-content-center align-items-start min-vh-100 position-relative security-bg'>
+            <div
+                className='bg-overlay'
+                style={{ backgroundImage: `url(${backgroundImg})` }}
+            >
+            </div>
+            <div className='card shadow-lg p-4 security-card' style={{ zIndex: 1}}>
+                <h3 className='fw-bold text-center mb-3' style={{ color: 'var(--main-red)' }}>
                     Forgot Password
                 </h3>
                 <form onSubmit={handleForgotPassword}>
                     {!successful && (
-                        <div className='container'>
-                            <div className='mb-3'>
+                        <div>
+                            <div className='mb-3 text-muted small'>
                                 Enter the email that you registered your account to here and we will send an e-mail containing a link to change your password!
                             </div>
                             <div className='mb-3'>
-                                <label htmlFor='email'>Email</label>
+                                <label htmlFor='email' className='form-label fw-semibold'>Email</label>
                                 <input
                                     type='text'
-                                    className='form-control'
+                                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                                     name='email'
                                     value={email}
                                     onChange={onChangeEmail}
                                 >
                                 </input>
                                 {errors.email && (
-                                    <div className='alert alert-danger' role='alert'>
+                                    <div className='invalid-feedback'>
                                         {errors.email}
                                     </div>
                                 )}
                             </div>
                             <div className='d-grid mb-3'>
-                                <button className='btn btn-primary' disabled={loading}>
+                                <button className='btn btn-primary btn-lg' disabled={loading}>
                                     {loading && (
                                         <span className='spinner-border spinner-border-sm me-2'></span>
                                     )}

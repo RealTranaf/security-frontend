@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { resetPassword, validateResetToken } from '../../services/auth-service'
+import backgroundImg from '../../resource/bkhn-c1.jpg'
 
 function ResetPasswordPage() {
     const location = useLocation()
@@ -67,48 +68,58 @@ function ResetPasswordPage() {
     }
 
     const onChangeNewPassword = (e) => {
-        const password = e.target.value
-        setNewPassword(password)
+        setNewPassword(e.target.value)
     }
 
     if (!isValidToken) {
         return (
-            <div className='container d-flex justify-content-center align-items-center'>
-                <div className='alert alert-danger text-center'>
-                    {/* {message || 'Validating token...'} */}
-                    NO
+            <div
+                className='container-fluid d-flex justify-content-center align-items-start min-vh-100 security-bg'
+                style={{
+                    backgroundImage: `url(${backgroundImg})`
+                }}
+            >
+                <div className='card shadow-lg p-4 security-card'>
+                    <div className='alert alert-danger text-center mb-0'>
+                        {message || 'Validating token...'}
+                    </div>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card card-container'>
-                <h3 className='text-center'>
+        <div className='container-fluid d-flex justify-content-center align-items-start min-vh-100 position-relative security-bg'>
+            <div
+                className='bg-overlay'
+                style={{ backgroundImage: `url(${backgroundImg})` }}
+            >
+            </div>
+            <div className='card shadow-lg p-4 security-card' style={{ zIndex: 1}}>
+                <h3 className='fw-bold text-center mb-3' style={{ color: 'var(--main-red)' }}>
                     Reset Your Password
                 </h3>
                 <form onSubmit={handleResetPassword}>
                     {!successful && (
-                        <div className='container'>
+                        <div>
                             <div className='mb-3'>
-                                <label htmlFor='password'>New password</label>
+                                <label htmlFor='password' className='form-label fw-semibold'>New password</label>
                                 <input
                                     type='password'
-                                    className='form-control'
+                                    className={`form-control ${errors.newPassword ? 'is-invalid' : ''}`}
                                     name='password'
                                     value={newPassword}
                                     onChange={onChangeNewPassword}
                                 >
                                 </input>
                                 {errors.newPassword && (
-                                    <div className='alert alert-danger' role='alert'>
+                                    <div className='invalid-feedback'>
                                         {errors.newPassword}
                                     </div>
                                 )}
                             </div>
                             <div className='d-grid mb-3'>
-                                <button className='btn btn-primary' disabled={loading}>
+                                <button className='btn btn-primary btn-lg' disabled={loading}>
                                     {loading && (
                                         <span className='spinner-border spinner-border-sm me-2'></span>
                                     )}

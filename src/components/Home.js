@@ -3,6 +3,7 @@ import { getCurrentUser } from '../services/user-service'
 import { getRoomList } from '../services/room-service'
 import CreateRoomModal from './CreateRoomModal'
 import { useNavigate } from 'react-router-dom'
+import backgroundImg from '../resource/bkhn-2.jpg'
 
 function Home() {
     const [rooms, setRooms] = useState([])
@@ -59,61 +60,67 @@ function Home() {
     }
 
     return (
-        <div className='container mt-5'>
-            <div className='d-flex justify-content-between align-items-center mb-4'>
-                <h3 className='fw-bold mb-0'>Your classes</h3>
-                {currentUser && currentUser.role === 'TEACHER' && (
-                    <button className='btn btn-primary' onClick={() => setShowCreateModal(true)}>
-                        <i className='bi bi-plus-circle me-1'></i>
-                        Create Room
-                    </button>
-                )}
+        <div className='min-vh-100 position-relative security-bg'>
+            <div
+                className='bg-overlay'
+                style={{ backgroundImage: `url(${backgroundImg})` }}
+            >
             </div>
-            {error && <div className='alert alert-danger'>{error}</div>}
-            <div className='row g-4'>
-                {rooms.length === 0 ? (
-                    <div className='col-12 text-center text-muted'>
-                        <i className='bi bi-door-closed fs-1 mb-2'></i>
-                        <div>No classes found</div>
-                    </div>
-                ) : (
-                    rooms.map((room) => (
-                        <div className='col-12 col-sm-6 col-md-4 col-lg-3 d-flex' key={room.id}>
-                            <div
-                                className='card shadow-sm room-card-hover flex-fill'
-                                style={{
-                                    cursor: 'pointer',
-                                    border: '1.5px solid #e0e0e0',
-                                    borderRadius: '18px',
-                                    transition: 'transform 0.15s, box-shadow 0.15s',
-                                    minWidth: 0,
-                                    background: 'rgb(167, 26, 26)',
-                                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
-                                }}
-                                onClick={() => handleRoomClick(room.id)}
-                            >
-                                <div className='card-body d-flex flex-column align-item-center justify-content-between' style={{ minHeight: 140 }}>
-                                    <div className='w-100 text-center'>
-                                        <i className="bi bi-door-open fs-2 mb-2 text-primary"></i>
-                                        <h5 className='card-title fw-semibold mb-2 text-truncate'>
-                                            {room.name}
-                                        </h5>
-                                        <p className='card-text mb-1 text-muted'>
-                                            Created by: <span className='fw-semibold'>{room.createdBy}</span>
-                                        </p>
+            <div className='container mt-5 position-relative' style={{zIndex: 1}}>
+                <div className='d-flex justify-content-between align-items-center mb-4'>
+                    <h3 className='fw-bold mb-0'>Your classes</h3>
+                    {currentUser && currentUser.role === 'TEACHER' && (
+                        <button className='btn btn-primary' onClick={() => setShowCreateModal(true)}>
+                            <i className='bi bi-plus-circle me-1'></i>
+                            Create Room
+                        </button>
+                    )}
+                </div>
+                {error && <div className='alert alert-danger'>{error}</div>}
+                <div className='row g-4'>
+                    {rooms.length === 0 ? (
+                        <div className='col-12 text-center text-muted'>
+                            <i className='bi bi-door-closed fs-1 mb-2'></i>
+                            <div>No classes found</div>
+                        </div>
+                    ) : (
+                        rooms.map((room) => (
+                            <div className='col-12 col-sm-6 col-md-4 col-lg-3 d-flex' key={room.id}>
+                                <div
+                                    className='card shadow-sm room-card-hover flex-fill'
+                                    style={{
+                                        cursor: 'pointer',
+                                        border: '1.5px solid #e0e0e0',
+                                        borderRadius: '18px',
+                                        transition: 'transform 0.15s, box-shadow 0.15s',
+                                        minWidth: 0,
+                                        boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+                                    }}
+                                    onClick={() => handleRoomClick(room.id)}
+                                >
+                                    <div className='card-body d-flex flex-column align-item-center justify-content-between' style={{ minHeight: 140 }}>
+                                        <div className='w-100 text-center'>
+                                            <i className="bi bi-door-open fs-2 mb-2 text-primary"></i>
+                                            <h5 className='card-title fw-semibold mb-2 text-truncate'>
+                                                {room.name}
+                                            </h5>
+                                            <p className='card-text mb-1 text-muted'>
+                                                Created by: <span className='fw-semibold'>{room.createdBy}</span>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
-                )}
+                        ))
+                    )}
+                </div>
+                <CreateRoomModal
+                    show={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                    onSuccess={fetchRoom}
+                >
+                </CreateRoomModal>
             </div>
-            <CreateRoomModal
-                show={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onSuccess={fetchRoom}
-            >
-            </CreateRoomModal>
         </div>
     )
 }

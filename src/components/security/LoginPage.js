@@ -3,11 +3,10 @@ import { useNavigate, Link } from 'react-router-dom'
 
 import { login } from '../../services/auth-service'
 import logo from '../../resource/logo.jpg'
+import backgroundImg from '../../resource/bkhn-c1.jpg'
 
 function LoginPage() {
-
     const navigate = useNavigate()
-
     const form = useRef()
 
     const [username, setUsername] = useState('')
@@ -49,8 +48,6 @@ function LoginPage() {
         setMessage('')
         setLoading(true)
 
-        // form.current.validateAll()
-
         if (validateForm()) {
             try {
                 await login(username, password)
@@ -58,7 +55,7 @@ function LoginPage() {
                 window.location.reload()
             } catch (error) {
                 const resMessage = (error.response?.data?.message) || error.message || 'An error occurred during login.'
-                if (resMessage === 'User is disabled'){
+                if (resMessage === 'User is disabled') {
                     setEnableVerify(true)
                 }
                 setMessage(resMessage)
@@ -67,58 +64,63 @@ function LoginPage() {
         } else {
             setLoading(false)
         }
-        // console.log(username)
-
     }
     const redirectToVerify = () => {
         navigate('/verify', { state: { username } })
     }
 
     return (
-        <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card card-container'>
-                <div className='text-center mb-3'>
+        <div className='container-fluid d-flex justify-content-center align-items-start min-vh-100 position-relative security-bg'>
+            <div
+                className='bg-overlay'
+                style={{ backgroundImage: `url(${backgroundImg})` }}
+            >
+            </div>
+            <div className='card shadow-lg p-4 security-card' style={{ zIndex: 1}}>
+                <div className='text-center mb-4'>
                     <img
                         src={logo}
                         alt='profile-img'
-                        className='profile-img-card'
+                        className='rounded-circle mb-2 security-logo'
                     />
+                    <h3 className='fw-bold mb-0' style={{ color: 'var(--main-red)' }}>Sign In</h3>
                 </div>
-                <form onSubmit={handleLogin} ref={form}>
+                <form onSubmit={handleLogin} ref={form} autoComplete='off'>
                     <div className='mb-3'>
-                        <label htmlFor='username'>Username</label>
+                        <label htmlFor='username' className='form-label fw-semibold'>Username</label>
                         <input
                             type='text'
-                            className='form-control'
+                            className={`form-control ${errors.username ? 'is-invalid' : ''}`}
                             name='username'
                             value={username}
                             onChange={onChangeUsername}
+                            autoFocus
                         >
                         </input>
                         {errors.username && (
-                            <div className='alert alert-danger' role='alert'>
+                            <div className='invalid-feedback'>
                                 {errors.username}
                             </div>
                         )}
                     </div>
                     <div className='mb-3'>
-                        <label htmlFor='password'>Password</label>
+                        <label htmlFor='password' className='form-label fw-semibold'>Password</label>
                         <input
                             type='password'
-                            className='form-control'
+                            className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                             name='password'
                             value={password}
                             onChange={onChangePassword}
                         >
                         </input>
                         {errors.password && (
-                            <div className='alert alert-danger' role='alert'>
+                            <div className='invalid-feedback'>
                                 {errors.password}
                             </div>
                         )}
                     </div>
                     <div className='d-grid mb-3'>
-                        <button className='btn btn-primary' disabled={loading}>
+                        <button className='btn btn-primary btn-lg' disabled={loading}>
                             {loading && (
                                 <span className='spinner-border spinner-border-sm me-2'></span>
                             )}
@@ -131,13 +133,23 @@ function LoginPage() {
                         </div>
                     )}
                 </form>
-                {enableVerify && <div className='d-grid mb-3'>
-                    <button className='btn btn-primary' onClick={redirectToVerify}>
-                        Go to verification
-                    </button>
-                </div>}
+                {enableVerify && (
+                    <div className='d-grid mb-3'>
+                        <button className='btn btn-primary' onClick={redirectToVerify}>
+                            Go to verification
+                        </button>
+                    </div>
+                )}
                 <div className='text-center mt-3'>
-                    <Link to='/forgot-password'>Forgot your password?</Link>
+                    <Link to='/forgot-password' className='small text-decoration-none'>
+                        Forgot your password?
+                    </Link>
+                </div>
+                <div className='text-center mt-2'>
+                    <span className='text-muted small'>Don't have an account? </span>
+                    <Link to='/signup' className='small text-decoration-none'>
+                        Register
+                    </Link>
                 </div>
             </div>
         </div>

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { resendCode, verify } from '../../services/auth-service'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
+import backgroundImg from '../../resource/bkhn-c1.jpg'
 
 function VerifyPage() {
-
-
     const [verificationCode, setVerificationCode] = useState('')
     const [message, setMessage] = useState('')
     const [successful, setSuccessful] = useState(false)
@@ -12,7 +11,6 @@ function VerifyPage() {
     const [loading, setLoading] = useState(false)
 
     const location = useLocation()
-
     const currentUsername = location.state?.username
 
     const validateForm = () => {
@@ -64,32 +62,43 @@ function VerifyPage() {
         setVerificationCode(e.target.value)
     }
     return (
-        <div className='container d-flex justify-content-center align-items-center'>
-            <div className='card card-container'>
-                <h3 className='text-center'>Verify Your Account</h3>
+        <div className='container-fluid d-flex justify-content-center align-items-start min-vh-100 position-relative security-bg'>
+            <div
+                className='bg-overlay'
+                style={{ backgroundImage: `url(${backgroundImg})` }}
+            >
+            </div>
+            <div className='card shadow-lg p-4 security-card' style={{ zIndex: 1}}>
+                <h3 className='fw-bold mb-0' style={{ color: 'var(--main-red)' }}>Verify Your Account</h3>
                 <p className='mb-2'>
                     Enter the 6-digit verification code sent to your e-mail address here!
                 </p>
-                <form onSubmit={handleVerification}>
+                <form onSubmit={handleVerification} autoComplete='off'>
                     <div className='mb-3'>
-                        <label htmlFor='verificationCode'>Verification Code</label>
+                        <label htmlFor='verificationCode' className='form-label fw-semibold'>Verification Code</label>
                         <input
                             type='text'
-                            className='form-control'
+                            className={`form-control ${errors.verificationCode ? 'is-invalid' : ''}`}
                             name='verificationCode'
                             value={verificationCode}
                             onChange={onChangeVerificationCode}
                             maxLength={6}
+                            autoFocus
                         >
                         </input>
                         {errors.verificationCode && (
-                            <div className='alert alert-danger' role='alert'>
+                            <div className='invalid-feedback'>
                                 {errors.verificationCode}
                             </div>
                         )}
                     </div>
                     <div className='d-grid mb-3'>
-                        <button className='btn btn-primary'>Verify</button>
+                        <button className='btn btn-primary btn-lg' disabled={loading}>
+                            {loading && (
+                                <span className='spinner-border spinner-border-sm me-2'></span>
+                            )}
+                            Verify
+                        </button>
                     </div>
                     {message && (
                         <div className='mb-3'>
@@ -100,9 +109,8 @@ function VerifyPage() {
                     )}
                 </form>
                 <div className='d-grid mb-3'>
-                    <button 
-                        className='btn btn-primary' 
-                        style={{ margin: '20px' }} 
+                    <button
+                        className='btn btn-primary btn-lg'
                         onClick={handleResendCode}
                         disabled={loading}>
                         {loading && (
@@ -110,6 +118,11 @@ function VerifyPage() {
                         )}
                         Resend code
                     </button>
+                </div>
+                <div className='text-center mt-3'>
+                    <Link to='/login' className='small text-decoration-none'>
+                        Back to login
+                    </Link>
                 </div>
             </div>
         </div>

@@ -88,7 +88,7 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                                 onClick={() => editFileInputRef.current && editFileInputRef.current.click()}
                                                 tabIndex={-1}
                                             >
-                                                <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                                <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
                                             </button>
                                             <input
                                                 type='file'

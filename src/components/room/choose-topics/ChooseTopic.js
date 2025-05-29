@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { getAllTopics, selectExistingTopic, submitCustomTopic } from '../../../services/topic-service'
 
-function ChooseTopics({roomId, currentUser}) {
+function ChooseTopics({ roomId, currentUser }) {
     const [topics, setTopics] = useState([])
     const [selectedTopicId, setSelectedTopicId] = useState(null)
     const [customTitle, setCustomTitle] = useState('')
@@ -12,16 +12,17 @@ function ChooseTopics({roomId, currentUser}) {
     const [selectedTopic, setSelectedTopic] = useState(null)
     const fileInputRef = useRef(null)
 
-    useEffect(() => {
-        const fetchTopics = async () => {
-            try {
-                const response = await getAllTopics(roomId)
-                setTopics(response.data.topics)
-                
-            } catch(error) {
-                console.error('Failed to load topics')
-            }
+    const fetchTopics = async () => {
+        try {
+            const response = await getAllTopics(roomId)
+            setTopics(response.data.topics)
+
+        } catch (error) {
+            console.error('Failed to load topics')
         }
+    }
+
+    useEffect(() => {
         fetchTopics()
     }, [roomId])
 
@@ -46,7 +47,7 @@ function ChooseTopics({roomId, currentUser}) {
             return
         }
         try {
-            await submitCustomTopic(roomId, customTitle, customDescription, customFiles)    
+            await submitCustomTopic(roomId, customTitle, customDescription, customFiles)
             setSubmitted(true)
             setCustomTitle('')
             setCustomDescription('')
@@ -57,7 +58,7 @@ function ChooseTopics({roomId, currentUser}) {
         } catch (error) {
             console.error('Failed to submit topics')
         }
-    }    
+    }
 
     return (
         <div className='mt-3'>

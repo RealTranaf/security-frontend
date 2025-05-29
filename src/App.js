@@ -15,7 +15,6 @@ import SignupPage from './components/security/SignupPage'
 import VerifyPage from './components/security/VerifyPage'
 import ForgotPasswordPage from './components/security/ForgotPasswordPage'
 import ResetPasswordPage from './components/security/ResetPasswordPage'
-// import CreateRoomPage from './components/CreateRoomPage'
 import RoomPage from './components/room/RoomPage'
 import RoomUsersPage from './components/room/userlist/RoomUsersPage'
 import WeeklyReportPage from './components/room/assignment/WeeklyReportPage'
@@ -37,7 +36,6 @@ function App() {
                     <Route path='/verify' element={<VerifyPage />} />
                     <Route path='/forgot-password' element={<ForgotPasswordPage />} />
                     <Route path='/reset-password' element={<ResetPasswordPage />} />
-                    {/* <Route path='/create-room' element={<CreateRoomPage />} /> */}
                     <Route path='/rooms/:roomId' element={<RoomPage />} />
                     <Route path='/profile/:username' element={<Profile />} />
                     <Route path='/rooms/:roomId/users' element={<RoomUsersPage />} />

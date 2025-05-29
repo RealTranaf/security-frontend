@@ -545,7 +545,7 @@ function PostList({ roomId, currentUser }) {
                                         tabIndex={-1}
                                         aria-label='Attach files'
                                     >
-                                        <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                        <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
                                     </button>
                                     <input
                                         type='file'
@@ -640,7 +640,7 @@ function PostList({ roomId, currentUser }) {
                                             onClick={() => fileInputRef.current && fileInputRef.current.click()}
                                             tabIndex={-1}
                                         >
-                                            <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                            <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
                                         </button>
                                         <input
                                             type='file'
@@ -791,7 +791,7 @@ function PostList({ roomId, currentUser }) {
                                                                         tabIndex={-1}
                                                                         aria-label='Attach files'
                                                                     >
-                                                                        <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                                                        <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
                                                                     </button>
                                                                     <input
                                                                         type='file'
@@ -900,7 +900,7 @@ function PostList({ roomId, currentUser }) {
                                         onClick={() => commentFileInputRefs.current[post.id] && commentFileInputRefs.current[post.id].click()}
                                         tabIndex={-1}
                                     >
-                                        <i className='bi bi-paperclip fs-4' style={{ color: '#7a2424' }}></i>
+                                        <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
                                     </button>
                                     <input
                                         type='file'
