@@ -100,7 +100,7 @@ function Home() {
                                 >
                                     <div className='card-body d-flex flex-column align-item-center justify-content-between' style={{ minHeight: 140 }}>
                                         <div className='w-100 text-center'>
-                                            <i className="bi bi-door-open fs-2 mb-2 text-primary"></i>
+                                            <i className='bi bi-door-open fs-2 mb-2 text-primary'></i>
                                             <h5 className='card-title fw-semibold mb-2 text-truncate'>
                                                 {room.name}
                                             </h5>

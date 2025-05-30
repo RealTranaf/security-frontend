@@ -125,14 +125,14 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                     data-bs-toggle='modal'
                                     data-bs-target='#searchAndAddUsersModal'
                                 >
-                                    <i className="bi bi-person-plus"></i>
+                                    <i className='bi bi-person-plus'></i>
                                 </button>
                                 <button
                                     className='btn btn-secondary'
                                     data-bs-toggle='modal'
                                     data-bs-target='#removeUsersModal'
                                 >
-                                    <i className="bi bi-person-dash"></i>
+                                    <i className='bi bi-person-dash'></i>
                                 </button>
                             </div>
                         )}
@@ -176,7 +176,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                                             }
                                                         }}
                                                     >
-                                                        <i className="bi bi-person-x me-1"></i>
+                                                        <i className='bi bi-person-x me-1'></i>
                                                         Remove
                                                     </button>
                                                     {isAdmin && <span className='text-muted ms-2'>(ADMIN)</span>}
@@ -238,7 +238,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                                 className='btn btn-sm btn-primary'
                                                 onClick={() => handleSelectUserAdd(user)}
                                             >
-                                                <i className="bi bi-plus-lg"></i>
+                                                <i className='bi bi-plus-lg'></i>
                                             </button>
                                         </li>
                                     ))}
@@ -262,7 +262,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                             className='btn btn-sm btn-secondary'
                                             onClick={() => handleClearUserAdd(user.id)}
                                         >
-                                            <i className="bi bi-x-lg"></i>
+                                            <i className='bi bi-x-lg'></i>
                                         </button>
                                     </li>
                                 ))}
@@ -282,7 +282,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                 onClick={handleAddUsers}
                                 disabled={selectedUsersAdd.length === 0}
                             >
-                                <i className="bi bi-person-plus me-1"></i>
+                                <i className='bi bi-person-plus me-1'></i>
                                 Add
                             </button>
                         </div>
@@ -368,7 +368,7 @@ function RoomUsersPage({ roomId, room, setRoom, currentUser }) {
                                 }
                                 disabled={selectedUsersRemove.length === 0}
                             >
-                                <i className="bi bi-person-dash me-1"></i>
+                                <i className='bi bi-person-dash me-1'></i>
                                 Remove
                             </button>
                         </div>

@@ -520,6 +520,7 @@ function PostList({ roomId, currentUser }) {
                                 <button type='button' className='btn-close' onClick={closePostModal}></button>
                             </div>
                             <div className='modal-body'>
+                                <label className='form-label fw-semibold'>Title</label>
                                 <input
                                     className='form-control mb-2'
                                     placeholder='Add a title...'
@@ -529,7 +530,8 @@ function PostList({ roomId, currentUser }) {
                                 >
                                 </input>
 
-                                <div style={{ position: 'relative' }}>
+                                <div className='position-relative'>
+                                    <label className='form-label fw-semibold'>Content</label>
                                     <textarea
                                         className='form-control'
                                         placeholder='Write a new post...'
@@ -619,6 +621,7 @@ function PostList({ roomId, currentUser }) {
                             </p>
                             {editingPostId === post.id ? (
                                 <div>
+                                    <label className='form-label fw-semibold'>Title</label>
                                     <input
                                         className='form-control mb-2'
                                         placeholder='Add a title...'
@@ -626,7 +629,8 @@ function PostList({ roomId, currentUser }) {
                                         required
                                         onChange={(e) => setEditingPostTitle(e.target.value)}
                                     ></input>
-                                    <div style={{ position: 'relative' }}>
+                                    <div className='position-relative'>
+                                        <label className='form-label fw-semibold'>Content</label>
                                         <textarea
                                             className='form-control mb-2'
                                             value={editingPostContent}
@@ -776,7 +780,7 @@ function PostList({ roomId, currentUser }) {
                                                         </p>
                                                         {editingCommentId === comment.id ? (
                                                             <div>
-                                                                <div style={{ position: 'relative' }}>
+                                                                <div className='position-relative'>
                                                                     <textarea
                                                                         className='form-control mb-2'
                                                                         value={editingCommentContent}
@@ -879,7 +883,7 @@ function PostList({ roomId, currentUser }) {
                                 </>
                             )}
                             <div className='d-flex'>
-                                <div style={{ position: 'relative', flex: 1 }}>
+                                <div className='position-relative' style={{ flex: 1 }}>
                                     <textarea
                                         type='text'
                                         className='form-control me-2'

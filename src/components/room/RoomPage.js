@@ -81,7 +81,7 @@ function RoomPage() {
                     <PostList roomId={roomId} currentUser={currentUser}></PostList>
                 )}
                 {selectedPage === 'choose-topics' && (
-                    <ChooseTopics></ChooseTopics>
+                    <ChooseTopics roomId={roomId} currentUser={currentUser}></ChooseTopics>
                 )}
                 {selectedPage === 'users' && (
                     <RoomUsersPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></RoomUsersPage>

@@ -67,6 +67,7 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                 )}
                                 {editingPostId === post.id ? (
                                     <div>
+                                        <label className='form-label fw-semibold'>Title</label>
                                         <input
                                             className='form-control mb-2'
                                             placeholder='Edit title...'
@@ -74,7 +75,8 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                             onChange={e => setEditingPostTitle(e.target.value)}
                                         >
                                         </input>
-                                        <div style={{ position: 'relative' }}>
+                                        <div className='position-relative'>
+                                            <label className='form-label fw-semibold'>Description</label>
                                             <textarea
                                                 className='form-control mb-2'
                                                 placeholder='Edit content...'
@@ -99,12 +101,15 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                             >
                                             </input>
                                         </div>
-                                        <input
-                                            className='form-control mb-2'
-                                            type='datetime-local'
-                                            value={editingPostDeadline}
-                                            onChange={e => setEditingPostDeadline(e.target.value)}
-                                        />
+                                        <div className='position-relative mt-2'>
+                                            <label className='form-label fw-semibold'>Deadline</label>
+                                            <input
+                                                className='form-control mb-2'
+                                                type='datetime-local'
+                                                value={editingPostDeadline}
+                                                onChange={e => setEditingPostDeadline(e.target.value)}
+                                            />
+                                        </div>
                                         <div>
                                             <strong>Current Attachments: </strong>
                                             <div>

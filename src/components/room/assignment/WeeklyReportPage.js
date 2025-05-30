@@ -255,6 +255,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                         <button type='button' className='btn-close' onClick={closeCreateModal}></button>
                                     </div>
                                     <div className='modal-body'>
+                                        <label className='form-label fw-semibold'>Title</label>
                                         <input
                                             className='form-control mb-2'
                                             placeholder='Add a title...'
@@ -263,7 +264,8 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                             onChange={e => setNewPostTitle(e.target.value)}
                                         >
                                         </input>
-                                        <div style={{ position: 'relative' }}>
+                                        <div className='position-relative'>
+                                            <label className='form-label fw-semibold'>Description</label>
                                             <textarea
                                                 className='form-control'
                                                 placeholder='Describe the report request...'
@@ -296,13 +298,16 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                                 ))}
                                             </div>
                                         )}
-                                        <input
-                                            className='form-control mt-2'
-                                            type='datetime-local'
-                                            value={newPostDeadline}
-                                            onChange={e => setNewPostDeadline(e.target.value)}
-                                        >
-                                        </input>
+                                        <div className='position-relative mt-2'>
+                                            <label className='form-label fw-semibold'>Deadline</label>
+                                            <input
+                                                className='form-control'
+                                                type='datetime-local'
+                                                value={newPostDeadline}
+                                                onChange={e => setNewPostDeadline(e.target.value)}
+                                            >
+                                            </input>
+                                        </div>
                                     </div>
                                     <div className='modal-footer'>
                                         <button className='btn btn-secondary' onClick={closeCreateModal}>
