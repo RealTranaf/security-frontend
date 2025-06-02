@@ -1,8 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { getAllTopics, getStudentSelectedTopic, selectExistingTopic, submitCustomTopic } from '../../../services/topic-service'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { getStudentSelectedTopic, selectExistingTopic, submitCustomTopic, getNonCustomTopics, submitTeacherTopic, getAllStudentSelections } from '../../../services/topic-service'
 import { downloadFile } from '../../../services/download-service'
+import CustomTopicModal from './CustomTopicModal'
+import TeacherTopicModal from './TeacherTopicModal'
+import StudentSelectionsModal from './StudentSelectionsModal'
 
-function ChooseTopics({ roomId, currentUser }) {
+function ChooseTopics({ roomId, currentUser, room }) {
     const [topics, setTopics] = useState([])
     const [customTitle, setCustomTitle] = useState('')
     const [customDescription, setCustomDescription] = useState('')
@@ -14,19 +17,28 @@ function ChooseTopics({ roomId, currentUser }) {
     const [studentSelection, setStudentSelection] = useState(null)
     const [selectedTopic, setSelectedTopic] = useState(null)
 
+    const [showTeacherTopicModal, setShowTeacherTopicModal] = useState(false)
+    const teacherFileInputRef = useRef(null)
+    const [teacherTitle, setTeacherTitle] = useState('')
+    const [teacherDescription, setTeacherDescription] = useState('')
+    const [teacherFiles, setTeacherFiles] = useState([])
+    const isRoomCreator = currentUser && room && currentUser.username === room.createdBy
 
+    const [showStudentSelectionModal, setShowStudentSelectionsModal] = useState(false)
+    const [studentSelections, setStudentSelections] = useState([])
 
-    const fetchTopics = async () => {
+    const fetchTopics = useCallback(async () => {
         try {
 
-            const response = await getAllTopics(roomId)
+            // const response = await getAllTopics(roomId)
+            const response = await getNonCustomTopics(roomId)
             setTopics(response.data.topics)
         } catch (error) {
             console.error('Failed to load topics')
         }
-    }
+    }, [roomId])
 
-    const fetchStudentSelection = async () => {
+    const fetchStudentSelection = useCallback(async () => {
         try {
             const response = await getStudentSelectedTopic(roomId)
             setStudentSelection(response.data)
@@ -38,12 +50,21 @@ function ChooseTopics({ roomId, currentUser }) {
             setSubmitted(false)
             setSelectedTopic(null)
         }
+    }, [roomId])
+
+    const fetchAllStudentSelections = async () => {
+        try {
+            const response = await getAllStudentSelections(roomId)
+            setStudentSelections(response.data.selections)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     useEffect(() => {
         fetchTopics()
         fetchStudentSelection()
-    }, [roomId])
+    }, [roomId, fetchTopics, fetchStudentSelection])
 
     const handleDropdownChange = (e) => {
         const topic = topics.find(t => t.id === e.target.value)
@@ -73,9 +94,6 @@ function ChooseTopics({ roomId, currentUser }) {
         }
         try {
             await submitCustomTopic(roomId, customTitle, customDescription, customFiles)
-            console.log(customTitle)
-            console.log(customDescription)
-            console.log(customFiles)
             setSubmitted(true)
             setCustomTitle('')
             setCustomDescription('')
@@ -90,6 +108,25 @@ function ChooseTopics({ roomId, currentUser }) {
         }
     }
 
+    const handleSubmitTeacherTopic = async () => {
+        if (!teacherTitle.trim() || !teacherDescription.trim()) {
+            return
+        }
+        try {
+            await submitTeacherTopic(roomId, teacherTitle, teacherDescription, teacherFiles)
+            setTeacherTitle('')
+            setTeacherDescription('')
+            setTeacherFiles([])
+            setShowTeacherTopicModal(false)
+            if (teacherFileInputRef.current) {
+                teacherFileInputRef.current.value = ''
+            }
+            fetchTopics()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const handleReselect = () => {
         setSubmitted(false)
         setSelectedTopic(null)
@@ -97,11 +134,25 @@ function ChooseTopics({ roomId, currentUser }) {
 
     return (
         <div className='container mt-4'>
-            <h3 className="mb-4">Topic Selection</h3>
+            <div className='mb-4'>
+                <h3>Topic Selection</h3>
+                {isRoomCreator && (
+                    <button
+                        className="btn btn-outline-primary btn-sm mt-2 ms-2"
+                        onClick={() => {
+                            setShowStudentSelectionsModal(true)
+                            fetchAllStudentSelections()
+                        }}
+                    >
+                        <i className="bi bi-people me-1"></i>
+                        View Student Selections
+                    </button>
+                )}
+            </div>
             <div className='mb-4'>
                 {studentSelection && studentSelection.topic ? (
                     <div className="card border-black shadow-sm">
-                        <div className='card-header d-flex text-white justify-content-between align-items-center' style={{background: 'var(--main-red)'}}>
+                        <div className='card-header d-flex text-white justify-content-between align-items-center' style={{ background: 'var(--main-red)' }}>
                             <span>
                                 <i className="bi bi-check-circle me-2"></i>
                                 Your Selected Topic
@@ -139,7 +190,7 @@ function ChooseTopics({ roomId, currentUser }) {
                                     </div>
                                 </div>
                             )}
-                            <span className="badge bg-secondary">{studentSelection.isCustom ? 'Custom Topic' : 'Existing Topic'}</span>
+                            <span className="badge bg-secondary">{studentSelection.custom ? 'Custom Topic' : 'Existing Topic'}</span>
                         </div>
                     </div>
                 ) : (
@@ -152,6 +203,15 @@ function ChooseTopics({ roomId, currentUser }) {
             <div className="card mb-4 shadow-sm">
                 <div className="card-header bg-light">
                     <h5 className="mb-0">Choose an Existing Topic</h5>
+                    {isRoomCreator && (
+                        <button
+                            className="btn btn-primary btn-sm mt-2"
+                            onClick={() => setShowTeacherTopicModal(true)}
+                        >
+                            <i className="bi bi-plus-lg me-1"></i>
+                            Add Topic (Teachers Only)
+                        </button>
+                    )}
                 </div>
                 <div className='card-body'>
                     <select
@@ -226,100 +286,52 @@ function ChooseTopics({ roomId, currentUser }) {
                 </div>
             )}
 
-            <hr />
-
             <div className="card shadow-sm mb-4">
                 <div className="card-header bg-light">
                     <h5 className="mb-0">Or Submit Your Own Topic</h5>
                 </div>
                 <div className="card-body">
-                    <button className='btn btn-success mb-3' onClick={() => setShowCreateModal(true)}>
+                    <button className='btn btn-primary mb-3' onClick={() => setShowCreateModal(true)}>
                         Create Custom Topic
                     </button>
                 </div>
             </div>
 
             {/* Modal for creating custom topic */}
-            {showCreateModal && (
-                <div className='modal show d-block' tabIndex='-1' style={{ background: 'rgba(0,0,0,0.5)' }}>
-                    <div className='modal-dialog modal-lg'>
-                        <div className='modal-content '>
-                            <div className='modal-header'>
-                                <h5 className='modal-title'>
-                                    <i className="bi bi-lightbulb me-2"></i>
-                                    Submit Custom Topic
-                                </h5>
-                                <button type='button' className='btn-close' onClick={() => setShowCreateModal(false)}></button>
-                            </div>
-                            <div className='modal-body'>
-                                <div className='mb-2'>
-                                    <label className='form-label fw-semibold'>Title</label>
-                                    <input
-                                        type='text'
-                                        className='form-control mb-2'
-                                        placeholder='Add a title...'
-                                        value={customTitle}
-                                        onChange={e => setCustomTitle(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div className='position-relative'>
-                                    <div className='mb-2'>
-                                        <label className='form-label fw-semibold'>Description</label>
-                                        <textarea
-                                            className='form-control'
-                                            placeholder='Describe your topic suggestion...'
-                                            value={customDescription}
-                                            style={{ paddingRight: 40 }}
-                                            onChange={e => setCustomDescription(e.target.value)}
-                                            required
-                                        />
-                                        <button
-                                            type='button'
-                                            className='attach-btn-inside-textarea'
-                                            onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                                            tabIndex={-1}
-                                        >
-                                            <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
-                                        </button>
-                                        <input
-                                            type='file'
-                                            className='d-none'
-                                            multiple
-                                            ref={fileInputRef}
-                                            onChange={e => setCustomFiles(Array.from(e.target.files))}
-                                        />
-                                    </div>
-                                </div>
-                                {customFiles.length > 0 && (
-                                    <div className='mb-2'>
-                                        {customFiles.map((file, idx) => (
-                                            <span key={idx} className='badge bg-secondary me-2'>{file.name}</span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className='modal-footer'>
-                                <button 
-                                    className='btn btn-secondary' 
-                                    onClick={() => setShowCreateModal(false)}
-                                >
-                                    <i className='bi bi-x-lg me-1'></i>
-                                    Cancel
-                                </button>
-                                <button 
-                                    className='btn btn-primary' 
-                                    onClick={handleSubmitCustom} 
-                                    disabled={submitted}
-                                >
-                                    <i className='bi bi-send me-1'></i>
-                                    Submit Custom Topic
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CustomTopicModal
+                show={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSubmit={handleSubmitCustom}
+                title={customTitle}
+                setTitle={setCustomTitle}
+                description={customDescription}
+                setDescription={setCustomDescription}
+                files={customFiles}
+                setFiles={setCustomFiles}
+                fileInputRef={fileInputRef}
+                submitted={submitted}
+            />
+
+            {/* Modal for teacher to add topic */}
+            <TeacherTopicModal
+                show={showTeacherTopicModal}
+                onClose={() => setShowTeacherTopicModal(false)}
+                onSubmit={handleSubmitTeacherTopic}
+                title={teacherTitle}
+                setTitle={setTeacherTitle}
+                description={teacherDescription}
+                setDescription={setTeacherDescription}
+                files={teacherFiles}
+                setFiles={setTeacherFiles}
+                fileInputRef={teacherFileInputRef}
+            />
+
+            <StudentSelectionsModal
+                show={showStudentSelectionModal}
+                onClose={() => setShowStudentSelectionsModal(false)}
+                studentSelections={studentSelections}
+                room={room}
+            />
         </div>
     )
 }

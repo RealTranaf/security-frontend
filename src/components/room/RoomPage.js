@@ -74,17 +74,17 @@ function RoomPage() {
     }
 
     return (
-        <div className='d-flex' style={{background: '#FFFAED'}}>
+        <div className='d-flex' style={{ background: '#FFFAED' }}>
             <RoomSideBar room={room} selectedPage={selectedPage} setSelectedPage={setSelectedPage}></RoomSideBar>
             <div className='flex-grow-1 px-5'>
                 {selectedPage === 'posts' && (
                     <PostList roomId={roomId} currentUser={currentUser}></PostList>
                 )}
-                {selectedPage === 'choose-topics' && (
-                    <ChooseTopics roomId={roomId} currentUser={currentUser}></ChooseTopics>
-                )}
                 {selectedPage === 'users' && (
                     <RoomUsersPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></RoomUsersPage>
+                )}
+                {selectedPage === 'choose-topics' && (
+                    <ChooseTopics roomId={roomId} room={room} currentUser={currentUser}></ChooseTopics>
                 )}
                 {selectedPage === 'weekly-report' && (
                     <WeeklyReportPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></WeeklyReportPage>
