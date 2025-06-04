@@ -3,8 +3,8 @@ import authHeader from './auth-header'
 
 const API_URL = 'http://localhost:8080/rooms'
 
-export async function createRoom (roomName){
-    return await axios.post(API_URL + '/create', { name: roomName }, { headers: authHeader() })
+export async function createRoom (roomName, type){
+    return await axios.post(API_URL + '/create', { name: roomName, type: type }, { headers: authHeader() })
 }
 
 export async function getRoomList() {

@@ -138,36 +138,36 @@ function ChooseTopics({ roomId, currentUser, room }) {
                 <h3>Topic Selection</h3>
                 {isRoomCreator && (
                     <button
-                        className="btn btn-outline-primary btn-sm mt-2 ms-2"
+                        className='btn btn-outline-primary btn-sm mt-2 ms-2'
                         onClick={() => {
                             setShowStudentSelectionsModal(true)
                             fetchAllStudentSelections()
                         }}
                     >
-                        <i className="bi bi-people me-1"></i>
+                        <i className='bi bi-people me-1'></i>
                         View Student Selections
                     </button>
                 )}
             </div>
             <div className='mb-4'>
                 {studentSelection && studentSelection.topic ? (
-                    <div className="card border-black shadow-sm">
+                    <div className='card border-black shadow-sm'>
                         <div className='card-header d-flex text-white justify-content-between align-items-center' style={{ background: 'var(--main-red)' }}>
                             <span>
-                                <i className="bi bi-check-circle me-2"></i>
+                                <i className='bi bi-check-circle me-2'></i>
                                 Your Selected Topic
                             </span>
                             <button
-                                className="btn btn-warning btn-sm"
+                                className='btn btn-warning btn-sm'
                                 onClick={handleReselect}
-                                title="Choose a different topic"
+                                title='Choose a different topic'
                             >
                                 Reselect Topic
                             </button>
                         </div>
                         <div className='card-body'>
-                            <h5 className="card-title">{studentSelection.topic.title}</h5>
-                            <div className="card-text-mb-2"><strong>Description:</strong> {studentSelection.topic.description}</div>
+                            <h5 className='card-title'>{studentSelection.topic.title}</h5>
+                            <div className='card-text-mb-2'><strong>Description:</strong> {studentSelection.topic.description}</div>
                             {studentSelection.topic.fileUrls && studentSelection.topic.fileUrls.length > 0 && (
                                 <div className='mb-2'>
                                     <strong>Attachments:</strong>
@@ -178,11 +178,11 @@ function ChooseTopics({ roomId, currentUser, room }) {
                                             return (
                                                 <span
                                                     key={index}
-                                                    className="btn btn-link p-0 ms-2"
+                                                    className='btn btn-link p-0 ms-2'
                                                     title={originalName}
                                                     onClick={() => downloadFile(fileUrl, originalName)}
                                                 >
-                                                    <i className="bi bi-paperclip me-1"></i>
+                                                    <i className='bi bi-paperclip me-1'></i>
                                                     {originalName}
                                                 </span>
                                             )
@@ -190,25 +190,25 @@ function ChooseTopics({ roomId, currentUser, room }) {
                                     </div>
                                 </div>
                             )}
-                            <span className="badge bg-secondary">{studentSelection.custom ? 'Custom Topic' : 'Existing Topic'}</span>
+                            <span className='badge bg-secondary'>{studentSelection.custom ? 'Custom Topic' : 'Existing Topic'}</span>
                         </div>
                     </div>
                 ) : (
-                    <div className="alert alert-secondary text-center mb-0">
-                        <i className="bi bi-info-circle me-2"></i>
+                    <div className='alert alert-secondary text-center mb-0'>
+                        <i className='bi bi-info-circle me-2'></i>
                         You have not selected a topic yet.
                     </div>
                 )}
             </div>
-            <div className="card mb-4 shadow-sm">
-                <div className="card-header bg-light">
-                    <h5 className="mb-0">Choose an Existing Topic</h5>
+            <div className='card mb-4 shadow-sm'>
+                <div className='card-header bg-light'>
+                    <h5 className='mb-0'>Choose an Existing Topic</h5>
                     {isRoomCreator && (
                         <button
-                            className="btn btn-primary btn-sm mt-2"
+                            className='btn btn-primary btn-sm mt-2'
                             onClick={() => setShowTeacherTopicModal(true)}
                         >
-                            <i className="bi bi-plus-lg me-1"></i>
+                            <i className='bi bi-plus-lg me-1'></i>
                             Add Topic (Teachers Only)
                         </button>
                     )}
@@ -286,11 +286,11 @@ function ChooseTopics({ roomId, currentUser, room }) {
                 </div>
             )}
 
-            <div className="card shadow-sm mb-4">
-                <div className="card-header bg-light">
-                    <h5 className="mb-0">Or Submit Your Own Topic</h5>
+            <div className='card shadow-sm mb-4'>
+                <div className='card-header bg-light'>
+                    <h5 className='mb-0'>Or Submit Your Own Topic</h5>
                 </div>
-                <div className="card-body">
+                <div className='card-body'>
                     <button className='btn btn-primary mb-3' onClick={() => setShowCreateModal(true)}>
                         Create Custom Topic
                     </button>

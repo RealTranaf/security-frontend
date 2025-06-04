@@ -116,11 +116,11 @@ function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId
                                                 {post.fileUrls && post.fileUrls.length > 0
                                                     ? post.fileUrls
                                                         .filter(fileUrl => !filesToDelete.includes(fileUrl))
-                                                        .map((fileUrl, idx) => {
+                                                        .map((fileUrl, index) => {
                                                             const fileName = fileUrl.split('/').pop()
                                                             const originalName = fileName.substring(fileName.indexOf('_') + 1)
                                                             return (
-                                                                <span key={idx} className='me-2'>
+                                                                <span key={index} className='me-2'>
                                                                     <span
                                                                         className='btn btn-link p-0'
                                                                         style={{ textDecoration: 'underline' }}

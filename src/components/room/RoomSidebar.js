@@ -31,6 +31,13 @@ function RoomSidebar({ room, selectedPage, setSelectedPage }) {
                     <i className='bi bi-calendar-week'></i>
                     Weekly Report
                 </span>
+                <span
+                    className={`sidebar-link${selectedPage === 'weekly-report' ? ' active' : ''}`}
+                    onClick={() => setSelectedPage('voting')}
+                >
+                    <i className='bi bi-check-lg'></i>
+                    Voting
+                </span>
             </div>
         </div>
     )

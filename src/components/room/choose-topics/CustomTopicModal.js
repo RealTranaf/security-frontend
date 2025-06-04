@@ -20,7 +20,7 @@ function CustomTopicModal({
                 <div className='modal-content '>
                     <div className='modal-header'>
                         <h5 className='modal-title'>
-                            <i className="bi bi-lightbulb me-2"></i>
+                            <i className='bi bi-lightbulb me-2'></i>
                             Submit Custom Topic
                         </h5>
                         <button type='button' className='btn-close' onClick={onClose}></button>
@@ -67,8 +67,8 @@ function CustomTopicModal({
                         </div>
                         {files.length > 0 && (
                             <div className='mb-2'>
-                                {files.map((file, idx) => (
-                                    <span key={idx} className='badge bg-secondary me-2'>{file.name}</span>
+                                {files.map((file, index) => (
+                                    <span key={index} className='badge bg-secondary me-2'>{file.name}</span>
                                 ))}
                             </div>
                         )}

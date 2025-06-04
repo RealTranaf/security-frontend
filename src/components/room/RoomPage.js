@@ -9,6 +9,7 @@ import RoomSideBar from './RoomSidebar'
 import RoomUsersPage from './userlist/RoomUsersPage'
 import WeeklyReportPage from './assignment/WeeklyReportPage'
 import ChooseTopics from './choose-topics/ChooseTopic'
+import Voting from './vote/Voting'
 
 function RoomPage() {
     const { roomId } = useParams()
@@ -87,7 +88,10 @@ function RoomPage() {
                     <ChooseTopics roomId={roomId} room={room} currentUser={currentUser}></ChooseTopics>
                 )}
                 {selectedPage === 'weekly-report' && (
-                    <WeeklyReportPage roomId={roomId} room={room} setRoom={setRoom} currentUser={currentUser}></WeeklyReportPage>
+                    <WeeklyReportPage roomId={roomId} room={room} currentUser={currentUser}></WeeklyReportPage>
+                )}
+                {selectedPage === 'voting' && (
+                    <Voting roomId={roomId} room={room} currentUser={currentUser}></Voting>
                 )}
             </div>
         </div>

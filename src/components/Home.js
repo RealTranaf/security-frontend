@@ -11,6 +11,10 @@ function Home() {
     const [currentUser, setCurrentUser] = useState()
     const [showCreateModal, setShowCreateModal] = useState(false)
 
+    const [search, setSearch] = useState('')
+    const [typeFilter, setTypeFilter] = useState('')
+    const [filteredRooms, setFilteredRooms] = useState([])
+
     const navigate = useNavigate()
 
     const fetchRoom = async () => {
@@ -20,6 +24,7 @@ function Home() {
                 a.name.localeCompare(b.name)
             )
             setRooms(sortedRooms)
+            setFilteredRooms(sortedRooms)
         } catch (error) {
             const errorMessage =
                 (error.response && error.response.data) ||
@@ -55,6 +60,17 @@ function Home() {
         fetchUser()
     }, [])
 
+    useEffect(() => {
+        const lower = search.trim().toLowerCase()
+        setFilteredRooms(
+            rooms.filter(room => {
+                const matchesName = room.name && room.name.toLowerCase().includes(lower)
+                const matchesType = !typeFilter || (room.type && room.type === typeFilter)
+                return matchesName && matchesType
+            })
+        )
+    }, [search, typeFilter, rooms])
+
     const handleRoomClick = (roomId) => {
         navigate(`/rooms/${roomId}`)
     }
@@ -66,7 +82,7 @@ function Home() {
                 style={{ backgroundImage: `url(${backgroundImg})` }}
             >
             </div>
-            <div className='container mt-5 position-relative' style={{zIndex: 1}}>
+            <div className='container mt-5 position-relative' style={{ zIndex: 1 }}>
                 <div className='d-flex justify-content-between align-items-center mb-4'>
                     <h3 className='fw-bold mb-0'>Your classes</h3>
                     {currentUser && currentUser.role === 'TEACHER' && (
@@ -76,15 +92,40 @@ function Home() {
                         </button>
                     )}
                 </div>
+                <div className="mb-3 row">
+                    <div className="col-md-8 mb-2 mb-md-0">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search by name..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-md-4">
+                        <select
+                            className="form-select"
+                            value={typeFilter}
+                            onChange={e => setTypeFilter(e.target.value)}
+                        >  
+                            <option key={''} value={''}>All type</option>
+                            <option key={'Đồ án 1'} value={'Đồ án 1'}>Đồ án 1</option>
+                            <option key={'Đồ án 2'} value={'Đồ án 2'}>Đồ án 2</option>
+                            <option key={'Đồ án 3'} value={'Đồ án 3'}>Đồ án 3</option>
+                            <option key={'Đồ án tốt nghiệp'} value={'Đồ án tốt nghiệp'}>Đồ án tốt nghiệp</option>
+
+                        </select>
+                    </div>
+                </div>
                 {error && <div className='alert alert-danger'>{error}</div>}
                 <div className='row g-4'>
-                    {rooms.length === 0 ? (
+                    {filteredRooms.length === 0 ? (
                         <div className='col-12 text-center text-muted'>
-                            <i className='bi bi-door-closed fs-1 mb-2'></i>
+                            <i className='bi bi-door-closed fs-1 mb-2' style={{ color: 'var(--main-red)' }}></i>
                             <div>No classes found</div>
                         </div>
                     ) : (
-                        rooms.map((room) => (
+                        filteredRooms.map((room) => (
                             <div className='col-12 col-sm-6 col-md-4 col-lg-3 d-flex' key={room.id}>
                                 <div
                                     className='card shadow-sm room-card-hover flex-fill'
@@ -106,6 +147,11 @@ function Home() {
                                             </h5>
                                             <p className='card-text mb-1 text-muted'>
                                                 Created by: <span className='fw-semibold'>{room.createdBy}</span>
+                                            </p>
+                                            <p className='card-text mb-0'>
+                                                <span className='badge' style={{ background: 'var(--main-red)' }}>
+                                                    {room.type}
+                                                </span>
                                             </p>
                                         </div>
                                     </div>

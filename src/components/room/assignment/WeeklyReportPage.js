@@ -4,7 +4,7 @@ import { downloadFile } from '../../../services/download-service'
 import GradeForm from './GradeForm'
 import WeeklyReportPostList from './WeeklyReportPostList'
 
-function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
+function WeeklyReportPage({ roomId, room, currentUser }) {
 
     const [posts, setPosts] = useState([])
     const [newPostTitle, setNewPostTitle] = useState('')
@@ -248,7 +248,7 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                     </div>
                     {showCreateModal && (
                         <div className='modal show d-block' tabIndex='-1' style={{ background: 'rgba(0,0,0,0.5)' }}>
-                            <div className='modal-dialog modal-lg modal-dialog-centered'>
+                            <div className='modal-dialog modal-lg '>
                                 <div className='modal-content'>
                                     <div className='modal-header'>
                                         <h5 className='modal-title'>Create a Weekly Report Post</h5>
@@ -293,8 +293,8 @@ function WeeklyReportPage({ roomId, room, setRoom, currentUser }) {
                                         </div>
                                         {newPostFiles.length > 0 && (
                                             <div className='mt-2'>
-                                                {newPostFiles.map((file, idx) => (
-                                                    <span key={idx} className='badge bg-secondary me-2'>{file.name}</span>
+                                                {newPostFiles.map((file, index) => (
+                                                    <span key={index} className='badge bg-secondary me-2'>{file.name}</span>
                                                 ))}
                                             </div>
                                         )}

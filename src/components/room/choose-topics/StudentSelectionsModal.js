@@ -8,14 +8,14 @@ function StudentSelectionsModal({ show, onClose, studentSelections, room }) {
                 <div className='modal-content'>
                     <div className='modal-header'>
                         <h5 className='modal-title'>
-                            <i className="bi bi-people me-2"></i>
+                            <i className='bi bi-people me-2'></i>
                             Student Topic Selections
                         </h5>
                         <button type='button' className='btn-close' onClick={onClose}></button>
                     </div>
                     <div className='modal-body'>
-                        <div className="table-responsive">
-                            <table className="table table-striped align-middle">
+                        <div className='table-responsive'>
+                            <table className='table table-striped align-middle'>
                                 <thead>
                                     <tr>
                                         <th>Student</th>
@@ -44,7 +44,7 @@ function StudentSelectionsModal({ show, onClose, studentSelections, room }) {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <td colSpan={3} className="text-muted">Not Selected</td>
+                                                            <td colSpan={3} className='text-muted'>Not Selected</td>
                                                         </>
                                                     )}
                                                 </tr>
