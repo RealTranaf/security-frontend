@@ -190,7 +190,15 @@ function ChooseTopics({ roomId, currentUser, room }) {
                                     </div>
                                 </div>
                             )}
-                            <span className='badge bg-secondary'>{studentSelection.custom ? 'Custom Topic' : 'Existing Topic'}</span>
+                            <div className='mt-2'>
+                                <span className='badge bg-secondary me-2'>
+                                    {studentSelection.custom ? 'Custom Topic' : 'Existing Topic'}
+                                </span>
+                                {studentSelection.verified
+                                    ? <span className='badge bg-success me-2'>Verified by Teacher</span>
+                                    : <span className='badge bg-warning text-dark me-2'>Pending Teacher Verification</span>
+                                }
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -331,6 +339,7 @@ function ChooseTopics({ roomId, currentUser, room }) {
                 onClose={() => setShowStudentSelectionsModal(false)}
                 studentSelections={studentSelections}
                 room={room}
+                onVerify={fetchAllStudentSelections}
             />
         </div>
     )

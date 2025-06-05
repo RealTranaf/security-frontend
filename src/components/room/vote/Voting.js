@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { createPoll, editPoll, getPolls, getPollVotes, votePoll, deletePoll } from '../../../services/poll-service'
 import { downloadFile } from '../../../services/download-service'
+import VotingInfoModal from './VotingInfoModal'
 
 function Voting({ roomId, currentUser, room }) {
     const [showCreateModal, setShowCreateModal] = useState(false)
@@ -22,6 +23,10 @@ function Voting({ roomId, currentUser, room }) {
     const [editingPollFiles, setEditingPollFiles] = useState([])
     const [editingFilesToDelete, setEditingFilesToDelete] = useState([])
     const editingFileInputRef = useRef(null)
+
+    const [showInfoModal, setShowInfoModal] = useState(false)
+    const [selectedPoll, setSelectedPoll] = useState(null)
+    const [selectedPollVotes, setSelectedPollVotes] = useState([])
 
     const fetchPolls = useCallback(async () => {
         try {
@@ -45,6 +50,18 @@ function Voting({ roomId, currentUser, room }) {
     useEffect(() => {
         fetchPolls()
     }, [roomId, fetchPolls])
+
+    const handleSelectPoll = async (poll) => {
+        setShowInfoModal(true)
+        setSelectedPoll(poll)
+        try {
+            const response = await getPollVotes(roomId, poll.id)
+            setSelectedPollVotes(response.data.votes)
+        } catch (error) {
+            setSelectedPollVotes([])
+            console.error(error)
+        }
+    }
 
     const handleOptionChange = (index, value) => {
         const newOptions = [...options]
@@ -180,26 +197,36 @@ function Voting({ roomId, currentUser, room }) {
                                 <div className='card-body'>
                                     <div className='d-flex justify-content-between align-items-center'>
                                         <h4 className='card-title fw-bold'>{poll.title}</h4>
-                                        {currentUser && (poll.createdBy === currentUser.username) && (
-                                            <div>
-                                                <span
-                                                    className='btn btn-link p-0 me-2'
-                                                    title='Edit'
-                                                    style={{ color: '#ffc107' }}
-                                                    onClick={() => handleEditPoll(poll)}
-                                                >
-                                                    <i className='bi bi-pencil-square fs-4'></i>
-                                                </span>
-                                                <span
-                                                    className='btn btn-link p-0 me-2'
-                                                    title='Delete'
-                                                    style={{ color: '#dc3545' }}
-                                                    onClick={() => handleDeletePoll(poll.id)}
-                                                >
-                                                    <i className='bi bi-trash-fill fs-4'></i>
-                                                </span>
-                                            </div>
-                                        )}
+                                        <div className='d-flex align-item-center'>
+                                            <span
+                                                className='btn btn-link p-0 me-2'
+                                                title='View'
+                                                onClick={() => handleSelectPoll(poll)}
+                                                style={{ color: '#1976d2' }}
+                                            >
+                                                <i className='bi bi-eye fs-4'></i>
+                                            </span>
+                                            {currentUser && (poll.createdBy === currentUser.username) && (
+                                                <div>
+                                                    <span
+                                                        className='btn btn-link p-0 me-2'
+                                                        title='Edit'
+                                                        style={{ color: '#ffc107' }}
+                                                        onClick={() => handleEditPoll(poll)}
+                                                    >
+                                                        <i className='bi bi-pencil-square fs-4'></i>
+                                                    </span>
+                                                    <span
+                                                        className='btn btn-link p-0 me-2'
+                                                        title='Delete'
+                                                        style={{ color: '#dc3545' }}
+                                                        onClick={() => handleDeletePoll(poll.id)}
+                                                    >
+                                                        <i className='bi bi-trash-fill fs-4'></i>
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     {editingPollId === poll.id ? (
                                         <div>
@@ -212,6 +239,15 @@ function Voting({ roomId, currentUser, room }) {
                                             >
                                             </input>
                                             <div className='position-relative'>
+                                                <label className='form-label fw-semibold'>Deadline</label>
+                                                <input
+                                                    className='form-control mb-2'
+                                                    type='datetime-local'
+                                                    value={editingPollDeadline}
+                                                    onChange={e => setEditingPollDeadline(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className='position-relative'>
                                                 <label className='form-label fw-semibold'>Description</label>
                                                 <textarea
                                                     className='form-control mb-2'
@@ -219,14 +255,20 @@ function Voting({ roomId, currentUser, room }) {
                                                     value={editingPollDescription}
                                                     onChange={e => setEditingPollDescription(e.target.value)}
                                                 />
-                                            </div>
-                                            <div className='position-relative'>
-                                                <label className='form-label fw-semibold'>Deadline</label>
+                                                <button
+                                                    type='button'
+                                                    className='attach-btn-inside-textarea'
+                                                    onClick={() => editingFileInputRef.current && editingFileInputRef.current.click()}
+                                                    tabIndex={-1}
+                                                >
+                                                    <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
+                                                </button>
                                                 <input
-                                                    className='form-control mb-2'
-                                                    type='datetime-local'
-                                                    value={editingPollDeadline}
-                                                    onChange={e => setEditingPollDeadline(e.target.value)}
+                                                    type='file'
+                                                    className='d-none'
+                                                    multiple
+                                                    ref={editingFileInputRef}
+                                                    onChange={e => setEditingPollFiles(Array.from(e.target.files))}
                                                 />
                                             </div>
                                             <div className='mb-2'>
@@ -262,13 +304,6 @@ function Voting({ roomId, currentUser, room }) {
                                                         : <span className='text-muted'>No attachments</span>
                                                     }
                                                 </div>
-                                                <input
-                                                    type='file'
-                                                    className='form-control mt-2'
-                                                    multiple
-                                                    ref={editingFileInputRef}
-                                                    onChange={e => setEditingPollFiles(Array.from(e.target.files))}
-                                                />
                                                 {editingPollFiles.length > 0 && (
                                                     <div className='mt-2'>
                                                         {editingPollFiles.map((file, index) => (
@@ -279,7 +314,7 @@ function Voting({ roomId, currentUser, room }) {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className='mb-2 mt-2'>
+                                            <div className='position-relative mt-2'>
                                                 <label className='form-label fw-semibold'>Voting Options</label>
                                                 {editingPollOptions.map((option, index) => (
                                                     <div className='input-group mb-2' key={index}>
@@ -396,6 +431,13 @@ function Voting({ roomId, currentUser, room }) {
                     })
                 )}
             </div>
+
+            <VotingInfoModal
+                show={showInfoModal}
+                onClose={() => setShowInfoModal(false)}
+                poll={selectedPoll}
+                votes={selectedPollVotes}
+            />
 
             {/* Create Poll Modal */}
             {showCreateModal && (

@@ -40,3 +40,7 @@ export async function getStudentSelectedTopic(roomId) {
 export async function getAllStudentSelections(roomId) {
     return await axios.get(`${API_URL}/${roomId}/topics/selections`, { headers: authHeader() })
 }
+
+export async function verifyStudentSelection(roomId, selectionId) {
+    return await axios.patch(`${API_URL}/${roomId}/topics/selections/${selectionId}/verify`, {}, { headers: authHeader() })
+}

@@ -92,19 +92,19 @@ function Home() {
                         </button>
                     )}
                 </div>
-                <div className="mb-3 row">
-                    <div className="col-md-8 mb-2 mb-md-0">
+                <div className='mb-3 row'>
+                    <div className='col-md-8 mb-2 mb-md-0'>
                         <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search by name..."
+                            type='text'
+                            className='form-control'
+                            placeholder='Search by name...'
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                         />
                     </div>
-                    <div className="col-md-4">
+                    <div className='col-md-4'>
                         <select
-                            className="form-select"
+                            className='form-select'
                             value={typeFilter}
                             onChange={e => setTypeFilter(e.target.value)}
                         >  
