@@ -44,3 +44,34 @@ export async function getAllStudentSelections(roomId) {
 export async function verifyStudentSelection(roomId, selectionId) {
     return await axios.patch(`${API_URL}/${roomId}/topics/selections/${selectionId}/verify`, {}, { headers: authHeader() })
 }
+
+export async function deleteTopic(roomId, topicId) {
+    return await axios.delete(`${API_URL}/${roomId}/topics/${topicId}`, { headers: authHeader() })
+}
+
+export async function editTopic(roomId, topicId, title, description, files, filesToDelete) {
+    const formData = new FormData()
+    formData.append('title', title)
+    formData.append('description', description)
+    files.forEach(file => formData.append('files', file))
+    filesToDelete.forEach(file => formData.append('filesToDelete', file))
+    return await axios.put(`${API_URL}/${roomId}/topics/${topicId}`, formData, { headers: authHeader() })
+}
+export async function handleExportExcelTopic(roomId, roomName, roomType) {
+    try {
+        const url = `${API_URL}/${roomId}/topics/export-excel`
+        const response = await axios.get(url, { responseType: 'blob', headers: authHeader() })
+        const blob = new Blob([response.data], { type: response.headers['content-type'] })
+        const safeName = roomName ? roomName.replace(/\s+/g, '_') : 'room'
+        const safeType = roomType ? roomType.replace(/\s+/g, '_') : 'type'
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = `topics_${safeName}_${safeType}.xlsx`
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+    } catch (error) {
+        alert('Failed to export file.')
+        console.error(error)
+    }
+}

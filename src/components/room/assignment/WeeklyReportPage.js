@@ -473,7 +473,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                     <div className='mt-4'>
                                         <h5>Student Submission</h5>
                                         {selectedPost.author === currentUser.username && (
-                                            <button className='btn btn-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.deadline)}>
+                                            <button className='btn btn-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.title)}>
                                                 <i class='bi bi-filetype-xls me-2'></i>
                                                 Export to Excel
                                             </button>

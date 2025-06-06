@@ -55,16 +55,15 @@ export function gradeWeeklyReportSubmission(roomId, submissionId, grade, note) {
     return axios.post(`${API_URL}/${roomId}/weekly-reports/submissions/${submissionId}/grade`, formData, { headers: authHeader() })
 }
 
-export async function handleExportExcel(roomId, reportPostId, deadline) {
+export async function handleExportExcel(roomId, reportPostId, postTitle) {
     try {
         const url = `${API_URL}/${roomId}/weekly-reports/${reportPostId}/export-excel`
         const response = await axios.get(url, { responseType: 'blob', headers: authHeader() })
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
-        
-        const safeDeadline = deadline ? deadline.toString().replace(/[: ]/g, '_') : 'no_deadline'
+        const safeTitle = postTitle ? postTitle.replace(/\s+/g, '_') : 'post'
         const link = document.createElement('a')
         link.href = window.URL.createObjectURL(blob)
-        link.download = `${reportPostId}_${safeDeadline}.xlsx`
+        link.download = `report_${safeTitle}.xlsx`
         link.click()
     } catch (error) {
         alert('Failed to export file.')

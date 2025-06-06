@@ -1,7 +1,8 @@
 import React from 'react'
 import { downloadFile } from '../../../services/download-service'
+import { handleExportExcelPoll } from '../../../services/poll-service'
 
-function VotingInfoModal({ show, onClose, poll, votes }) {
+function VotingInfoModal({ show, onClose, room, poll, votes, isRoomCreator }) {
     if (!show) return null
 
     return (
@@ -20,6 +21,12 @@ function VotingInfoModal({ show, onClose, poll, votes }) {
                         <p><strong>Deadline:</strong> {new Date(poll.deadline).toLocaleString()}</p>
                         <p><strong>Created on:</strong> {new Date(poll.createdAt).toLocaleString()}</p>
                         <p><strong>Total Votes:</strong> {votes ? votes.length : 0}</p>
+                        {isRoomCreator && (
+                            <button className='btn btn-success mb-3' onClick={() => handleExportExcelPoll(room.id, poll.id, poll.title)}>
+                                <i class='bi bi-filetype-xls me-2'></i>
+                                Export to Excel
+                            </button>
+                        )}
                         {poll.fileUrls && poll.fileUrls.length > 0 && (
                             <div>
                                 <strong>Attachments:</strong>

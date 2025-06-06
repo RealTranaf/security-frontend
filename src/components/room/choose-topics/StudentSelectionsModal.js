@@ -1,7 +1,8 @@
 import React from 'react'
-import { verifyStudentSelection } from '../../../services/topic-service'
+import { verifyStudentSelection, handleExportExcelTopic } from '../../../services/topic-service'
 
-function StudentSelectionsModal({ show, onClose, studentSelections, room, onVerify }) {
+
+function StudentSelectionsModal({ show, onClose, studentSelections, room, onVerify, isRoomCreator }) {
     if (!show) return null
 
     const handleVerify = async (selectionId) => {
@@ -42,6 +43,12 @@ function StudentSelectionsModal({ show, onClose, studentSelections, room, onVeri
                         <button type='button' className='btn-close' onClick={onClose}></button>
                     </div>
                     <div className='modal-body'>
+                        {isRoomCreator && (
+                            <button className='btn btn-outline-success mb-3' onClick={() => handleExportExcelTopic(room.id, room.name, room.type)}>
+                                <i className='bi bi-file-earmark-excel me-1'></i>
+                                Export to Excel
+                            </button>
+                        )}
                         <div className='table-responsive'>
                             <table className='table table-striped align-middle'>
                                 <thead>

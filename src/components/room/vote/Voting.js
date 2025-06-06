@@ -28,6 +28,8 @@ function Voting({ roomId, currentUser, room }) {
     const [selectedPoll, setSelectedPoll] = useState(null)
     const [selectedPollVotes, setSelectedPollVotes] = useState([])
 
+    const isRoomCreator = currentUser && room && currentUser.username === room.createdBy
+
     const fetchPolls = useCallback(async () => {
         try {
             const response = await getPolls(roomId)
@@ -238,15 +240,13 @@ function Voting({ roomId, currentUser, room }) {
                                                 onChange={e => setEditingPollTitle(e.target.value)}
                                             >
                                             </input>
-                                            <div className='position-relative'>
-                                                <label className='form-label fw-semibold'>Deadline</label>
-                                                <input
-                                                    className='form-control mb-2'
-                                                    type='datetime-local'
-                                                    value={editingPollDeadline}
-                                                    onChange={e => setEditingPollDeadline(e.target.value)}
-                                                />
-                                            </div>
+                                            <label className='form-label fw-semibold'>Deadline</label>
+                                            <input
+                                                className='form-control mb-2'
+                                                type='datetime-local'
+                                                value={editingPollDeadline}
+                                                onChange={e => setEditingPollDeadline(e.target.value)}
+                                            />
                                             <div className='position-relative'>
                                                 <label className='form-label fw-semibold'>Description</label>
                                                 <textarea
@@ -435,8 +435,10 @@ function Voting({ roomId, currentUser, room }) {
             <VotingInfoModal
                 show={showInfoModal}
                 onClose={() => setShowInfoModal(false)}
+                room={room}
                 poll={selectedPoll}
                 votes={selectedPollVotes}
+                isRoomCreator={isRoomCreator}
             />
 
             {/* Create Poll Modal */}

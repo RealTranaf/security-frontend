@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { getStudentSelectedTopic, selectExistingTopic, submitCustomTopic, getNonCustomTopics, submitTeacherTopic, getAllStudentSelections } from '../../../services/topic-service'
+import { editTopic, deleteTopic, getStudentSelectedTopic, selectExistingTopic, submitCustomTopic, getNonCustomTopics, submitTeacherTopic, getAllStudentSelections } from '../../../services/topic-service'
 import { downloadFile } from '../../../services/download-service'
 import CustomTopicModal from './CustomTopicModal'
 import TeacherTopicModal from './TeacherTopicModal'
@@ -26,6 +26,13 @@ function ChooseTopics({ roomId, currentUser, room }) {
 
     const [showStudentSelectionModal, setShowStudentSelectionsModal] = useState(false)
     const [studentSelections, setStudentSelections] = useState([])
+
+    const [editingTopicId, setEditingTopicId] = useState(null)
+    const [editingTitle, setEditingTitle] = useState('')
+    const [editingDescription, setEditingDescription] = useState('')
+    const [editingFiles, setEditingFiles] = useState([])
+    const editingFileInputRef = useRef(null)
+    const [editingFilesToDelete, setEditingFilesToDelete] = useState([])
 
     const fetchTopics = useCallback(async () => {
         try {
@@ -121,6 +128,41 @@ function ChooseTopics({ roomId, currentUser, room }) {
             if (teacherFileInputRef.current) {
                 teacherFileInputRef.current.value = ''
             }
+            fetchTopics()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleEditTopic = (topic) => {
+        setEditingTopicId(topic.id)
+        setEditingTitle(topic.title)
+        setEditingDescription(topic.description)
+        setEditingFiles([])
+        setEditingFilesToDelete([])
+        if (editingFileInputRef.current) editingFileInputRef.current.value = ''
+    }
+
+    const handleSaveEditTopic = async () => {
+        if (!editingTitle.trim() || !editingDescription.trim()) return
+        try {
+            await editTopic(roomId, editingTopicId, editingTitle, editingDescription, editingFiles, editingFilesToDelete)
+            setEditingTopicId(null)
+            setEditingTitle('')
+            setEditingDescription('')
+            setEditingFiles([])
+            setEditingFilesToDelete([])
+            fetchTopics()
+            fetchAllStudentSelections()
+            fetchStudentSelection()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    const handleDeleteTopic = async (topicId) => {
+        if (!window.confirm('Are you sure you want to delete this topic? This will also remove all student selections for this topic.')) return
+        try {
+            await deleteTopic(roomId, topicId)
             fetchTopics()
         } catch (error) {
             console.error(error)
@@ -236,36 +278,156 @@ function ChooseTopics({ roomId, currentUser, room }) {
                         ))}
                     </select>
                     {selectedTopic && (
-                        <div className='mt-2'>
-                            <div><strong>Description:</strong> {selectedTopic.description}</div>
-                            {selectedTopic.fileUrls && selectedTopic.fileUrls.length > 0 && (
+                        <div className='mt-2 rounded'>
+                            {editingTopicId === selectedTopic.id ? (
                                 <div>
-                                    <strong>Attachments: </strong>
+                                    <label className='form-label fw-semibold'>Title</label>
+                                    <input
+                                        className='form-control mb-2'
+                                        value={editingTitle}
+                                        onChange={e => setEditingTitle(e.target.value)}
+                                    />
+                                    <label className='form-label fw-semibold'>Description</label>
+                                    <textarea
+                                        className='form-control mb-2'
+                                        value={editingDescription}
+                                        onChange={e => setEditingDescription(e.target.value)}
+                                    />
+                                    <div className='position-relative'>
+                                        <label className='form-label fw-semibold'>Attachments</label>
+                                        <button
+                                            type='button'
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                outline: 'none'
+                                            }}
+                                            onClick={() => editingFileInputRef.current && editingFileInputRef.current.click()}
+                                            tabIndex={-1}
+                                        >
+                                            <i className='bi bi-paperclip fs-5' style={{ color: 'var(--main-red)' }}></i>
+                                        </button>
+                                        <input
+                                            type='file'
+                                            className='d-none'
+                                            multiple
+                                            ref={editingFileInputRef}
+                                            onChange={e => setEditingFiles(Array.from(e.target.files))}
+                                        />
+                                    </div>
                                     <div>
-                                        {selectedTopic.fileUrls.map((fileUrl, index) => {
-                                            const fileName = fileUrl.split('/').pop()
-                                            const originalName = fileName.substring(fileName.indexOf('_') + 1)
-                                            return (
-                                                <span
-                                                    key={index}
-                                                    className='btn btn-link p-0 ms-2'
-                                                    onClick={() => downloadFile(fileUrl, fileName)}
-                                                >
-                                                    <i className='bi bi-paperclip me-1'></i>
-                                                    {originalName}
+                                        {selectedTopic.fileUrls && selectedTopic.fileUrls.length > 0
+                                            ? selectedTopic.fileUrls
+                                                .filter(fileUrl => !editingFilesToDelete.includes(fileUrl))
+                                                .map((fileUrl, idx) => {
+                                                    const fileName = fileUrl.split('/').pop()
+                                                    const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                    return (
+                                                        <span key={idx} className='me-2'>
+                                                            <span
+                                                                className='btn btn-link p-0'
+                                                                style={{ textDecoration: 'underline' }}
+                                                                onClick={() => downloadFile(fileUrl, fileName)}
+                                                            >
+                                                                <i className='bi bi-paperclip me-1'></i>
+                                                                {originalName}
+                                                            </span>
+                                                            <span
+                                                                className='btn btn-sm ms-1'
+                                                                onClick={() => setEditingFilesToDelete([...editingFilesToDelete, fileUrl])}
+                                                                style={{ cursor: 'pointer' }}
+                                                                title='Delete'
+                                                            >
+                                                                <i className='bi bi-x-lg'></i>
+                                                            </span>
+                                                        </span>
+                                                    )
+                                                })
+                                            : <span className='text-muted'>No attachments</span>
+                                        }
+                                    </div>
+                                    {editingFiles.length > 0 && (
+                                        <div className='mt-2'>
+                                            {editingFiles.map((file, idx) => (
+                                                <span key={idx} className='badge bg-secondary me-2'>
+                                                    {file.name}
                                                 </span>
-                                            )
-                                        })}
+                                            ))}
+                                        </div>
+                                    )}
+                                    <div className='mt-3'>
+                                        <button
+                                            className='btn btn-sm btn-success me-2'
+                                            onClick={handleSaveEditTopic}
+                                        >
+                                            <i className='bi bi-check-lg me-1'></i>
+                                            Save
+                                        </button>
+                                        <button
+                                            className='btn btn-sm btn-secondary'
+                                            onClick={() => setEditingTopicId(null)}
+                                        >
+                                            <i className='bi bi-x-lg me-1'></i>
+                                            Cancel
+                                        </button>
                                     </div>
                                 </div>
+                            ) : (
+                                <>
+                                    <div><strong>Description:</strong> {selectedTopic.description}</div>
+                                    {selectedTopic.fileUrls && selectedTopic.fileUrls.length > 0 && (
+                                        <div>
+                                            <strong>Attachments: </strong>
+                                            <div>
+                                                {selectedTopic.fileUrls.map((fileUrl, index) => {
+                                                    const fileName = fileUrl.split('/').pop()
+                                                    const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                    return (
+                                                        <span
+                                                            key={index}
+                                                            className='btn btn-link p-0 ms-2'
+                                                            onClick={() => downloadFile(fileUrl, fileName)}
+                                                        >
+                                                            <i className='bi bi-paperclip me-1'></i>
+                                                            {originalName}
+                                                        </span>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className='d-flex mt-3'>
+                                        <button
+                                            className='btn btn-outline-primary btn-sm me-2'
+                                            onClick={() => handleSelectTopic(selectedTopic.id)}
+                                            disabled={submitted}
+                                        >
+                                            {submitted && studentSelection && selectedTopic.id === studentSelection.topic.id ? 'Selected' : 'Select'}
+                                        </button>
+                                        {isRoomCreator && (
+                                            <>
+                                                <span
+                                                    className='btn btn-link p-0 me-2'
+                                                    title='Edit'
+                                                    onClick={() => handleEditTopic(selectedTopic)}
+                                                    style={{ color: '#ffc107' }}
+                                                >
+                                                    <i className='bi bi-pencil-square fs-3'></i>
+                                                </span>
+                                                <span
+                                                    className='btn btn-link p-0 me-2'
+                                                    title='Delete'
+                                                    onClick={() => handleDeleteTopic(selectedTopic.id)}
+                                                    style={{ color: '#dc3545' }}
+                                                >
+                                                    <i className='bi bi-trash-fill fs-3'></i>
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+                                </>
                             )}
-                            <button
-                                className='btn btn-outline-primary btn-sm mt-3'
-                                onClick={() => handleSelectTopic(selectedTopic.id)}
-                                disabled={submitted}
-                            >
-                                {submitted && studentSelection && selectedTopic.id === studentSelection.topic.id ? 'Selected' : 'Select'}
-                            </button>
+
                         </div>
                     )}
                 </div>
@@ -340,6 +502,7 @@ function ChooseTopics({ roomId, currentUser, room }) {
                 studentSelections={studentSelections}
                 room={room}
                 onVerify={fetchAllStudentSelections}
+                isRoomCreator={isRoomCreator}
             />
         </div>
     )

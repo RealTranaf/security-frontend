@@ -40,3 +40,20 @@ export function editPoll(roomId, pollId, title, description, options, deadline, 
 export function deletePoll(roomId, pollId) {
     return axios.delete(`${API_URL}/${roomId}/polls/${pollId}`, { headers: authHeader() })
 }
+export async function handleExportExcelPoll(roomId, pollId, pollTitle) {
+    try {
+        const url = `${API_URL}/${roomId}/polls/${pollId}/export-excel`
+        const response = await axios.get(url, { responseType: 'blob', headers: authHeader() })
+        const blob = new Blob([response.data], { type: response.headers['content-type'] })
+        const safeTitle = pollTitle ? pollTitle.replace(/\s+/g, '_') : 'poll'
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = `poll_${safeTitle}.xlsx`
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+    } catch (error) {
+        alert('Failed to export file.')
+        console.error(error)
+    }
+}
