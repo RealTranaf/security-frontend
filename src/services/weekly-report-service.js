@@ -37,21 +37,15 @@ export function submitWeeklyReport(roomId, reportPostId, content, files) {
     return axios.post(`${API_URL}/${roomId}/weekly-reports/${reportPostId}/create`, formData, { headers: authHeader() })
 }
 
-export function resubmitWeeklyReport(roomId, reportPostId, content, files) {
-    const formData = new FormData()
-    formData.append('content', content)
-    files.forEach(file => formData.append('files', file))
-    return axios.put(`${API_URL}/${roomId}/weekly-reports/${reportPostId}/create`, formData, { headers: authHeader() })
-}
-
 export function getWeeklyReportSubmissions(roomId, reportPostId) {
     return axios.get(`${API_URL}/${roomId}/weekly-reports/${reportPostId}/submissions`, { headers: authHeader() })
 }
 
-export function gradeWeeklyReportSubmission(roomId, submissionId, grade, note) {
+export function gradeWeeklyReportSubmission(roomId, submissionId, grade, note, files) {
     const formData = new FormData()
     formData.append('grade', grade)
     formData.append('note', note)
+    files.forEach(file => formData.append('files', file))
     return axios.post(`${API_URL}/${roomId}/weekly-reports/submissions/${submissionId}/grade`, formData, { headers: authHeader() })
 }
 
@@ -74,3 +68,8 @@ export async function handleExportExcel(roomId, reportPostId, postTitle) {
 export function getUserWeeklyReportSubmissions(roomId, username) {
     return axios.get(`${API_URL}/${roomId}/weekly-reports/student-submissions?username=${username}`, { headers: authHeader() })
 }
+
+export function getStudentSubmissionsByPost(roomId, reportPostId, username) {
+    return axios.get(`${API_URL}/${roomId}/weekly-reports/${reportPostId}/student-submissions?username=${username}`, { headers: authHeader() })
+}
+

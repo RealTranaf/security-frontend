@@ -34,6 +34,11 @@ function ChooseTopics({ roomId, currentUser, room }) {
     const editingFileInputRef = useRef(null)
     const [editingFilesToDelete, setEditingFilesToDelete] = useState([])
 
+    // const [selectionMode, setSelectionMode] = useState('solo') // 'solo' or 'group'
+    // const [groupMembers, setGroupMembers] = useState([])
+    // const [customSelectionMode, setCustomSelectionMode] = useState('solo')
+    // const [customGroupMembers, setCustomGroupMembers] = useState([])
+
     const fetchTopics = useCallback(async () => {
         try {
 
@@ -319,11 +324,11 @@ function ChooseTopics({ roomId, currentUser, room }) {
                                         {selectedTopic.fileUrls && selectedTopic.fileUrls.length > 0
                                             ? selectedTopic.fileUrls
                                                 .filter(fileUrl => !editingFilesToDelete.includes(fileUrl))
-                                                .map((fileUrl, idx) => {
+                                                .map((fileUrl, index) => {
                                                     const fileName = fileUrl.split('/').pop()
                                                     const originalName = fileName.substring(fileName.indexOf('_') + 1)
                                                     return (
-                                                        <span key={idx} className='me-2'>
+                                                        <span key={index} className='me-2'>
                                                             <span
                                                                 className='btn btn-link p-0'
                                                                 style={{ textDecoration: 'underline' }}
@@ -348,8 +353,8 @@ function ChooseTopics({ roomId, currentUser, room }) {
                                     </div>
                                     {editingFiles.length > 0 && (
                                         <div className='mt-2'>
-                                            {editingFiles.map((file, idx) => (
-                                                <span key={idx} className='badge bg-secondary me-2'>
+                                            {editingFiles.map((file, index) => (
+                                                <span key={index} className='badge bg-secondary me-2'>
                                                     {file.name}
                                                 </span>
                                             ))}

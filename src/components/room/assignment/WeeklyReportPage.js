@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { getWeeklyReportPosts, createWeeklyReportPost, submitWeeklyReport, getWeeklyReportSubmissions, gradeWeeklyReportSubmission, handleExportExcel, resubmitWeeklyReport, editWeeklyReportPost, deleteWeeklyReportPost, getUserWeeklyReportSubmissions } from '../../../services/weekly-report-service'
+import { getStudentSubmissionsByPost, getWeeklyReportPosts, createWeeklyReportPost, submitWeeklyReport, getWeeklyReportSubmissions, gradeWeeklyReportSubmission, handleExportExcel, editWeeklyReportPost, deleteWeeklyReportPost, getUserWeeklyReportSubmissions } from '../../../services/weekly-report-service'
 import { downloadFile } from '../../../services/download-service'
 import GradeForm from './GradeForm'
 import WeeklyReportPostList from './WeeklyReportPostList'
@@ -33,6 +33,10 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
 
     const [showExpired, setShowExpired] = useState(false)
 
+    const [showPastSubs, setShowPastSubs] = useState(false)
+    const [pastSubs, setPastSubs] = useState([])
+    const [pastSubsUser, setPastSubsUser] = useState(null)
+
     const fetchPosts = useCallback(async () => {
         try {
             const response = await getWeeklyReportPosts(roomId)
@@ -42,6 +46,21 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
         }
     }, [roomId])
 
+    const fetchPastSubsForUser = async (username) => {
+        if (selectedPost && currentUser.role === 'TEACHER') {
+            try {
+                const res = await getStudentSubmissionsByPost(roomId, selectedPost.id, username)
+                setPastSubs(res.data.studentSubmissions || [])
+                setPastSubsUser(username)
+                setShowPastSubs(true)
+            } catch (error) {
+                setPastSubs([])
+                setPastSubsUser(username)
+                setShowPastSubs(true)
+                console.error(error)
+            }
+        }
+    }
     useEffect(() => {
         fetchPosts()
     }, [roomId, fetchPosts])
@@ -140,22 +159,11 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
     const handleSelectPost = async (post) => {
         setSelectedPost(post)
         setShowPostModal(true)
-        if (currentUser.role === 'TEACHER') {
-            try {
-                const response = await getWeeklyReportSubmissions(roomId, post.id)
-                setSubmissions(response.data.submissions)
-            } catch (error) {
-                console.error('Failed to select posts:', error)
-            }
-        }
-
-        if (currentUser.role === 'STUDENT') {
-            try {
-                const response = await getWeeklyReportSubmissions(roomId, post.id)
-                setSubmissions(response.data.submissions)
-            } catch (error) {
-                console.error('Failed to select posts:', error)
-            }
+        try {
+            const response = await getWeeklyReportSubmissions(roomId, post.id)
+            setSubmissions(response.data.submissions)
+        } catch (error) {
+            console.error('Failed to select posts:', error)
         }
     }
 
@@ -171,11 +179,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                     return
                 }
             }
-            if (getMySubmission()) {
-                await resubmitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
-            } else {
-                await submitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
-            }
+            await submitWeeklyReport(roomId, selectedPost.id, reportContent, reportFiles)
             setReportContent('')
             setReportFiles([])
             fetchPosts()
@@ -190,9 +194,9 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
         }
     }
 
-    const handleGrade = async (submissionId, grade, note) => {
+    const handleGrade = async (submissionId, grade, note, files) => {
         try {
-            await gradeWeeklyReportSubmission(roomId, submissionId, grade, note)
+            await gradeWeeklyReportSubmission(roomId, submissionId, grade, note, files)
             const response = await getWeeklyReportSubmissions(roomId, selectedPost.id)
             setSubmissions(response.data.submissions)
         } catch (error) {
@@ -229,9 +233,6 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
             fileInputRef.current.value = ''
         }
     }
-
-    // console.log(submissions)
-    console.log(posts)
 
     const expiredPosts = posts.filter(post => post.expired)
     const currentPosts = posts.filter(post => !post.expired)
@@ -464,6 +465,27 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                         <strong>Teacher Note:</strong> {getMySubmission().teacherNote}
                                                     </div>
                                                 )}
+                                                {getMySubmission().teacherFileUrls && getMySubmission().teacherFileUrls.length > 0 && (
+                                                    <div>
+                                                        <strong>Teacher Attachments:</strong>
+                                                        {getMySubmission().teacherFileUrls.map((fileUrl, idx) => {
+                                                            const fileName = fileUrl.split('/').pop()
+                                                            const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                            return (
+                                                                <div key={idx}>
+                                                                    <span
+                                                                        className='btn btn-link p-0'
+                                                                        style={{ textDecoration: 'underline' }}
+                                                                        onClick={() => downloadFile(fileUrl, fileName)}
+                                                                    >
+                                                                        <i className='bi bi-paperclip me-1'></i>
+                                                                        {originalName}
+                                                                    </span>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -474,7 +496,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                         <h5>Student Submission</h5>
                                         {selectedPost.author === currentUser.username && (
                                             <button className='btn btn-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.title)}>
-                                                <i class='bi bi-filetype-xls me-2'></i>
+                                                <i className='bi bi-filetype-xls me-2'></i>
                                                 Export to Excel
                                             </button>
                                         )}
@@ -487,6 +509,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                     <th>Files</th>
                                                     <th>Grade</th>
                                                     <th>Note</th>
+                                                    <th>Note's Attachments</th>
                                                     <th>Submission Date</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -529,16 +552,48 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                             </td>
                                                             <td>{sub.grade || '-'}</td>
                                                             <td>{sub.teacherNote || '-'}</td>
+                                                            <td>
+                                                                {sub.teacherFileUrls && sub.teacherFileUrls.length > 0 ? (
+                                                                    <div>
+                                                                        {sub.teacherFileUrls.map((fileUrl, idx) => {
+                                                                            const fileName = fileUrl.split('/').pop()
+                                                                            const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                                            return (
+                                                                                <div key={idx}>
+                                                                                    <span
+                                                                                        className='btn btn-link p-0'
+                                                                                        style={{ textDecoration: 'underline' }}
+                                                                                        onClick={() => downloadFile(fileUrl, fileName)}
+                                                                                    >
+                                                                                        <i className='bi bi-paperclip me-1'></i>
+                                                                                        {originalName}
+                                                                                    </span>
+                                                                                </div>
+                                                                            )
+                                                                        })}
+                                                                    </div>
+                                                                ) : ('-')}
+                                                            </td>
                                                             <td>{new Date(sub.submittedAt).toLocaleString().split(',')[0]}</td>
                                                             {selectedPost.author === currentUser.username && (
                                                                 <td>
                                                                     <GradeForm
                                                                         initialGrade={sub.grade}
                                                                         initialNote={sub.teacherNote}
-                                                                        onSave={(grade, note) => handleGrade(sub.id, grade, note)}
+                                                                        onSave={(grade, note, files) => handleGrade(sub.id, grade, note, files)}
                                                                     />
                                                                 </td>
                                                             )}
+                                                            <td>
+                                                                <button
+                                                                    className='btn btn-outline-secondary btn-sm'
+                                                                    type='button'
+                                                                    onClick={() => fetchPastSubsForUser(sub.author)}
+                                                                >
+                                                                    <i className='bi bi-clock-history me-1'></i>
+                                                                    View History
+                                                                </button>
+                                                            </td>
                                                         </tr>
                                                     )
                                                 })}
@@ -558,11 +613,93 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                                 <td>-</td>
                                                                 <td>-</td>
                                                                 <td>-</td>
+                                                                <td>-</td>
                                                             </tr>
                                                         )
                                                     })}
                                             </tbody>
                                         </table>
+                                        {showPastSubs && (
+                                            <div className='modal d-block' tabIndex='-1' style={{ background: 'rgba(0,0,0,0.3)' }}>
+                                                <div className='modal-dialog modal-lg'>
+                                                    <div className='modal-content'>
+                                                        <div className='modal-header'>
+                                                            <h5 className='modal-title'>
+                                                                {pastSubsUser ? `All Submissions for ${pastSubsUser}` : 'Submission History'}
+                                                            </h5>
+                                                            <button type='button' className='btn-close' onClick={() => setShowPastSubs(false)}></button>
+                                                        </div>
+                                                        <div className='modal-body' style={{ maxHeight: '30rem', overflowY: 'auto' }}>
+                                                            {pastSubs.length === 0 && (
+                                                                <div className='text-muted'>No past submissions found.</div>
+                                                            )}
+                                                            {pastSubs.map((sub, index) => (
+                                                                <div key={sub.id} className='border rounded p-2 mb-3'>
+                                                                    <div>
+                                                                        <strong>Submitted at:</strong> {new Date(sub.submittedAt).toLocaleString()}
+                                                                        {sub.isActive && <span className='badge bg-success ms-2'>Active</span>}
+                                                                    </div>
+                                                                    <div>{sub.content}</div>
+                                                                    <div>
+                                                                        {sub.fileUrls && sub.fileUrls.length > 0 && (
+                                                                            <div>
+                                                                                {sub.fileUrls.map((fileUrl, index) => {
+                                                                                    const fileName = fileUrl.split('/').pop()
+                                                                                    const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                                                    return (
+                                                                                        <span
+                                                                                            key={index}
+                                                                                            className='btn btn-link p-0'
+                                                                                            style={{ textDecoration: 'underline' }}
+                                                                                            onClick={() => downloadFile(fileUrl, fileName)}
+                                                                                        >
+                                                                                            <i className='bi bi-paperclip me-1'></i>
+                                                                                            {originalName}
+                                                                                        </span>
+                                                                                    )
+                                                                                })}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    {sub.grade && (
+                                                                        <div>
+                                                                            <strong>Grade:</strong> {sub.grade}<br />
+                                                                            <strong>Teacher Note:</strong> {sub.teacherNote}
+                                                                        </div>
+                                                                    )}
+                                                                    {sub.teacherFileUrls && sub.teacherFileUrls.length > 0 && (
+                                                                        <div>
+                                                                            <strong>Teacher Attachments:</strong>
+                                                                            {sub.teacherFileUrls.map((fileUrl, idx) => {
+                                                                                const fileName = fileUrl.split('/').pop()
+                                                                                const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                                                return (
+                                                                                    <div key={idx}>
+                                                                                        <span
+                                                                                            className='btn btn-link p-0'
+                                                                                            style={{ textDecoration: 'underline' }}
+                                                                                            onClick={() => downloadFile(fileUrl, fileName)}
+                                                                                        >
+                                                                                            <i className='bi bi-paperclip me-1'></i>
+                                                                                            {originalName}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                )
+                                                                            })}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <div className='modal-footer'>
+                                                            <button className='btn btn-secondary' onClick={() => setShowPastSubs(false)}>
+                                                                Close
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

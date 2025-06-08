@@ -1,14 +1,36 @@
 import React from 'react'
 import { downloadFile } from '../../../services/download-service'
 
-function WeeklyReportPostList({ posts, mySubmissions, currentUser, editingPostId, editingPostTitle, setEditingPostTitle, editingPostContent, setEditingPostContent, editingPostDeadline, setEditingPostDeadline, selectedEditFiles, setSelectedEditFiles, filesToDelete, setFilesToDelete, editFileInputRef, handleSelectPost, handleEditPost, handleDeletePost, handleRemoveFile, handleSaveEditPost, setEditingPostId }) {
+function WeeklyReportPostList({ 
+    posts, 
+    mySubmissions, 
+    currentUser, 
+    editingPostId, 
+    editingPostTitle, 
+    setEditingPostTitle, 
+    editingPostContent, 
+    setEditingPostContent, 
+    editingPostDeadline, 
+    setEditingPostDeadline, 
+    selectedEditFiles, 
+    setSelectedEditFiles, 
+    filesToDelete, 
+    setFilesToDelete, 
+    editFileInputRef, 
+    handleSelectPost, 
+    handleEditPost, 
+    handleDeletePost, 
+    handleRemoveFile, 
+    handleSaveEditPost, 
+    setEditingPostId }) {
     return (
         <>
             {posts.length === 0 ? (
                 <p>No assignments</p>
             ) : (
                 posts.map((post) => {
-                    const mySub = mySubmissions && mySubmissions.find(sub => sub.reportPostId === post.id)
+                    const mySub = mySubmissions
+                     && mySubmissions.find(sub => sub.reportPostId === post.id)
                     return (
                         <div key={post.id} className='card mb-3'>
                             <div className='card-body'>

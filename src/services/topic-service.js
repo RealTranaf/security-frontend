@@ -75,3 +75,18 @@ export async function handleExportExcelTopic(roomId, roomName, roomType) {
         console.error(error)
     }
 }
+export function selectGroupTopic(roomId, topicId, usernames) {
+    const formData = new FormData();
+    formData.append('topicId', topicId)
+    usernames.forEach(username => formData.append('usernames', username));
+    return axios.post(`${API_URL}/${roomId}/topics/select-group`, formData, { headers: authHeader() });
+}
+
+export function submitCustomTopicGroup(roomId, title, description, files, usernames) {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    files.forEach(file => formData.append('files', file));
+    usernames.forEach(username => formData.append('usernames', username));
+    return axios.post(`${API_URL}/${roomId}/topics/custom-group`, formData, { headers: { ...authHeader(), 'Content-Type': 'multipart/form-data' } });
+}
