@@ -52,6 +52,9 @@ function ChooseTopics({ roomId, currentUser, room }) {
 
     const fetchStudentSelection = useCallback(async () => {
         try {
+            if (currentUser.role === "TEACHER") {
+                return
+            }
             const response = await getStudentSelectedTopic(roomId)
             setStudentSelection(response.data)
             setSubmitted(true)

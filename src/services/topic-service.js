@@ -42,7 +42,7 @@ export async function getAllStudentSelections(roomId) {
 }
 
 export async function verifyStudentSelection(roomId, selectionId) {
-    return await axios.patch(`${API_URL}/${roomId}/topics/selections/${selectionId}/verify`, {}, { headers: authHeader() })
+    return await axios.patch(`${API_URL}/${roomId}/topics/selections/${selectionId}/verify`, { headers: authHeader() })
 }
 
 export async function deleteTopic(roomId, topicId) {
