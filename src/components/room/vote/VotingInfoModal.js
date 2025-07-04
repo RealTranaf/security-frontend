@@ -22,7 +22,7 @@ function VotingInfoModal({ show, onClose, room, poll, votes, isRoomCreator }) {
                         <p><strong>Created on:</strong> {new Date(poll.createdAt).toLocaleString()}</p>
                         <p><strong>Total Votes:</strong> {votes ? votes.length : 0}</p>
                         {isRoomCreator && (
-                            <button className='btn btn-success mb-3' onClick={() => handleExportExcelPoll(room.id, poll.id, poll.title)}>
+                            <button className='btn btn-primary mb-3' onClick={() => handleExportExcelPoll(room.id, poll.id, poll.title)}>
                                 <i class='bi bi-filetype-xls me-2'></i>
                                 Export to Excel
                             </button>

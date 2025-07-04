@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
 import { login } from '../../services/auth-service'
-import logo from '../../resource/logo.jpg'
+import logo from '../../resource/logo.png'
 import backgroundImg from '../../resource/bkhn-c1.jpg'
 
 function LoginPage() {

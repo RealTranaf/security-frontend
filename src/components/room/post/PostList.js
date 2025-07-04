@@ -663,7 +663,7 @@ function PostList({ roomId, currentUser }) {
                                         </div>
                                     )}
                                     <button
-                                        className='btn btn-sm btn-success me-2'
+                                        className='btn btn-sm btn-primary me-2'
                                         onClick={handleSaveEditPost}
                                     >
                                         <i className='bi bi-check-lg me-1'></i>
@@ -814,7 +814,7 @@ function PostList({ roomId, currentUser }) {
                                                                     </div>
                                                                 )}
                                                                 <button
-                                                                    className='btn btn-sm btn-success me-2'
+                                                                    className='btn btn-sm btn-primary me-2'
                                                                     onClick={() => handleSaveEditComment(post.id)}
                                                                 >
                                                                     <i className='bi bi-check-lg me-1'></i>

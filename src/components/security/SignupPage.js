@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { signup } from '../../services/auth-service'
-import logo from '../../resource/logo.jpg'
+import logo from '../../resource/logo.png'
 import { useNavigate, Link } from 'react-router-dom'
 import backgroundImg from '../../resource/bkhn-c1.jpg'
 

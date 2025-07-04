@@ -52,9 +52,9 @@ function ChooseTopics({ roomId, currentUser, room }) {
 
     const fetchStudentSelection = useCallback(async () => {
         try {
-            if (currentUser.role === "TEACHER") {
-                return
-            }
+            // if (currentUser.role === "TEACHER") {
+            //     return
+            // }
             const response = await getStudentSelectedTopic(roomId)
             setStudentSelection(response.data)
             setSubmitted(true)
@@ -199,7 +199,7 @@ function ChooseTopics({ roomId, currentUser, room }) {
                     </button>
                 )}
             </div>
-            <div className='mb-4'>
+            { currentUser.role !== "TEACHER" && <div className='mb-4'>
                 {studentSelection && studentSelection.topic ? (
                     <div className='card border-black shadow-sm'>
                         <div className='card-header d-flex text-white justify-content-between align-items-center' style={{ background: 'var(--main-red)' }}>
@@ -258,6 +258,7 @@ function ChooseTopics({ roomId, currentUser, room }) {
                     </div>
                 )}
             </div>
+            }
             <div className='card mb-4 shadow-sm'>
                 <div className='card-header bg-light'>
                     <h5 className='mb-0'>Choose an Existing Topic</h5>
@@ -365,7 +366,7 @@ function ChooseTopics({ roomId, currentUser, room }) {
                                     )}
                                     <div className='mt-3'>
                                         <button
-                                            className='btn btn-sm btn-success me-2'
+                                            className='btn btn-sm btn-primary me-2'
                                             onClick={handleSaveEditTopic}
                                         >
                                             <i className='bi bi-check-lg me-1'></i>

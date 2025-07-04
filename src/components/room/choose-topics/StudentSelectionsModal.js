@@ -83,7 +83,7 @@ function StudentSelectionsModal({ show, onClose, studentSelections, room, onVeri
                                                     <td>
                                                         {!selection.verified && (
                                                             <button
-                                                                className='btn btn-sm btn-success'
+                                                                className='btn btn-sm btn-primary'
                                                                 onClick={() => handleVerify(selection.id)}
                                                             >
                                                                 Verify

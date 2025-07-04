@@ -129,6 +129,15 @@ div, option {
   background-color: var(--main-red) !important;
   border-color: black !important;
 }
+.btn-outline-primary{
+  border-color: var(--main-red) !important;
+}
+.text-primary{
+  color: var(--main-red);
+}
+.bi-check-circle-fill{
+  border-color: white;
+}
 
 .btn-primary:hover,
 .btn-primary:focus,

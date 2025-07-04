@@ -180,10 +180,12 @@ function Voting({ roomId, currentUser, room }) {
         <div className='mt-4'>
             <div className='d-flex justify-content-between align-items-center mb-3'>
                 <h3 className='fw-bold mb-0'>Voting</h3>
-                <button className='btn btn-primary' onClick={() => setShowCreateModal(true)}>
-                    <i className='bi bi-plus-circle me-2'></i>
-                    Create Poll
-                </button>
+                {isRoomCreator && (
+                    <button className='btn btn-primary' onClick={() => setShowCreateModal(true)}>
+                        <i className='bi bi-plus-circle me-2'></i>
+                        Create Poll
+                    </button>
+                )}
             </div>
 
             {/* Polls as Cards */}
@@ -342,7 +344,7 @@ function Voting({ roomId, currentUser, room }) {
                                                 </button>
                                             </div>
                                             <button
-                                                className='btn btn-sm btn-success me-2 mt-2'
+                                                className='btn btn-sm btn-primary me-2 mt-2'
                                                 onClick={handleSaveEditPoll}
                                             >
                                                 <i className='bi bi-check-lg me-1'></i>
@@ -367,10 +369,11 @@ function Voting({ roomId, currentUser, room }) {
                                                 </div>
                                             )}
                                             <div className='mb-2'>
-                                                <strong>Attachments:</strong>
-                                                <div>
-                                                    {poll.fileUrls && poll.fileUrls.length > 0
-                                                        ? poll.fileUrls.map((fileUrl, index) => {
+
+                                                {poll.fileUrls && poll.fileUrls.length > 0 && (
+                                                    <div className="d-flex flex-wrap gap-2 mt-1">
+                                                        <strong>Attachments:</strong>
+                                                        {poll.fileUrls.map((fileUrl, index) => {
                                                             const fileName = fileUrl.split('/').pop()
                                                             const originalName = fileName.substring(fileName.indexOf('_') + 1)
                                                             return (
@@ -384,34 +387,51 @@ function Voting({ roomId, currentUser, room }) {
                                                                     {originalName}
                                                                 </span>
                                                             )
-                                                        })
-                                                        : <span className='text-muted ms-2'>No attachments</span>
-                                                    }
-                                                </div>
+                                                        })}
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className='mb-2'>
                                                 <strong>Options:</strong>
-                                                <ul className='mb-0 ps-3'>
-                                                    {poll.options.map((option, index) => (
-                                                        <li key={index}>
-                                                            <div className='d-flex align-items-center'>
-                                                                <button
-                                                                    className={`btn btn-sm me-2 ${userVote === index ? 'btn-success' : 'btn-outline-primary'}`}
-                                                                    disabled={isClosed || submittingVote === poll.id}
-                                                                    onClick={() => handleVote(poll.id, index)}
-                                                                >
-                                                                    {userVote === index ? <i className='bi bi-check-circle-fill'></i> : <i className='bi bi-circle'></i>}
-                                                                </button>
-                                                                <span>{option}</span>
-                                                                <span className='ms-auto badge bg-light text-dark border ms-2'>
+                                                <div className="d-flex flex-column gap-2 mt-2">
+                                                    {poll.options.map((option, index) => {
+                                                        const selected = userVote === index
+                                                        return (
+                                                            <button
+                                                                key={index}
+                                                                className={`btn d-flex align-items-center justify-content-between px-3 py-2 shadow-sm
+                                                                    ${selected ? 'btn-primary text-white' : 'btn-outline-primary bg-white text-dark'}
+                                                                    ${isClosed || submittingVote === poll.id ? 'disabled' : ''}`}
+                                                                style={{
+                                                                    borderRadius: '2rem',
+                                                                    fontWeight: selected ? 'bold' : 'normal',
+                                                                    transition: 'all 0.15s'
+                                                                }}
+                                                                disabled={isClosed || submittingVote === poll.id}
+                                                                onClick={() => handleVote(poll.id, index)}    
+                                                            >
+                                                                <span className="d-flex align-items-center">
+                                                                    <span
+                                                                        className={`me-2 rounded-circle d-inline-block`}
+                                                                        style={{ color: 'var(--main-red)'}}
+                                                                    >
+                                                                        {selected ? (
+                                                                            <i className="bi bi-check-circle-fill text-light" style={{ fontSize: 18 }}></i>
+                                                                        ) : (
+                                                                            <i className="bi bi-circle" style={{fontSize: 18 }}></i>
+                                                                        )}
+                                                                    </span>
+                                                                    <span>{option}</span>
+                                                                </span>
+                                                                <span className='ms-auto badge bg-light text-dark border'>
                                                                     {getOptionVoteCount(poll.id, index)} vote{getOptionVoteCount(poll.id, index) !== 1 ? 's' : ''}
                                                                 </span>
-                                                            </div>
-                                                        </li>
-                                                    ))}
-                                                </ul>
+                                                            </button>
+                                                        )
+                                                    })}
+                                                </div>
                                                 {userVote !== null && !isClosed && (
-                                                    <div className='text-success mt-2'>
+                                                    <div className='text mt-2' style={{ color: 'var(--main-red)' }}>
                                                         <i className='bi bi-check-circle me-1'></i>
                                                         You voted: <strong>{poll.options[userVote]}</strong>
                                                     </div>

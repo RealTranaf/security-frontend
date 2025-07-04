@@ -118,7 +118,7 @@ function RoomSidebar({ room, selectedPage, setSelectedPage, onRoomUpdate }) {
                                 </div>
                             </div>
                             <div className='modal-footer'>
-                                <button className='btn btn-success' onClick={handleSave}>
+                                <button className='btn btn-primary' onClick={handleSave}>
                                     Save
                                 </button>
                                 <button className='btn btn-secondary' onClick={() => setShowModal(false)}>

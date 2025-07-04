@@ -174,7 +174,7 @@ function WeeklyReportPostList({
                                             </div>
                                         )}
                                         <button
-                                            className='btn btn-sm btn-success me-2 mt-2'
+                                            className='btn btn-sm btn-primary me-2 mt-2'
                                             onClick={handleSaveEditPost}
                                         >
                                             <i className='bi bi-check-lg me-1'></i>

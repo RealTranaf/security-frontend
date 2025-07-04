@@ -382,10 +382,13 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                 <button type='button' className='btn-close' onClick={closePostModal}></button>
                             </div>
                             <div className='modal-body' style={{ maxHeight: '40rem', overflowY: 'auto' }}>
-                                <p>{selectedPost.content}</p>
-                                <p><strong>Deadline:</strong> {new Date(selectedPost.deadline).toLocaleString()}</p>
+                                <p className='fs-5'>{selectedPost.content}</p>
+                                <p>
+                                    <strong>Deadline:</strong>
+                                    {new Date(selectedPost.deadline).toLocaleString()}
+                                </p>
                                 {selectedPost.fileUrls && selectedPost.fileUrls.length > 0 && (
-                                    <div>
+                                    <div className='mb-2'>
                                         <strong>Attachments:</strong>
                                         <div>
                                             {selectedPost.fileUrls.map((fileUrl, index) => {
@@ -419,15 +422,33 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                             required
                                         >
                                         </textarea>
-                                        <input
-                                            className='form-control mb-2'
-                                            type='file'
-                                            multiple
-                                            onChange={e => setReportFiles(Array.from(e.target.files))}
-                                        >
-                                        </input>
+                                        <div className='position-relative'>
+                                            <button
+                                                type='button'
+                                                className='attach-btn-inside-textarea'
+                                                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                                tabIndex={-1}
+                                            >
+                                                <i className='bi bi-paperclip fs-4' style={{ color: 'var(--main-red)' }}></i>
+                                            </button>
+                                            <input
+                                                type='file'
+                                                className='d-none'
+                                                multiple
+                                                ref={fileInputRef}
+                                                onChange={e => setReportFiles(Array.from(e.target.files))}
+                                            >
+                                            </input>
+                                        </div>
+                                        {reportFiles.length > 0 && (
+                                            <div className='mt-2'>
+                                                {reportFiles.map((file, index) => (
+                                                    <span key={index} className='badge bg-secondary me-2'>{file.name}</span>
+                                                ))}
+                                            </div>
+                                        )}
                                         <button
-                                            className='btn btn-success'
+                                            className='btn btn-primary mt-2'
                                             onClick={handleSubmitReport}
                                         >
                                             <i className={`bi ${getMySubmission() ? 'bi-arrow-repeat' : 'bi-upload'} me-1`}></i>
@@ -495,17 +516,17 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                     <div className='mt-4'>
                                         <h5>Student Submission</h5>
                                         {selectedPost.author === currentUser.username && (
-                                            <button className='btn btn-success btn-sm' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.title)}>
+                                            <button className='btn btn-primary' onClick={() => handleExportExcel(roomId, selectedPost.id, selectedPost.title)}>
                                                 <i className='bi bi-filetype-xls me-2'></i>
                                                 Export to Excel
                                             </button>
                                         )}
-                                        <table className='table table-striped'>
+                                        <table className='table table-striped mt-2'>
                                             <thead>
                                                 <tr>
                                                     <th>Student</th>
                                                     <th>Status</th>
-                                                    <th>Report</th>
+                                                    {/* <th>Report</th> */}
                                                     <th>Files</th>
                                                     <th>Grade</th>
                                                     <th>Note</th>
@@ -527,7 +548,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                                     : <span className='badge bg-success ms-2'>On Time</span>
                                                                 }
                                                             </td>
-                                                            <td>{sub.content}</td>
+                                                            {/* <td>{sub.content}</td> */}
                                                             <td>
                                                                 {sub.fileUrls && sub.fileUrls.length > 0 ? (
                                                                     <div>
@@ -607,7 +628,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                             >
                                                                 <td>{user.username}</td>
                                                                 <td>Not Turned In</td>
-                                                                <td>-</td>
+                                                                {/* <td>-</td> */}
                                                                 <td>-</td>
                                                                 <td>-</td>
                                                                 <td>-</td>
@@ -629,20 +650,39 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                             </h5>
                                                             <button type='button' className='btn-close' onClick={() => setShowPastSubs(false)}></button>
                                                         </div>
-                                                        <div className='modal-body' style={{ maxHeight: '30rem', overflowY: 'auto' }}>
+                                                        <div className='modal-body' style={{ maxHeight: '40rem', overflowY: 'auto' }}>
                                                             {pastSubs.length === 0 && (
                                                                 <div className='text-muted'>No past submissions found.</div>
                                                             )}
-                                                            {pastSubs.map((sub, index) => (
-                                                                <div key={sub.id} className='border rounded p-2 mb-3'>
+                                                            {pastSubs.map((sub) => (
+                                                                <div
+                                                                    key={sub.id}
+                                                                    className={`border rounded p-2 mb-3 ${sub.active ? ' border-success' : 'border-danger'}`}
+                                                                    style={{ background: sub.active ? '#e9fbe9' : '#fff' }}
+                                                                >
                                                                     <div>
-                                                                        <strong>Submitted at:</strong> {new Date(sub.submittedAt).toLocaleString()}
-                                                                        {sub.isActive && <span className='badge bg-success ms-2'>Active</span>}
-                                                                    </div>
-                                                                    <div>{sub.content}</div>
-                                                                    <div>
-                                                                        {sub.fileUrls && sub.fileUrls.length > 0 && (
+                                                                        <div className="d-flex justify-content-between align-items-center mb-2">
                                                                             <div>
+                                                                                <strong>Submitted at:</strong>
+                                                                                <span className="ms-2">{new Date(sub.submittedAt).toLocaleString()}</span>
+                                                                            </div>
+                                                                            {/* {sub.active && (
+                                                                                <span className="badge bg-success ms-2">Active</span>
+                                                                            )} */}
+                                                                            {sub.grade && (
+                                                                                <span
+                                                                                    className="badge bg-primary fs-6"
+                                                                                >
+                                                                                    Grade: {sub.grade}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="mb-2" style={{ whiteSpace: 'pre-line' }}>{sub.content}</div>
+                                                                    <div className='mb-2'>
+                                                                        {sub.fileUrls && sub.fileUrls.length > 0 && (
+                                                                            <div className="d-flex flex-wrap gap-2 mt-1">
+                                                                                <strong>Attachments:</strong>
                                                                                 {sub.fileUrls.map((fileUrl, index) => {
                                                                                     const fileName = fileUrl.split('/').pop()
                                                                                     const originalName = fileName.substring(fileName.indexOf('_') + 1)
@@ -653,7 +693,7 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                                                             style={{ textDecoration: 'underline' }}
                                                                                             onClick={() => downloadFile(fileUrl, fileName)}
                                                                                         >
-                                                                                            <i className='bi bi-paperclip me-1'></i>
+                                                                                            <i className='bi bi-paperclip'></i>
                                                                                             {originalName}
                                                                                         </span>
                                                                                     )
@@ -664,30 +704,32 @@ function WeeklyReportPage({ roomId, room, currentUser }) {
                                                                     {sub.grade && (
                                                                         <div>
                                                                             <strong>Grade:</strong> {sub.grade}<br />
-                                                                            <strong>Teacher Note:</strong> {sub.teacherNote}
+                                                                            <strong>Teacher's notes:</strong> {sub.teacherNote}
                                                                         </div>
                                                                     )}
-                                                                    {sub.teacherFileUrls && sub.teacherFileUrls.length > 0 && (
-                                                                        <div>
-                                                                            <strong>Teacher Attachments:</strong>
-                                                                            {sub.teacherFileUrls.map((fileUrl, idx) => {
-                                                                                const fileName = fileUrl.split('/').pop()
-                                                                                const originalName = fileName.substring(fileName.indexOf('_') + 1)
-                                                                                return (
-                                                                                    <div key={idx}>
-                                                                                        <span
-                                                                                            className='btn btn-link p-0'
-                                                                                            style={{ textDecoration: 'underline' }}
-                                                                                            onClick={() => downloadFile(fileUrl, fileName)}
-                                                                                        >
-                                                                                            <i className='bi bi-paperclip me-1'></i>
-                                                                                            {originalName}
-                                                                                        </span>
-                                                                                    </div>
-                                                                                )
-                                                                            })}
-                                                                        </div>
-                                                                    )}
+                                                                    <div className='mb-2'>
+                                                                        {sub.teacherFileUrls && sub.teacherFileUrls.length > 0 && (
+                                                                                <div className="d-flex flex-wrap gap-2 mt-1">
+                                                                                    <strong>Teacher Attachments:</strong>
+                                                                                    {sub.teacherFileUrls.map((fileUrl, idx) => {
+                                                                                        const fileName = fileUrl.split('/').pop()
+                                                                                        const originalName = fileName.substring(fileName.indexOf('_') + 1)
+                                                                                        return (
+                                                                                            <div key={idx}>
+                                                                                                <span
+                                                                                                    className='btn btn-link p-0'
+                                                                                                    style={{ textDecoration: 'underline' }}
+                                                                                                    onClick={() => downloadFile(fileUrl, fileName)}
+                                                                                                >
+                                                                                                    <i className='bi bi-paperclip'></i>
+                                                                                                    {originalName}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        )
+                                                                                    })}
+                                                                                </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                             ))}
                                                         </div>
